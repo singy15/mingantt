@@ -25,3 +25,21 @@
   padding: 40px;
 }
 
+.text-light {
+  color: #FFF;
+}
+
+.bg-light {
+  background-color: #555;
+}
+
+.mingantt-button {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.5rem;
+  align-items: center;
+  display: flex;
+}
+

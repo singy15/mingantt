@@ -3,7 +3,7 @@ const app = Vue.createApp({
     return {
       start_month: '2021-10',
       end_month: '2022-02',
-      block_size: 30,
+      block_size: 24,
       block_number: 0,
       calendars:[],
       inner_width: '',
@@ -361,29 +361,45 @@ const app = Vue.createApp({
     },
     taskBars() {
       let startDate = moment(this.start_month);
-      let top = 10;
+      let top = 2;
       let left;
+      let leftAc;
       let between;
+      let betweenAc;
       let start;
+      let startAc;
       let style;
+      let actualStyle;
       return this.displayTasks.map(task => {
         style = {}
         if(task.cat==='task'){
           let date_from = moment(task.startDate);
           let date_to = moment(task.endDate);
+          let ac_date_from = moment(task.actualStartDate);
+          let ac_date_to = moment(task.actualEndDate);
           between = date_to.diff(date_from, 'days');
           between++;
+          betweenAc = ac_date_to.diff(ac_date_from, 'days');
+          betweenAc++;
           start = date_from.diff(startDate, 'days');
+          startAc = ac_date_from.diff(startDate, 'days');
           left = start * this.block_size;
+          leftAc = startAc * this.block_size;
           style = {
             top: `${top}px`,
             left: `${left}px`,
             width: `${this.block_size * between}px`,
-          }
+          };
+          actualStyle = {
+            top: `${top+8}px`,
+            left: `${leftAc}px`,
+            width: `${this.block_size * betweenAc}px`,
+          };
         }
-        top = top + 40;
+        top = top + 20;
         return {
           style,
+          actualStyle,
           task
         }
       })

@@ -111,11 +111,11 @@
             </div>
           </div>
           <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="`height:${calendarViewHeight}px`">
-            <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-10 mg-border-b" draggable="true" @dragstart="dragTask(task)" @dragover.prevent="dragTaskOver(task)">
+            <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" draggable="true" @dragstart="dragTask(task)" @dragover.prevent="dragTaskOver(task)">
               <!-- Template for category -->
               <template v-if="task.cat === 'category'">
                 <div
-                  class="mg-flex mg-items-center mg-w-full mg-text-sm mg-pl-2 mg-flex  mg-items-center">
+                  class="mg-flex mg-items-center mg-w-full mg-text-xs mg-pl-2 mg-flex  mg-items-center">
                   <span>{{task.name}}</span>
                   <div class="pr-4" @click="toggleCategory(task.taskId)">
                     <span v-if="task.collapsed">
@@ -135,19 +135,19 @@
               </template>
               <!-- Template for task -->
               <template v-else>
-                <div @click="editTask(task)" class="mg-border-r mg-flex mg-items-center mg-w-48 mg-text-sm mg-pl-4">
+                <div @click="editTask(task)" class="mg-border-r mg-flex mg-items-center mg-w-48 mg-text-xs mg-pl-4">
                   {{task.name}}
                 </div>
-                <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-sm">
+                <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
                   {{task.startDate}}
                 </div>
-                <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-sm">
+                <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
                   {{task.endDate}}
                 </div>
-                <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-sm">
+                <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs">
                   {{task.assignedUserId}}
                 </div>
-                <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-sm">
+                <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs">
                   {{task.percentage}}%
                 </div>
               </template>
@@ -173,8 +173,7 @@
                   <div class="mg-border-r mg-border-b mg-h-12 mg-absolute mg-flex mg-items-center mg-justify-center mg-flex-col mg-text-xs"
                        :class="{'bg-blue-100': day.dayOfWeek === '土', 'bg-red-100': day.dayOfWeek ==='日', 'bg-red-600 mg-text-white': calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date()}"
                        :style="`width:${block_size}px;left:${day.block_number*block_size}px`">
-                    <span>{{ day.day }}</span>
-                    <span>{{ day.dayOfWeek }}</span>
+                    <span style="text-align:center;">{{ day.day }}<br>{{ day.dayOfWeek }}</span>
                   </div>
                 </div>
               </div>
@@ -194,7 +193,27 @@
           <!-- Bar Area -->
           <div id="gantt-bar-area" class="mg-relative" :style="`width:${calendarViewWidth}px;height:${calendarViewHeight}px`">
             <div v-for="(bar,index) in taskBars" :key="index">
-              <div :style="bar.style" style="cursor:pointer; background-color:#fef3c7;" class="mg-absolute mg-h-5" 
+
+              <div :style="bar.style" style="cursor:pointer; background-color:#fef3c7;" class="mg-absolute mg-h-2 mg-border" 
+                  v-if="bar.task.cat === 'task'" @mousedown="mouseDownMove(bar.task)" >
+                <div class="mg-w-full mg-h-full" style="pointer-events: none;">
+                  <!--
+                  <div class="mg-h-full" 
+                       style="pointer-events:none; background-color:#f59e0b" 
+                       :style="`width:${bar.task.percentage}%`"></div>
+                  -->
+                </div>
+                <div class="mg-absolute mg-w-2 mg-h-2" 
+                     style="top:3px;left:-6px;cursor:col-resize" 
+                     @mousedown.stop="mouseDownResize(bar.task,'left')">
+                </div>
+                <div class="mg-absolute mg-w-2 mg-h-2" 
+                     style="top:3px;right:-6px;cursor:col-resize" 
+                     @mousedown.stop="mouseDownResize(bar.task,'right')">
+                </div>
+              </div>
+
+              <div :style="bar.actualStyle" style="cursor:pointer; background-color:#fef3c7;" class="mg-absolute mg-h-2 mg-border" 
                   v-if="bar.task.cat === 'task'" @mousedown="mouseDownMove(bar.task)" >
                 <div class="mg-w-full mg-h-full" style="pointer-events: none;">
                   <div class="mg-h-full" 
@@ -202,14 +221,15 @@
                        :style="`width:${bar.task.percentage}%`"></div>
                 </div>
                 <div class="mg-absolute mg-w-2 mg-h-2" 
-                     style="top:6px;left:-6px;cursor:col-resize" 
+                     style="top:3px;left:-6px;cursor:col-resize" 
                      @mousedown.stop="mouseDownResize(bar.task,'left')">
                 </div>
                 <div class="mg-absolute mg-w-2 mg-h-2" 
-                     style="top:6px;right:-6px;cursor:col-resize" 
+                     style="top:3px;right:-6px;cursor:col-resize" 
                      @mousedown.stop="mouseDownResize(bar.task,'right')">
                 </div>
               </div>
+
             </div>
           </div>
 

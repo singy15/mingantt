@@ -172,6 +172,14 @@ input {
   height: 1.25rem;
 }
 
+.mg-h-3 {
+  height: 0.75rem;
+}
+
+.mg-h-4 {
+  height: 1.0rem;
+}
+
 .mg-h-2 {
   height: 0.5rem;
 }

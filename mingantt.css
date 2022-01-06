@@ -296,3 +296,13 @@ input {
   margin-left: 0.5rem;
 }
 
+.mg-actual {
+  /*
+  background-color: #91a4d9;
+  background-image: -webkit-gradient(linear, 0 0, 100% 100%,color-stop(.25, #CCF), color-stop(.25, transparent),color-stop(.5, transparent), color-stop(.5, #CCF),color-stop(.75, #CCF), color-stop(.75, transparent),to(transparent));
+  */
+  background-color: #fef3c7;;
+  background-image: -webkit-gradient(linear, 0 0, 100% 100%,color-stop(.25, #f9ce86), color-stop(.25, transparent),color-stop(.5, transparent), color-stop(.5, #f9ce86),color-stop(.75, #f9ce86), color-stop(.75, transparent),to(transparent));
+  -webkit-background-size: 7px 7px;
+}
+

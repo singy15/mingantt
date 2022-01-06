@@ -99,15 +99,15 @@
         <div id="gantt-task">
           <!-- Header -->
           <div id="gantt-task-title" class="mg-flex mg-items-center mg-col-header mg-text-white mg-h-20" ref="task">
-            <div class="mg-flex mg-border mg-text-xs mg-w-48 mg-center mg-items-center mg-justify-center mg-h-full">タスク
+            <div class="mg-flex mg-border-r mg-text-xs mg-w-48 mg-center mg-items-center mg-justify-center mg-h-full">タスク
             </div>
-            <div class="mg-flex mg-border mg-text-xs mg-w-24 mg-center mg-items-center mg-justify-center mg-h-full">開始日
+            <div class="mg-flex mg-border-r mg-text-xs mg-w-24 mg-center mg-items-center mg-justify-center mg-h-full">開始日
             </div>
-            <div class="mg-flex mg-border mg-text-xs mg-w-24 mg-center mg-items-center mg-justify-center mg-h-full">完了期限日
+            <div class="mg-flex mg-border-r mg-text-xs mg-w-24 mg-center mg-items-center mg-justify-center mg-h-full">完了期限日
             </div>
-            <div class="mg-flex mg-border mg-text-xs mg-w-16 mg-center mg-items-center mg-justify-center mg-h-full">担当
+            <div class="mg-flex mg-border-r mg-text-xs mg-w-16 mg-center mg-items-center mg-justify-center mg-h-full">担当
             </div>
-            <div class="mg-flex mg-border mg-text-xs mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">進捗
+            <div class="mg-flex mg-border-r mg-text-xs mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">進捗
             </div>
           </div>
           <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="`height:${calendarViewHeight}px`">
@@ -213,7 +213,7 @@
                 </div>
               </div>
 
-              <div :style="bar.actualStyle" style="cursor:pointer; background-color:#fef3c7;" class="mg-absolute mg-h-2 mg-border" 
+              <div :style="bar.actualStyle" style="cursor:pointer; " class="mg-absolute mg-h-2 mg-border mg-actual" 
                   v-if="bar.task.cat === 'task'" @mousedown="mouseDownMove(bar.task)" >
                 <div class="mg-w-full mg-h-full" style="pointer-events: none;">
                   <div class="mg-h-full" 

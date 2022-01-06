@@ -383,17 +383,17 @@ const app = Vue.createApp({
           betweenAc++;
           start = date_from.diff(startDate, 'days');
           startAc = ac_date_from.diff(startDate, 'days');
-          left = start * this.block_size;
-          leftAc = startAc * this.block_size;
+          left = start * this.block_size - 1;
+          leftAc = startAc * this.block_size - 1;
           style = {
             top: `${top}px`,
             left: `${left}px`,
-            width: `${this.block_size * between}px`,
+            width: `${this.block_size * between + 1}px`,
           };
           actualStyle = {
-            top: `${top+8}px`,
+            top: `${top+7}px`,
             left: `${leftAc}px`,
-            width: `${this.block_size * betweenAc}px`,
+            width: `${this.block_size * betweenAc + 1}px`,
           };
         }
         top = top + 20;

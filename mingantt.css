@@ -1,0 +1,290 @@
+* {
+  font-family: system-ui;
+}
+
+button {
+  border:none;
+  outline:none;
+}
+
+input {
+  font-family: sans-serif;
+}
+
+.bg-blue-100 {
+  background-color: #DBEAFE;
+}
+
+.bg-red-100 {
+  background-color: #FEE2E2;
+}
+
+.bg-red-600 {
+  background-color: #DC2626;
+}
+
+.base {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: gray;
+  opacity: 0.5;
+}
+
+.content {
+  background-color: white;
+  position: relative;
+  border-radius: 10px;
+  padding: 40px;
+}
+
+.text-light {
+  color: #FFF;
+}
+
+.bg-light {
+  background-color: #555;
+}
+
+.mingantt-button {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.5rem;
+  align-items: center;
+  display: flex;
+}
+
+.mg-text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.mg-center {
+  text-align: center;
+}
+
+.mg-border {
+  border-right: solid 1px #CCC;
+  border-top: solid 1px #CCC;
+  border-bottom: solid 1px #CCC;
+  box-sizing: border-box;
+}
+
+.mg-base {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.mg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: gray;
+  opacity: 0.5;
+}
+
+.mg-content {
+  background-color: white;
+  position: relative;
+  border-radius: 10px;
+  padding: 40px;
+}
+
+.mg-h-full {
+  height: 100%;
+}
+
+.mg-h-8 {
+  height: 2rem;
+}
+
+.mg-w-full {
+  height: 100%;
+}
+
+.mg-my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mg-w-48 {
+  width: 12rem;
+}
+
+.mg-border {
+  border: solid 1px #CCC;
+}
+
+.mg-w-24 {
+  width: 6rem;
+}
+
+.mg-justify-between {
+  justify-content: space-between;
+}
+
+.mg-w-16 {
+  width: 4rem;
+}
+
+.mg-green {
+  background-color: #10b981;
+}
+
+.mg-red {
+  background-color: #ef4444;
+}
+
+.mg-w-12 {
+  width: 3rem;
+}
+
+.mg-w-4 {
+  width: 1rem;
+}
+
+.mg-w-2 {
+  width: 0.5rem;
+}
+
+.mg-h-5 {
+  height: 1.25rem;
+}
+
+.mg-h-2 {
+  height: 0.5rem;
+}
+
+.mg-pl-2 {
+  padding-left: 0.5rem;
+}
+
+.mg-pl-4 {
+  padding-left: 1rem;
+}
+
+.mg-col-header {
+  background-color: #555;
+}
+
+.mg-absolute {
+  position: absolute;
+}
+
+.mg-relative {
+  position: relative;
+}
+
+.mg-flex {
+  display: flex;
+}
+
+.mg-items-center {
+  align-items: center;
+}
+
+.mg-text-white {
+  color: #FFF;
+}
+
+.mg-h-20 {
+  height: 5rem;
+}
+
+.mg-h-10 {
+  height: 2.5rem;
+}
+
+.mg-h-12 {
+  height: 3rem;
+}
+
+.mg-text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.mg-justify-center {
+  justify-content: center;
+}
+
+.mg-overflow-y-hidden {
+  overflow-y: hidden;
+}
+
+.mg-overflow-x-hidden {
+  overflow-x: hidden;
+}
+
+.mg-border-b {
+  border-bottom: solid 1px #CCC;
+  box-sizing: border-box;
+}
+
+.mg-border-l {
+  border-left: solid 1px #CCC;
+  box-sizing: border-box;
+}
+
+.mg-border-t {
+  border-top: solid 1px #CCC;
+  box-sizing: border-box;
+}
+
+.mg-border-r {
+  border-right: solid 1px #CCC;
+  box-sizing: border-box;
+}
+
+.mg-text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.mg-p-2 {
+  padding: 0.5rem;
+}
+
+.mg-indigo {
+  background-color: #4338CA;
+}
+
+.mg-py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.mg-px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.mg-rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.mg-ml-2 {
+  margin-left: 0.5rem;
+}
+

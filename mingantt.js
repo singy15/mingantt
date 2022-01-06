@@ -13,68 +13,80 @@ const app = Vue.createApp({
       today:moment(),
       categories: [
         {
-          id: 1,
+          taskId: 1,
           name: 'テストA',
           collapsed: false,
         }, {
-          id: 2,
+          taskId: 2,
           name: 'テストB',
           collapsed: false,
         }
       ],
       tasks: [
         {
-          id: 1,
-          category_id: 1,
+          taskId: 1,
+          categoryId: 1,
           name: 'テスト1',
-          start_date: '2021-12-18',
-          end_date: '2021-12-20',
-          incharge_user: '鈴木',
+          startDate: '2021-12-18',
+          endDate: '2021-12-20',
+          actualStartDate: '2021-12-18',
+          actualEndDate: '2021-12-20',
+          assignedUserId: '鈴木',
           percentage: 100,
         },
         {
-          id: 2,
-          category_id: 1,
+          taskId: 2,
+          categoryId: 1,
           name: 'テスト2',
-          start_date: '2021-12-19',
-          end_date: '2021-12-23',
-          incharge_user: '佐藤',
+          startDate: '2021-12-19',
+          endDate: '2021-12-23',
+          actualStartDate: '2021-12-18',
+          actualEndDate: '2021-12-20',
+          assignedUserId: '佐藤',
           percentage: 90,
         },
         {
-          id: 3,
-          category_id: 1,
+          taskId: 3,
+          categoryId: 1,
           name: 'テスト3',
-          start_date: '2021-12-19',
-          end_date: '2022-01-04',
-          incharge_user: '鈴木',
+          startDate: '2021-12-19',
+          endDate: '2022-01-04',
+          actualStartDate: '2021-12-18',
+          actualEndDate: '2021-12-20',
+          assignedUserId: '鈴木',
           percentage: 40,
         },
         {
-          id: 4,
-          category_id: 1,
+          taskId: 4,
+          categoryId: 1,
           name: 'テスト4',
-          start_date: '2021-12-21',
-          end_date: '2021-12-30',
-          incharge_user: '山下',
+          startDate: '2021-12-21',
+          endDate: '2021-12-30',
+          actualStartDate: '2021-12-18',
+          actualEndDate: '2021-12-20',
+          assignedUserId: '山下',
           percentage: 60,
         },
         {
-          id: 5,
-          category_id: 1,
+          taskId: 5,
+          categoryId: 1,
           name: 'テスト5',
-          start_date: '2021-12-25',
-          end_date: '2022-01-04',
-          incharge_user: '佐藤',
+          startDate: '2021-12-25',
+          endDate: '2022-01-04',
+          actualStartDate: '2021-12-18',
+          actualEndDate: '2021-12-20',
+          assignedUserId: '佐藤',
           percentage: 5,
         },
         {
-          id: 6,
-          category_id: 2,
+          taskId: 6,
+          categoryId: 2,
           name: 'テスト6',
-          start_date: '2021-12-28',
-          end_date: '2022-01-08',
-          incharge_user: '佐藤',
+          startDate: '2021-12-28',
+          endDate: '2022-01-08',
+          actualStartDate: '2021-12-18',
+          actualEndDate: '2021-12-20',
+          assignedUserId: '佐藤',
           percentage: 0,
         },
       ],
@@ -90,12 +102,14 @@ const app = Vue.createApp({
       task: '',
       show: false,
       form: {
-        category_id: '',
-        id: '',
+        categoryId: '',
+        taskId: '',
         name: '',
-        start_date: '',
-        end_date: '',
-        incharge_user: '',
+        startDate: '',
+        endDate: '',
+        actualStartDate: '',
+        actualEndDate: '',
+        assignedUserId: '',
         percentage: 0
       },
       update_mode: false
@@ -162,7 +176,7 @@ const app = Vue.createApp({
       this.pageX = event.pageX;
       this.element = event.target;
       this.left = event.target.style.left;
-      this.task_id = task.id
+      this.task_id = task.taskId
       console.log('mouseDownMove')
     },
     mouseMove() {
@@ -177,11 +191,11 @@ const app = Vue.createApp({
         let days = Math.ceil(diff / this.block_size)
         if (days !== 0) {
           console.log(days)
-          let task = this.tasks.find(task => task.id === this.task_id);
-          let start_date = moment(task.start_date).add(-days, 'days')
-          let end_date = moment(task.end_date).add(-days, 'days')
-          task['start_date'] = start_date.format('YYYY-MM-DD')
-          task['end_date'] = end_date.format('YYYY-MM-DD')
+          let task = this.tasks.find(task => task.taskId === this.task_id);
+          let startDate = moment(task.startDate).add(-days, 'days')
+          let endDate = moment(task.endDate).add(-days, 'days')
+          task['startDate'] = startDate.format('YYYY-MM-DD')
+          task['endDate'] = endDate.format('YYYY-MM-DD')
         } else {
           this.element.style.left = `${this.left.replace('px', '')}px`;
         }
@@ -190,13 +204,13 @@ const app = Vue.createApp({
         let diff = this.pageX - event.pageX;
         let days = Math.ceil(diff / this.block_size)
         if (days !== 0) {
-          let task = this.tasks.find(task => task.id === this.task_id);
-          let start_date = moment(task.start_date).add(-days, 'days')
-          let end_date = moment(task.end_date)
-          if (end_date.diff(start_date, 'days') <= 0) {
-            task['start_date'] = end_date.format('YYYY-MM-DD')
+          let task = this.tasks.find(task => task.taskId === this.task_id);
+          let startDate = moment(task.startDate).add(-days, 'days')
+          let endDate = moment(task.endDate)
+          if (endDate.diff(startDate, 'days') <= 0) {
+            task['startDate'] = endDate.format('YYYY-MM-DD')
           } else {
-            task['start_date'] = start_date.format('YYYY-MM-DD')
+            task['startDate'] = startDate.format('YYYY-MM-DD')
           }
         } else {
           this.element.style.width = this.width;
@@ -210,17 +224,17 @@ const app = Vue.createApp({
           this.element.style.width = `${parseInt(this.width.replace('px', ''))}px`;
         } else if (days <= 2) {
           days--;
-          let task = this.tasks.find(task => task.id === this.task_id);
-          let end_date = moment(task.end_date).add(-days, 'days')
-          task['end_date'] = end_date.format('YYYY-MM-DD')
+          let task = this.tasks.find(task => task.taskId === this.task_id);
+          let endDate = moment(task.endDate).add(-days, 'days')
+          task['endDate'] = endDate.format('YYYY-MM-DD')
         } else {
-          let task = this.tasks.find(task => task.id === this.task_id);
-          let start_date = moment(task.start_date);
-          let end_date = moment(task.end_date).add(-days, 'days')
-          if (end_date.diff(start_date, 'days') < 0) {
-            task['end_date'] = start_date.format('YYYY-MM-DD')
+          let task = this.tasks.find(task => task.taskId === this.task_id);
+          let startDate = moment(task.startDate);
+          let endDate = moment(task.endDate).add(-days, 'days')
+          if (endDate.diff(startDate, 'days') < 0) {
+            task['endDate'] = startDate.format('YYYY-MM-DD')
           } else {
-            task['end_date'] = end_date.format('YYYY-MM-DD')
+            task['endDate'] = endDate.format('YYYY-MM-DD')
           }
         }
       }
@@ -234,7 +248,7 @@ const app = Vue.createApp({
       this.width = event.target.parentElement.style.width;
       this.left = event.target.parentElement.style.left;
       this.element = event.target.parentElement;
-      this.task_id = task.id
+      this.task_id = task.taskId
     },
     mouseResize() {
       if (this.leftResizing) {
@@ -259,21 +273,21 @@ const app = Vue.createApp({
       let addIndex;
       if (this.task.cat !== 'category') {
         if (overTask.cat === 'category') {
-          let updateTask = this.tasks.find(task => task.id === this.task.id)
-          updateTask['category_id'] = overTask['id']
+          let updateTask = this.tasks.find(task => task.taskId === this.task.taskId)
+          updateTask['categoryId'] = overTask['taskId']
         } else {
-          if (overTask.id !== this.task.id) {
-            this.tasks.map((task, index) => { if (task.id === this.task.id) deleteIndex = index })
-            this.tasks.map((task, index) => { if (task.id === overTask.id) addIndex = index })
+          if (overTask.taskId !== this.task.taskId) {
+            this.tasks.map((task, index) => { if (task.taskId === this.task.taskId) deleteIndex = index })
+            this.tasks.map((task, index) => { if (task.taskId === overTask.taskId) addIndex = index })
             this.tasks.splice(deleteIndex, 1)
-            this.task['category_id'] = overTask['category_id']
+            this.task['categoryId'] = overTask['categoryId']
             this.tasks.splice(addIndex, 0, this.task)
           }
         }
       }
     },
     toggleCategory(task_id) {
-      let category = this.categories.find(category => category.id === task_id)
+      let category = this.categories.find(category => category.taskId === task_id)
       category['collapsed'] = !category['collapsed'];
     },
     addTask() {
@@ -293,16 +307,16 @@ const app = Vue.createApp({
       this.show = true;
       Object.assign(this.form, task);
     },
-    updateTask(id) {
-      let task = this.tasks.find(task => task.id === id);
+    updateTask(taskId) {
+      let task = this.tasks.find(task => task.taskId === taskId);
       Object.assign(task, this.form);
       this.form = {}
       this.show = false;
     },
-    deleteTask(id) {
+    deleteTask(taskId) {
       let delete_index;
       this.tasks.map((task, index) => {
-        if (task.id === id) delete_index = index;
+        if (task.taskId === taskId) delete_index = index;
       })
       this.tasks.splice(delete_index, 1)
       this.form = {}
@@ -329,8 +343,8 @@ const app = Vue.createApp({
       return this.inner_height - this.task_height - 48 - 20;
     },
     scrollDistance() {
-      let start_date = moment(this.start_month);
-      let between_days = this.today.diff(start_date, 'days')
+      let startDate = moment(this.start_month);
+      let between_days = this.today.diff(startDate, 'days')
       return (between_days + 1) * this.block_size - this.calendarViewWidth / 2;
     },
     lists() {
@@ -338,7 +352,7 @@ const app = Vue.createApp({
       this.categories.map(category => {
         lists.push({ cat: 'category', ...category });
         this.tasks.map(task => {
-          if (task.category_id === category.id && !category.collapsed) {
+          if (task.categoryId === category.taskId && !category.collapsed) {
             lists.push({ cat: 'task', ...task })
           }
         })
@@ -346,7 +360,7 @@ const app = Vue.createApp({
       return lists;
     },
     taskBars() {
-      let start_date = moment(this.start_month);
+      let startDate = moment(this.start_month);
       let top = 10;
       let left;
       let between;
@@ -355,11 +369,11 @@ const app = Vue.createApp({
       return this.displayTasks.map(task => {
         style = {}
         if(task.cat==='task'){
-          let date_from = moment(task.start_date);
-          let date_to = moment(task.end_date);
+          let date_from = moment(task.startDate);
+          let date_to = moment(task.endDate);
           between = date_to.diff(date_from, 'days');
           between++;
-          start = date_from.diff(start_date, 'days');
+          start = date_from.diff(startDate, 'days');
           left = start * this.block_size;
           style = {
             top: `${top}px`,

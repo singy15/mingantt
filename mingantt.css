@@ -13,10 +13,12 @@ input {
 
 .bg-blue-100 {
   background-color: #DBEAFE;
+  opacity: 0.6;
 }
 
 .bg-red-100 {
   background-color: #FEE2E2;
+  opacity: 0.6;
 }
 
 .bg-red-600 {
@@ -71,6 +73,11 @@ input {
 .mg-text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.mg-text-xxs {
+  font-size: 0.5rem;
+  line-height: 0.75rem;
 }
 
 .mg-center {
@@ -132,6 +139,14 @@ input {
   width: 12rem;
 }
 
+.mg-w-64 {
+  width: 16rem;
+}
+
+.mg-w-96 {
+  width: 24rem;
+}
+
 .mg-border {
   border: solid 1px #CCC;
 }
@@ -168,6 +183,11 @@ input {
   width: 0.5rem;
 }
 
+
+.mg-h-6 {
+  height: 1.75rem;
+}
+
 .mg-h-5 {
   height: 1.25rem;
 }
@@ -192,12 +212,32 @@ input {
   padding-left: 1rem;
 }
 
-.mg-col-header {
-  background-color: #555;
+.mg-bg-gray {
+  background-color: #f4f2ea;
+}
+
+.mg-bg-lightgray {
+  background-color: #EEE;
+}
+
+.mg-opacity-60 {
+  opacity: 0.6;
+}
+
+.mg-bg-darkgray {
+  background-color: #888888;
+}
+
+.mg-text-dark {
+  color: #3f3f3f;
 }
 
 .mg-absolute {
   position: absolute;
+}
+
+.mg-bd-gray {
+  border-color: #cac8bd;
 }
 
 .mg-relative {
@@ -220,12 +260,20 @@ input {
   height: 5rem;
 }
 
+.mg-h-15 {
+  height: 3.75rem;
+}
+
 .mg-h-10 {
   height: 2.5rem;
 }
 
 .mg-h-12 {
   height: 3rem;
+}
+
+.mg-text-black {
+  color: #000;
 }
 
 .mg-text-sm {
@@ -304,5 +352,9 @@ input {
   background-color: #fef3c7;;
   background-image: -webkit-gradient(linear, 0 0, 100% 100%,color-stop(.25, #f9ce86), color-stop(.25, transparent),color-stop(.5, transparent), color-stop(.5, #f9ce86),color-stop(.75, #f9ce86), color-stop(.75, transparent),to(transparent));
   -webkit-background-size: 7px 7px;
+}
+
+.mg-bold {
+  font-weight: bold;
 }
 

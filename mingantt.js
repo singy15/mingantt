@@ -1,3 +1,114 @@
+var testData = [
+  {
+    taskId: 1,
+    categoryId: 1,
+    subject: 'Test1',
+    planStartDate: '20211218',
+    planEndDate: '20211220',
+    actualStartDate: '20211218',
+    actualEndDate: '20211220',
+    assignedUserId: 'James',
+    progress: 100,
+    planWorkload: 0,
+    actualWorkload: 0,
+    planWorkloadMap: "",
+    content: ""
+  },
+  {
+    taskId: 2,
+    categoryId: 1,
+    subject: 'Test2',
+    planStartDate: '20211219',
+    planEndDate: '20211223',
+    actualStartDate: '20211218',
+    actualEndDate: '20211220',
+    assignedUserId: 'Alice',
+    progress: 90,
+    planWorkload: 0,
+    actualWorkload: 0,
+    planWorkloadMap: "",
+    content: ""
+  },
+  {
+    taskId: 3,
+    categoryId: 1,
+    subject: 'Test3',
+    planStartDate: '20211219',
+    planEndDate: '20220104',
+    actualStartDate: '20211218',
+    actualEndDate: '20211220',
+    assignedUserId: 'James',
+    progress: 40,
+    planWorkload: 0,
+    actualWorkload: 0,
+    planWorkloadMap: "",
+    content: ""
+  },
+  {
+    taskId: 4,
+    categoryId: 1,
+    subject: 'Test4',
+    planStartDate: '20211221',
+    planEndDate: '20211230',
+    actualStartDate: '20211218',
+    actualEndDate: '20211220',
+    assignedUserId: 'Bob',
+    progress: 60,
+    planWorkload: 0,
+    actualWorkload: 0,
+    planWorkloadMap: "",
+    content: ""
+  },
+  {
+    taskId: 5,
+    categoryId: 1,
+    subject: 'Test5',
+    planStartDate: '20211225',
+    planEndDate: '20220104',
+    actualStartDate: '20211218',
+    actualEndDate: '20211220',
+    assignedUserId: 'Alice',
+    progress: 5,
+    planWorkload: 0,
+    actualWorkload: 0,
+    planWorkloadMap: "",
+    content: ""
+  },
+  {
+    taskId: 6,
+    categoryId: 2,
+    subject: 'Test6',
+    planStartDate: '20211228',
+    planEndDate: '20220108',
+    actualStartDate: '20211218',
+    actualEndDate: '20211220',
+    assignedUserId: 'Alice',
+    progress: 0,
+    planWorkload: 0,
+    actualWorkload: 0,
+    planWorkloadMap: "",
+    content: ""
+  },
+];
+
+function encodeTask(task) {
+  var encoded = {...task};
+  encoded.planStartDate = encoded.planStartDate.substring(0,4) + "-" + encoded.planStartDate.substring(4,6) + "-" + encoded.planStartDate.substring(6,8);
+  encoded.planEndDate = encoded.planEndDate.substring(0,4) + "-" + encoded.planEndDate.substring(4,6) + "-" + encoded.planEndDate.substring(6,8);
+  encoded.actualStartDate = encoded.actualStartDate.substring(0,4) + "-" + encoded.actualStartDate.substring(4,6) + "-" + encoded.actualStartDate.substring(6,8);
+  encoded.actualEndDate = encoded.actualEndDate.substring(0,4) + "-" + encoded.actualEndDate.substring(4,6) + "-" + encoded.actualEndDate.substring(6,8);
+  return encoded;
+}
+
+function decodeTask(task) {
+  var decoded = {...task};
+  decoded.planStartDate = decoded.planStartDate.substring(0,4) + decoded.planStartDate.substring(5,7) + decoded.planStartDate.substring(8,10);
+  decoded.planEndDate = decoded.planEndDate.substring(0,4) + decoded.planEndDate.substring(5,7) + decoded.planEndDate.substring(8,10);
+  decoded.actualStartDate = decoded.actualStartDate.substring(0,4) + decoded.actualStartDate.substring(5,7) + decoded.actualStartDate.substring(8,10);
+  decoded.actualEndDate = decoded.actualEndDate.substring(0,4) + decoded.actualEndDate.substring(5,7) + decoded.actualEndDate.substring(8,10);
+  return decoded;
+}
+
 const app = Vue.createApp({
   data() {
     return {
@@ -14,82 +125,15 @@ const app = Vue.createApp({
       categories: [
         {
           taskId: 1,
-          name: 'Category1',
+          subject: 'Category1',
           collapsed: false,
         }, {
           taskId: 2,
-          name: 'Category2',
+          subject: 'Category2',
           collapsed: false,
         }
       ],
-      tasks: [
-        {
-          taskId: 1,
-          categoryId: 1,
-          name: 'Test1',
-          startDate: '2021-12-18',
-          endDate: '2021-12-20',
-          actualStartDate: '2021-12-18',
-          actualEndDate: '2021-12-20',
-          assignedUserId: 'James',
-          percentage: 100,
-        },
-        {
-          taskId: 2,
-          categoryId: 1,
-          name: 'Test2',
-          startDate: '2021-12-19',
-          endDate: '2021-12-23',
-          actualStartDate: '2021-12-18',
-          actualEndDate: '2021-12-20',
-          assignedUserId: 'Alice',
-          percentage: 90,
-        },
-        {
-          taskId: 3,
-          categoryId: 1,
-          name: 'Test3',
-          startDate: '2021-12-19',
-          endDate: '2022-01-04',
-          actualStartDate: '2021-12-18',
-          actualEndDate: '2021-12-20',
-          assignedUserId: 'James',
-          percentage: 40,
-        },
-        {
-          taskId: 4,
-          categoryId: 1,
-          name: 'Test4',
-          startDate: '2021-12-21',
-          endDate: '2021-12-30',
-          actualStartDate: '2021-12-18',
-          actualEndDate: '2021-12-20',
-          assignedUserId: 'Bob',
-          percentage: 60,
-        },
-        {
-          taskId: 5,
-          categoryId: 1,
-          name: 'Test5',
-          startDate: '2021-12-25',
-          endDate: '2022-01-04',
-          actualStartDate: '2021-12-18',
-          actualEndDate: '2021-12-20',
-          assignedUserId: 'Alice',
-          percentage: 5,
-        },
-        {
-          taskId: 6,
-          categoryId: 2,
-          name: 'Test6',
-          startDate: '2021-12-28',
-          endDate: '2022-01-08',
-          actualStartDate: '2021-12-18',
-          actualEndDate: '2021-12-20',
-          assignedUserId: 'Alice',
-          percentage: 0,
-        },
-      ],
+      tasks: [],
       position_id: 0,
       dragging:false,
       pageX:'',
@@ -104,18 +148,31 @@ const app = Vue.createApp({
       form: {
         categoryId: '',
         taskId: '',
-        name: '',
-        startDate: '',
-        endDate: '',
+        subject: '',
+        planStartDate: '',
+        planEndDate: '',
         actualStartDate: '',
         actualEndDate: '',
         assignedUserId: '',
-        percentage: 0
+        progress: 0,
+        planWorkload: 0,
+        actualWorkload: 0,
+        planWorkloadMap: "",
+        content: ""
       },
-      update_mode: false
+      update_mode: false,
+      encodeFn: null,
+      decodeFn: null
     }
   },
   methods:{
+    loadTasks(tasks) {
+      if(this.encodeFn) {
+        this.tasks = tasks.map(this.encodeFn);
+      } else {
+        this.tasks = tasks;
+      }
+    },
     getDays(year, month, block_number) {
       const dayOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       let days = [];
@@ -124,7 +181,8 @@ const app = Vue.createApp({
       for (let i = 0; i < num; i++) {
         days.push({
           day: date.date(),
-          dayOfWeek: dayOfWeek[date.day()],
+          dayOfWeek: date.day(),
+          dayOfWeekStr: dayOfWeek[date.day()],
           block_number
         })
         date.add(1, 'day');
@@ -192,10 +250,10 @@ const app = Vue.createApp({
         if (days !== 0) {
           console.log(days)
           let task = this.tasks.find(task => task.taskId === this.task_id);
-          let startDate = moment(task.startDate).add(-days, 'days')
-          let endDate = moment(task.endDate).add(-days, 'days')
-          task['startDate'] = startDate.format('YYYY-MM-DD')
-          task['endDate'] = endDate.format('YYYY-MM-DD')
+          let planStartDate = moment(task.planStartDate).add(-days, 'days')
+          let planEndDate = moment(task.planEndDate).add(-days, 'days')
+          task['planStartDate'] = planStartDate.format('YYYY-MM-DD')
+          task['planEndDate'] = planEndDate.format('YYYY-MM-DD')
         } else {
           this.element.style.left = `${this.left.replace('px', '')}px`;
         }
@@ -205,12 +263,12 @@ const app = Vue.createApp({
         let days = Math.ceil(diff / this.block_size)
         if (days !== 0) {
           let task = this.tasks.find(task => task.taskId === this.task_id);
-          let startDate = moment(task.startDate).add(-days, 'days')
-          let endDate = moment(task.endDate)
-          if (endDate.diff(startDate, 'days') <= 0) {
-            task['startDate'] = endDate.format('YYYY-MM-DD')
+          let planStartDate = moment(task.planStartDate).add(-days, 'days')
+          let planEndDate = moment(task.planEndDate)
+          if (planEndDate.diff(planStartDate, 'days') <= 0) {
+            task['planStartDate'] = planEndDate.format('YYYY-MM-DD')
           } else {
-            task['startDate'] = startDate.format('YYYY-MM-DD')
+            task['planStartDate'] = planStartDate.format('YYYY-MM-DD')
           }
         } else {
           this.element.style.width = this.width;
@@ -225,16 +283,16 @@ const app = Vue.createApp({
         } else if (days <= 2) {
           days--;
           let task = this.tasks.find(task => task.taskId === this.task_id);
-          let endDate = moment(task.endDate).add(-days, 'days')
-          task['endDate'] = endDate.format('YYYY-MM-DD')
+          let planEndDate = moment(task.planEndDate).add(-days, 'days')
+          task['planEndDate'] = planEndDate.format('YYYY-MM-DD')
         } else {
           let task = this.tasks.find(task => task.taskId === this.task_id);
-          let startDate = moment(task.startDate);
-          let endDate = moment(task.endDate).add(-days, 'days')
-          if (endDate.diff(startDate, 'days') < 0) {
-            task['endDate'] = startDate.format('YYYY-MM-DD')
+          let planStartDate = moment(task.planStartDate);
+          let planEndDate = moment(task.planEndDate).add(-days, 'days')
+          if (planEndDate.diff(planStartDate, 'days') < 0) {
+            task['planEndDate'] = planStartDate.format('YYYY-MM-DD')
           } else {
-            task['endDate'] = endDate.format('YYYY-MM-DD')
+            task['planEndDate'] = planEndDate.format('YYYY-MM-DD')
           }
         }
       }
@@ -343,8 +401,8 @@ const app = Vue.createApp({
       return this.inner_height - this.task_height - 48 - 20;
     },
     scrollDistance() {
-      let startDate = moment(this.start_month);
-      let between_days = this.today.diff(startDate, 'days')
+      let planStartDate = moment(this.start_month);
+      let between_days = this.today.diff(planStartDate, 'days')
       return (between_days + 1) * this.block_size - this.calendarViewWidth / 2;
     },
     lists() {
@@ -360,7 +418,7 @@ const app = Vue.createApp({
       return lists;
     },
     taskBars() {
-      let startDate = moment(this.start_month);
+      let planStartDate = moment(this.start_month);
       let top = 2;
       let left;
       let leftAc;
@@ -373,16 +431,16 @@ const app = Vue.createApp({
       return this.displayTasks.map(task => {
         style = {}
         if(task.cat==='task'){
-          let date_from = moment(task.startDate);
-          let date_to = moment(task.endDate);
+          let date_from = moment(task.planStartDate);
+          let date_to = moment(task.planEndDate);
           let ac_date_from = moment(task.actualStartDate);
           let ac_date_to = moment(task.actualEndDate);
           between = date_to.diff(date_from, 'days');
           between++;
           betweenAc = ac_date_to.diff(ac_date_from, 'days');
           betweenAc++;
-          start = date_from.diff(startDate, 'days');
-          startAc = ac_date_from.diff(startDate, 'days');
+          start = date_from.diff(planStartDate, 'days');
+          startAc = ac_date_from.diff(planStartDate, 'days');
           left = start * this.block_size - 1;
           leftAc = startAc * this.block_size - 1;
           style = {
@@ -411,4 +469,10 @@ const app = Vue.createApp({
   }
 
 }).mount('#app');
+
+
+// DEBUG
+app.encodeFn = encodeTask;
+app.decodeFn = decodeTask;
+app.loadTasks(testData);
 

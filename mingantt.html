@@ -1,7 +1,7 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta subject="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/vue@next"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <title>mingantt</title>
@@ -11,16 +11,6 @@
     <div id="app">
       <div id="gantt-header" class="mg-h-12 mg-p-2 mg-flex mg-items-center">
         <h1 class="mg-text-xl ">mingantt</h1>
-        <button
-          @click="addTask"
-          class="mg-indigo mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-flex mg-items-center">
-          <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          <span class=" mg-text-xs">
-            Add Task
-          </span>
-        </button>
         <teleport to="#form">
         <div class="mg-base" v-show="show">
           <div class="mg-overlay" v-show="show" @click="show=false">
@@ -29,38 +19,52 @@
             <h2 v-if="update_mode">Edit Task</h2>
             <h2 v-else>Add Task</h2>
             <div class="mg-my-4">
-              <label class="mg-text-xs">CategoryID</label>
+              <label class="mg-text-xs">Category ID: </label>
               <select v-model="form.categoryId" class="mg-text-xs mg-border mg-px-4 mg-py-2 mg-rounded-lg">
-                <option v-for="category in categories" :key="category.taskId" :value="category.taskId">{{ category.name }}
+                <option v-for="category in categories" :key="category.taskId" :value="category.taskId">{{ category.subject }}
                 </option>
               </select>
             </div>
             <div class="mg-my-4">
-              <label class="mg-text-xs">ID:</label>
+              <label class="mg-text-xs">ID: </label>
               <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model.number="form.taskId">
             </div>
             <div class="mg-my-4">
-              <label class="mg-text-xs">Subject:</label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.name">
+              <label class="mg-text-xs">Subject: </label>
+              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.subject">
             </div>
             <div class="mg-my-4">
-              <label class="mg-text-xs">AssignedTo:</label>
+              <label class="mg-text-xs">AssignedTo: </label>
               <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.assignedUserId">
             </div>
             <div class="mg-my-4">
-              <label class="mg-text-xs">Planned Term:</label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.startDate" type="date">
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.endDate" type="date">
+              <label class="mg-text-xs">Planned Term: </label>
+              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.planStartDate" type="date">
+              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.planEndDate" type="date">
             </div>
             <div class="mg-my-4">
-              <label class="mg-text-xs">Actual Term:</label>
+              <label class="mg-text-xs">Actual Term: </label>
               <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.actualStartDate" type="date">
               <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.actualEndDate" type="date">
             </div>
             <div class="mg-my-4">
-              <label class="mg-text-xs">Progress:</label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.percentage" type="number">
+              <label class="mg-text-xs">Plan Workload: </label>
+              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2 mg-w-24" v-model="form.planWorkload" type="number">
             </div>
+            <div class="mg-my-4">
+              <label class="mg-text-xs">Actual Workload: </label>
+              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2 mg-w-24" v-model="form.actualWorkload" type="number">
+            </div>
+            <div class="mg-my-4">
+              <label class="mg-text-xs">Plan Wrokload Map: </label>
+              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2 mg-w-24" v-model="form.planWorkloadMap">
+            </div>
+            <!--
+            <div class="mg-my-4">
+              <label class="mg-text-xs">Progress:</label>
+              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.progress" type="number">
+            </div>
+            -->
             <div v-if="update_mode" class="mg-flex mg-items-center mg-justify-between">
               <button @click="updateTask(form.taskId)" class="mg-green mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-text-xs mg-flex mg-items-center">
                 <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -97,25 +101,46 @@
         <!-- List section -->
         <div id="gantt-task">
           <!-- Header -->
-          <div id="gantt-task-title" class="mg-flex mg-items-center mg-col-header mg-text-white mg-h-20" ref="task">
-            <div class="mg-flex mg-border-r mg-text-xs mg-w-48 mg-center mg-items-center mg-justify-center mg-h-full">Subject
+          <div id="gantt-task-title" class="mg-flex mg-items-center mg-bg-gray mg-text-white mg-h-15" ref="task">
+            <div class="mg-flex mg-border-l mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">ID
             </div>
-            <div class="mg-flex mg-border-r mg-text-xs mg-w-24 mg-center mg-items-center mg-justify-center mg-h-full">Begin
+            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-96 mg-center mg-items-center mg-justify-center mg-h-full">Subject
             </div>
-            <div class="mg-flex mg-border-r mg-text-xs mg-w-24 mg-center mg-items-center mg-justify-center mg-h-full">End
+            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-48 mg-center mg-items-center mg-justify-center mg-h-full">Pl/Term
             </div>
-            <div class="mg-flex mg-border-r mg-text-xs mg-w-16 mg-center mg-items-center mg-justify-center mg-h-full">Assig.
+            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-48 mg-center mg-items-center mg-justify-center mg-h-full">Ac/Term
             </div>
-            <div class="mg-flex mg-border-r mg-text-xs mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">Progr.
+            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-16 mg-center mg-items-center mg-justify-center mg-h-full">Assig.
+            </div>
+            <!--
+            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">Progr.
+            </div>
+            -->
+            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">Pl/WL
+            </div>
+            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">Ac/WL
             </div>
           </div>
           <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="`height:${calendarViewHeight}px`">
+
+            <div class="mg-flex mg-h-5 mg-border-b mg-bg-lightgray">
+              <div class="mg-flex mg-items-center mg-w-full mg-text-xs mg-flex mg-items-center">
+                <button @click="addTask"
+                  class="mg-indigo mg-text-white mg-px-4 mg-flex mg-items-center">
+                  <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  <span class=" mg-text-xs">Add</span>
+                </button>
+              </div>
+            </div>
+
             <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" draggable="true" @dragstart="dragTask(task)" @dragover.prevent="dragTaskOver(task)">
               <!-- Template for category -->
               <template v-if="task.cat === 'category'">
                 <div
-                  class="mg-flex mg-items-center mg-w-full mg-text-xs mg-pl-2 mg-flex  mg-items-center">
-                  <span>{{task.name}}</span>
+                  class="mg-flex mg-items-center mg-border-l mg-w-full mg-text-xs mg-pl-2 mg-flex  mg-items-center">
+                  <span>{{task.subject}}</span>
                   <div class="pr-4" @click="toggleCategory(task.taskId)">
                     <span v-if="task.collapsed">
                       <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -134,20 +159,37 @@
               </template>
               <!-- Template for task -->
               <template v-else>
-                <div @click="editTask(task)" class="mg-border-r mg-flex mg-items-center mg-w-48 mg-text-xs mg-pl-4">
-                  {{task.name}}
+                <div class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs">
+                  {{task.taskId}}
+                </div>
+                <div @click="editTask(task)" class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-4">
+                  {{task.subject}}
                 </div>
                 <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
-                  {{task.startDate}}
+                  {{task.planStartDate}}
                 </div>
                 <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
-                  {{task.endDate}}
+                  {{task.planEndDate}}
+                </div>
+                <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
+                  {{task.actualStartDate}}
+                </div>
+                <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
+                  {{task.actualEndDate}}
                 </div>
                 <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs">
                   {{task.assignedUserId}}
                 </div>
+                <!--
+                <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
+                  {{task.progress}}%
+                </div>
+                -->
+                <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
+                  {{task.planWorkload}}
+                </div>
                 <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs">
-                  {{task.percentage}}%
+                  {{task.actualWorkload}}
                 </div>
               </template>
             </div>
@@ -156,23 +198,23 @@
 
         <!-- Calendar section -->
         <div id="gantt-calendar" class="mg-overflow-x-scroll mg-overflow-y-hidden mg-border-l" :style="`width:${calendarViewWidth}px`" ref="calendar">
-          <div id="gantt-date" class="mg-h-20">
-            <div id="gantt-year-month" class="mg-relative mg-h-8">
+          <div id="gantt-date" class="mg-h-15">
+            <div id="gantt-year-month" class="mg-relative mg-h-5">
               <div v-for="(calendar,index) in calendars" :key="index">
                 <div
-                  class="mg-indigo mg-text-white mg-border-b mg-border-r mg-border-t mg-h-8 mg-absolute mg-text-sm mg-flex mg-items-center mg-justify-center"
+                  class="mg-text-black mg-bg-gray mg-text-dark mg-border-b mg-border-r mg-border-t mg-h-5 mg-absolute mg-text-xs mg-flex mg-items-center mg-justify-center"
                   :style="`width:${calendar.calendar*block_size}px;left:${calendar.start_block_number*block_size}px`">
                   {{calendar.date}}
                 </div>
               </div>
             </div>
-            <div id="gantt-day" class="mg-relative mg-h-12">
+            <div id="gantt-day" class="mg-relative mg-h-10">
               <div v-for="(calendar,index) in calendars" :key="index">
                 <div v-for="(day,index) in calendar.days" :key="index">
-                  <div class="mg-border-r mg-border-b mg-h-12 mg-absolute mg-flex mg-items-center mg-justify-center mg-flex-col mg-text-xs"
-                       :class="{'bg-blue-100': day.dayOfWeek === '土', 'bg-red-100': day.dayOfWeek ==='日', 'bg-red-600 mg-text-white': calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date()}"
+                  <div class="mg-border-r mg-border-b mg-h-10 mg-absolute mg-flex mg-items-center mg-justify-center mg-flex-col mg-text-xs mg-bg-gray"
+                       :class="{'mg-bg-darkgray mg-text-white': (day.dayOfWeek === 0 || day.dayOfWeek === 6), 'bg-red-600 mg-text-dark': calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date()}"
                        :style="`width:${block_size}px;left:${day.block_number*block_size}px`">
-                    <span style="text-align:center;">{{ day.day }}<br>{{ day.dayOfWeek }}</span>
+                    <span style="text-align:center;">{{ day.day }}<br><span class="mg-text-xxs">{{ day.dayOfWeekStr }}</span></span>
                   </div>
                 </div>
               </div>
@@ -181,7 +223,7 @@
               <div v-for="(calendar,index) in calendars" :key="index">
                 <div v-for="day in calendar.days" :key="index">
                   <div class="mg-border-r mg-border-b mg-absolute"
-                       :class="{'bg-blue-100': day.dayOfWeek === '土', 'bg-red-100': day.dayOfWeek ==='日'}"
+                       :class="{'mg-bg-lightgray': (day.dayOfWeek === 6 || day.dayOfWeek === 0)}"
                        :style="`width:${block_size}px;left:${day.block_number*block_size}px;height:${calendarViewHeight}px`">
                   </div>
                 </div>
@@ -199,7 +241,7 @@
                   <!--
                   <div class="mg-h-full" 
                        style="pointer-events:none; background-color:#f59e0b" 
-                       :style="`width:${bar.task.percentage}%`"></div>
+                       :style="`width:${bar.task.progress}%`"></div>
                   -->
                 </div>
                 <div class="mg-absolute mg-w-2 mg-h-2" 
@@ -217,7 +259,7 @@
                 <div class="mg-w-full mg-h-full" style="pointer-events: none;">
                   <div class="mg-h-full" 
                        style="pointer-events:none; background-color:#f59e0b" 
-                       :style="`width:${bar.task.percentage}%`"></div>
+                       :style="`width:${bar.task.progress}%`"></div>
                 </div>
                 <div class="mg-absolute mg-w-2 mg-h-2" 
                      style="top:3px;left:-6px;cursor:col-resize" 

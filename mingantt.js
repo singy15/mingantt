@@ -398,7 +398,7 @@ const app = Vue.createApp({
       return this.inner_width - this.task_width;
     },
     calendarViewHeight() {
-      return this.inner_height - this.task_height - 48 - 20;
+      return this.inner_height - this.task_height - 48 - 60;
     },
     scrollDistance() {
       let planStartDate = moment(this.start_month);
@@ -419,7 +419,7 @@ const app = Vue.createApp({
     },
     taskBars() {
       let planStartDate = moment(this.start_month);
-      let top = 2;
+      let top = 2 + 20;
       let left;
       let leftAc;
       let between;

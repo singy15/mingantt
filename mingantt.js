@@ -14,11 +14,11 @@ const app = Vue.createApp({
       categories: [
         {
           taskId: 1,
-          name: 'テストA',
+          name: 'Category1',
           collapsed: false,
         }, {
           taskId: 2,
-          name: 'テストB',
+          name: 'Category2',
           collapsed: false,
         }
       ],
@@ -26,67 +26,67 @@ const app = Vue.createApp({
         {
           taskId: 1,
           categoryId: 1,
-          name: 'テスト1',
+          name: 'Test1',
           startDate: '2021-12-18',
           endDate: '2021-12-20',
           actualStartDate: '2021-12-18',
           actualEndDate: '2021-12-20',
-          assignedUserId: '鈴木',
+          assignedUserId: 'James',
           percentage: 100,
         },
         {
           taskId: 2,
           categoryId: 1,
-          name: 'テスト2',
+          name: 'Test2',
           startDate: '2021-12-19',
           endDate: '2021-12-23',
           actualStartDate: '2021-12-18',
           actualEndDate: '2021-12-20',
-          assignedUserId: '佐藤',
+          assignedUserId: 'Alice',
           percentage: 90,
         },
         {
           taskId: 3,
           categoryId: 1,
-          name: 'テスト3',
+          name: 'Test3',
           startDate: '2021-12-19',
           endDate: '2022-01-04',
           actualStartDate: '2021-12-18',
           actualEndDate: '2021-12-20',
-          assignedUserId: '鈴木',
+          assignedUserId: 'James',
           percentage: 40,
         },
         {
           taskId: 4,
           categoryId: 1,
-          name: 'テスト4',
+          name: 'Test4',
           startDate: '2021-12-21',
           endDate: '2021-12-30',
           actualStartDate: '2021-12-18',
           actualEndDate: '2021-12-20',
-          assignedUserId: '山下',
+          assignedUserId: 'Bob',
           percentage: 60,
         },
         {
           taskId: 5,
           categoryId: 1,
-          name: 'テスト5',
+          name: 'Test5',
           startDate: '2021-12-25',
           endDate: '2022-01-04',
           actualStartDate: '2021-12-18',
           actualEndDate: '2021-12-20',
-          assignedUserId: '佐藤',
+          assignedUserId: 'Alice',
           percentage: 5,
         },
         {
           taskId: 6,
           categoryId: 2,
-          name: 'テスト6',
+          name: 'Test6',
           startDate: '2021-12-28',
           endDate: '2022-01-08',
           actualStartDate: '2021-12-18',
           actualEndDate: '2021-12-20',
-          assignedUserId: '佐藤',
+          assignedUserId: 'Alice',
           percentage: 0,
         },
       ],
@@ -117,7 +117,7 @@ const app = Vue.createApp({
   },
   methods:{
     getDays(year, month, block_number) {
-      const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
+      const dayOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       let days = [];
       let date = moment(`${year}-${month}-01`);
       let num = date.daysInMonth();
@@ -141,9 +141,9 @@ const app = Vue.createApp({
       for (let i = 0; i <= between_month; i++) {
         days = this.getDays(start_month.year(), start_month.format('MM'), block_number);
         this.calendars.push({
-          date: start_month.format('YYYY年MM月'),
+          date: start_month.format('YYYY/MM'),
           year: start_month.year(),
-          month: start_month.month(), //month(), 0,1..11と表示
+          month: start_month.month(),
           start_block_number: block_number,
           calendar: days.length,
           days: days

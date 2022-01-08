@@ -12,7 +12,7 @@ var testData = [
     planWorkload: 0,
     actualWorkload: 0,
     planWorkloadMap: "",
-    content: ""
+    content: "asdfg\nllljkl;"
   },
   {
     taskId: 2,

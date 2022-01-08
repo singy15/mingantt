@@ -126,11 +126,20 @@
             <div class="mg-flex mg-h-5 mg-border-b mg-bg-lightgray">
               <div class="mg-flex mg-items-center mg-w-full mg-text-xs mg-flex mg-items-center">
                 <button @click="addTask"
-                  class="mg-indigo mg-text-white mg-px-4 mg-flex mg-items-center">
+                  class="mg-bg-darkgray mg-text-white mg-px-4 mg-flex mg-items-center">
+                  <!--
                   <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
+                  -->
+
+                  <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+
+                  <!--
                   <span class=" mg-text-xs">Add</span>
+                  -->
                 </button>
               </div>
             </div>
@@ -162,7 +171,7 @@
                 <div class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs">
                   {{task.taskId}}
                 </div>
-                <div @click="editTask(task)" class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-4">
+                <div @click="editTask(task)" class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
                   {{task.subject}}
                 </div>
                 <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
@@ -235,7 +244,7 @@
           <div id="gantt-bar-area" class="mg-relative" :style="`width:${calendarViewWidth}px;height:${calendarViewHeight}px`">
             <div v-for="(bar,index) in taskBars" :key="index">
 
-              <div :style="bar.style" style="cursor:pointer; background-color:#fef3c7;" class="mg-absolute mg-h-2 mg-border" 
+              <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border" 
                   v-if="bar.task.cat === 'task'" @mousedown="mouseDownMove(bar.task)" >
                 <div class="mg-w-full mg-h-full" style="pointer-events: none;">
                   <!--
@@ -258,7 +267,7 @@
                   v-if="bar.task.cat === 'task'" @mousedown="mouseDownMove(bar.task)" >
                 <div class="mg-w-full mg-h-full" style="pointer-events: none;">
                   <div class="mg-h-full" 
-                       style="pointer-events:none; background-color:#f59e0b" 
+                       style="pointer-events:none; background-color:#8492bd" 
                        :style="`width:${bar.task.progress}%`"></div>
                 </div>
                 <div class="mg-absolute mg-w-2 mg-h-2" 

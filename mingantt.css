@@ -349,12 +349,21 @@ input {
   background-color: #91a4d9;
   background-image: -webkit-gradient(linear, 0 0, 100% 100%,color-stop(.25, #CCF), color-stop(.25, transparent),color-stop(.5, transparent), color-stop(.5, #CCF),color-stop(.75, #CCF), color-stop(.75, transparent),to(transparent));
   */
-  background-color: #fef3c7;;
-  background-image: -webkit-gradient(linear, 0 0, 100% 100%,color-stop(.25, #f9ce86), color-stop(.25, transparent),color-stop(.5, transparent), color-stop(.5, #f9ce86),color-stop(.75, #f9ce86), color-stop(.75, transparent),to(transparent));
+  /*background-color: #fef3c7;;*/
+  background-color: #dde5ff;;
+  background-image: -webkit-gradient(linear, 0 0, 100% 100%,color-stop(.25, #8492bd), color-stop(.25, transparent),color-stop(.5, transparent), color-stop(.5, #8492bd),color-stop(.75, #8492bd), color-stop(.75, transparent),to(transparent));
   -webkit-background-size: 7px 7px;
 }
 
 .mg-bold {
   font-weight: bold;
+}
+
+.mg-bg-blue {
+  background-color: #dde5ff;
+}
+
+.mg-bg-task-gray {
+  background-color: #c9c9c9;
 }
 

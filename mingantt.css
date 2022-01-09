@@ -367,3 +367,11 @@ input {
   background-color: #c9c9c9;
 }
 
+.mg-task {
+  user-select: none;
+}
+
+.mg-inline-block {
+  display: inline-block;
+}
+

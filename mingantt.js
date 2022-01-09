@@ -91,21 +91,37 @@ var testData = [
   },
 ];
 
+function encodeDateFormat(dateStr) {
+  if((dateStr === "") || (dateStr === 0) || (dateStr === undefined) || (dateStr == null)) {
+    return "";
+  }
+
+  return dateStr.substring(0,4) + "-" + dateStr.substring(4,6) + "-" + dateStr.substring(6,8);
+}
+
+function decodeDateFormat(dateStr) {
+  if((dateStr === "") || (dateStr === 0) || (dateStr === undefined) || (dateStr == null)) {
+    return "";
+  }
+
+  return dateStr.substring(0,4) + dateStr.substring(5,7) + dateStr.substring(8,10);
+}
+
 function encodeTask(task) {
   var encoded = {...task};
-  encoded.planStartDate = encoded.planStartDate.substring(0,4) + "-" + encoded.planStartDate.substring(4,6) + "-" + encoded.planStartDate.substring(6,8);
-  encoded.planEndDate = encoded.planEndDate.substring(0,4) + "-" + encoded.planEndDate.substring(4,6) + "-" + encoded.planEndDate.substring(6,8);
-  encoded.actualStartDate = encoded.actualStartDate.substring(0,4) + "-" + encoded.actualStartDate.substring(4,6) + "-" + encoded.actualStartDate.substring(6,8);
-  encoded.actualEndDate = encoded.actualEndDate.substring(0,4) + "-" + encoded.actualEndDate.substring(4,6) + "-" + encoded.actualEndDate.substring(6,8);
+  encoded.planStartDate = encodeDateFormat(encoded.planStartDate);
+  encoded.planEndDate = encodeDateFormat(encoded.planEndDate);
+  encoded.actualStartDate = encodeDateFormat(encoded.actualStartDate);
+  encoded.actualEndDate = encodeDateFormat(encoded.actualEndDate);
   return encoded;
 }
 
 function decodeTask(task) {
   var decoded = {...task};
-  decoded.planStartDate = decoded.planStartDate.substring(0,4) + decoded.planStartDate.substring(5,7) + decoded.planStartDate.substring(8,10);
-  decoded.planEndDate = decoded.planEndDate.substring(0,4) + decoded.planEndDate.substring(5,7) + decoded.planEndDate.substring(8,10);
-  decoded.actualStartDate = decoded.actualStartDate.substring(0,4) + decoded.actualStartDate.substring(5,7) + decoded.actualStartDate.substring(8,10);
-  decoded.actualEndDate = decoded.actualEndDate.substring(0,4) + decoded.actualEndDate.substring(5,7) + decoded.actualEndDate.substring(8,10);
+  decoded.planStartDate = decodeDateFormat(decoded.planStartDate);
+  decoded.planEndDate = decodeDateFormat(decoded.planEndDate);
+  decoded.actualStartDate = decodeDateFormat(decoded.actualStartDate);
+  decoded.actualEndDate = decodeDateFormat(decoded.actualEndDate);
   return decoded;
 }
 
@@ -145,6 +161,21 @@ const app = Vue.createApp({
       rightResizing:false,
       task: '',
       show: false,
+      formDefault: {
+        categoryId: '',
+        taskId: '',
+        subject: '',
+        planStartDate: '',
+        planEndDate: '',
+        actualStartDate: '',
+        actualEndDate: '',
+        assignedUserId: '',
+        progress: 0,
+        planWorkload: 0,
+        actualWorkload: 0,
+        planWorkloadMap: "",
+        content: ""
+      },
       form: {
         categoryId: '',
         taskId: '',
@@ -171,6 +202,13 @@ const app = Vue.createApp({
         this.tasks = tasks.map(this.encodeFn);
       } else {
         this.tasks = tasks;
+      }
+    },
+    getTasks() {
+      if(this.decodeFn) {
+        return this.tasks.map(this.decodeFn);
+      } else {
+        return this.tasks;
       }
     },
     getDays(year, month, block_number) {
@@ -350,7 +388,7 @@ const app = Vue.createApp({
     },
     addTask() {
       this.update_mode = false;
-      this.form = {}
+      this.form = {...this.formDefault};
       this.show = true;
     },
     saveTask() {
@@ -364,6 +402,8 @@ const app = Vue.createApp({
       this.update_mode=true;
       this.show = true;
       Object.assign(this.form, task);
+      console.log(task);
+      console.log(this.form);
     },
     updateTask(taskId) {
       let task = this.tasks.find(task => task.taskId === taskId);
@@ -434,7 +474,7 @@ const app = Vue.createApp({
           let date_from = moment(task.planStartDate);
           let date_to = moment(task.planEndDate);
           let ac_date_from = moment(task.actualStartDate);
-          let ac_date_to = moment(task.actualEndDate);
+          let ac_date_to = (task.actualEndDate !== "")? (moment(task.actualEndDate)) : (moment());
           between = date_to.diff(date_from, 'days');
           between++;
           betweenAc = ac_date_to.diff(ac_date_from, 'days');
@@ -447,11 +487,13 @@ const app = Vue.createApp({
             top: `${top}px`,
             left: `${left}px`,
             width: `${this.block_size * between + 1}px`,
+            scheduled: (task.planStartDate !== ""),
           };
           actualStyle = {
             top: `${top+7}px`,
             left: `${leftAc}px`,
             width: `${this.block_size * betweenAc + 1}px`,
+            scheduled: (task.actualStartDate !== ""),
           };
         }
         top = top + 20;
@@ -475,4 +517,13 @@ const app = Vue.createApp({
 app.encodeFn = encodeTask;
 app.decodeFn = decodeTask;
 app.loadTasks(testData);
+
+function loadLocalStorage() {
+  app.loadTasks(JSON.parse(localStorage.getItem("mingantt/tasks")));
+}
+
+function saveLocalStorage() {
+  localStorage.setItem("mingantt/tasks", JSON.stringify(app.getTasks()));
+  alert("successfully saved!");
+}
 

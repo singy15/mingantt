@@ -9,10 +9,18 @@
   </head>
   <body>
     <div id="app">
+      <button onclick="saveLocalStorage()" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-24 mg-justify-center mg-inline-block">
+        save
+      </button>
+      <span>&nbsp;</span>
+      <button onclick="loadLocalStorage()" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-24 mg-justify-center mg-inline-block">
+        load
+      </button>
       <div id="gantt-header" class="mg-h-12 mg-p-2 mg-flex mg-items-center">
         <h1 class="mg-text-xl ">mingantt</h1>
         <teleport to="#form">
-        <div class="mg-base" v-show="show">
+        <div class="mg-base" v-show="show"
+          @keyup.ctrl.enter="(update_mode)? updateTask(form.taskId) : saveTask()">
           <div class="mg-overlay" v-show="show" @click="show=false">
           </div>
           <div class="mg-content" v-show="show">
@@ -61,12 +69,10 @@
               <label class="mg-text-xs">Desc: </label><br>
               <textarea class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2 mg-w-full" v-model="form.content"></textarea>
             </div>
-            <!--
             <div class="mg-my-4">
               <label class="mg-text-xs">Progress:</label>
               <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.progress" type="number">
             </div>
-            -->
             <div v-if="update_mode" class="mg-flex mg-items-center mg-justify-between">
               <button @click="updateTask(form.taskId)" class="mg-green mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-text-xs mg-flex mg-items-center">
                 <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -128,7 +134,7 @@
             <div class="mg-flex mg-h-5 mg-border-b mg-bg-lightgray">
               <div class="mg-flex mg-items-center mg-w-full mg-text-xs mg-flex mg-items-center">
                 <button @click="addTask"
-                  class="mg-bg-darkgray mg-text-white mg-px-4 mg-flex mg-items-center">
+                  class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-full mg-justify-center">
                   <!--
                   <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -170,7 +176,7 @@
               </template>
               <!-- Template for task -->
               <template v-else>
-                <div class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs">
+                <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs">
                   {{task.taskId}}
                 </div>
                 <div @click="editTask(task)" class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
@@ -246,8 +252,9 @@
           <div id="gantt-bar-area" class="mg-relative" :style="`width:${calendarViewWidth}px;height:${calendarViewHeight}px`">
             <div v-for="(bar,index) in taskBars" :key="index">
 
-              <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border" 
-                  v-if="bar.task.cat === 'task'" @mousedown="mouseDownMove(bar.task)" >
+              <!-- Plan -->
+              <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border mg-task" 
+                  v-if="bar.task.cat === 'task' && bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" >
                 <div class="mg-w-full mg-h-full" style="pointer-events: none;">
                   <!--
                   <div class="mg-h-full" 
@@ -255,28 +262,29 @@
                        :style="`width:${bar.task.progress}%`"></div>
                   -->
                 </div>
-                <div class="mg-absolute mg-w-2 mg-h-2" 
+                <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
                      style="top:3px;left:-6px;cursor:col-resize" 
                      @mousedown.stop="mouseDownResize(bar.task,'left')">
                 </div>
-                <div class="mg-absolute mg-w-2 mg-h-2" 
+                <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
                      style="top:3px;right:-6px;cursor:col-resize" 
                      @mousedown.stop="mouseDownResize(bar.task,'right')">
                 </div>
               </div>
 
-              <div :style="bar.actualStyle" style="cursor:pointer; " class="mg-absolute mg-h-2 mg-border mg-actual" 
-                  v-if="bar.task.cat === 'task'" @mousedown="mouseDownMove(bar.task)" >
-                <div class="mg-w-full mg-h-full" style="pointer-events: none;">
+              <!-- Actual -->
+              <div :style="bar.actualStyle" style="cursor:pointer; " class="mg-absolute mg-h-2 mg-border mg-actual mg-task" 
+                  v-if="bar.task.cat === 'task' && bar.actualStyle.scheduled === true" @mousedown="mouseDownMove(bar.task)" >
+                <div class="mg-w-full mg-h-full mg-task" style="pointer-events: none;">
                   <div class="mg-h-full" 
                        style="pointer-events:none; background-color:#8492bd" 
                        :style="`width:${bar.task.progress}%`"></div>
                 </div>
-                <div class="mg-absolute mg-w-2 mg-h-2" 
+                <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
                      style="top:3px;left:-6px;cursor:col-resize" 
                      @mousedown.stop="mouseDownResize(bar.task,'left')">
                 </div>
-                <div class="mg-absolute mg-w-2 mg-h-2" 
+                <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
                      style="top:3px;right:-6px;cursor:col-resize" 
                      @mousedown.stop="mouseDownResize(bar.task,'right')">
                 </div>

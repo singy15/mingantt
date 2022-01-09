@@ -115,7 +115,7 @@
             <div class="mg-col-header mg-border-r mg-w-12">Pl/WL</div>
             <div class="mg-col-header mg-border-r mg-w-12">Ac/WL</div>
           </div>
-          <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="`height:${calendarViewHeight}px`">
+          <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + calendarViewHeight + 'px'">
 
             <div class="mg-flex mg-h-5 mg-border-b mg-bg-lightgray">
               <div class="mg-flex mg-items-center mg-w-full mg-text-xs mg-flex mg-items-center">
@@ -194,13 +194,13 @@
         </div>
 
         <!-- Calendar section -->
-        <div id="gantt-calendar" class="mg-overflow-x-scroll mg-overflow-y-hidden mg-border-l" :style="`width:${calendarViewWidth}px`" ref="calendar">
+        <div id="gantt-calendar" class="mg-overflow-x-scroll mg-overflow-y-hidden mg-border-l" :style="'width:' + calendarViewWidth + 'px'" ref="calendar">
           <div id="gantt-date" class="mg-h-15">
             <div id="gantt-year-month" class="mg-relative mg-h-5">
               <div v-for="(calendar,index) in calendars" :key="index">
                 <div
                   class="mg-text-black mg-bg-gray mg-text-dark mg-border-b mg-border-r mg-border-t mg-h-5 mg-absolute mg-text-xs mg-flex mg-items-center mg-justify-center"
-                  :style="`width:${calendar.calendar*block_size}px;left:${calendar.start_block_number*block_size}px`">
+                  :style="'width:' + calendar.calendar*block_size + 'px;' + 'left:' + calendar.start_block_number*block_size + 'px'">
                   {{calendar.date}}
                 </div>
               </div>
@@ -210,7 +210,7 @@
                 <div v-for="(day,index) in calendar.days" :key="index">
                   <div class="mg-border-r mg-border-b mg-h-10 mg-absolute mg-flex mg-items-center mg-justify-center mg-flex-col mg-text-xs mg-bg-gray"
                        :class="{'mg-bg-darkgray mg-text-white': (day.dayOfWeek === 0 || day.dayOfWeek === 6), 'bg-red-600 mg-text-dark': calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date()}"
-                       :style="`width:${block_size}px;left:${day.block_number*block_size}px`">
+                       :style="'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px'">
                     <span style="text-align:center;">{{ day.day }}<br><span class="mg-text-xxs">{{ day.dayOfWeekStr }}</span></span>
                   </div>
                 </div>
@@ -221,7 +221,7 @@
                 <div v-for="day in calendar.days" :key="index">
                   <div class="mg-border-r mg-border-b mg-absolute"
                        :class="{'mg-bg-lightgray': (day.dayOfWeek === 6 || day.dayOfWeek === 0)}"
-                       :style="`width:${block_size}px;left:${day.block_number*block_size}px;height:${calendarViewHeight}px`">
+                       :style="'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px;' + 'height:' + calendarViewHeight + 'px'">
                   </div>
                 </div>
               </div>
@@ -229,7 +229,7 @@
           </div>
 
           <!-- Bar Area -->
-          <div id="gantt-bar-area" class="mg-relative" :style="`width:${calendarViewWidth}px;height:${calendarViewHeight}px`">
+          <div id="gantt-bar-area" class="mg-relative" :style="'width:' + calendarViewWidth + 'px;' + 'height:' + calendarViewHeight + 'px'">
             <div v-for="(bar,index) in taskBars" :key="index">
 
               <!-- Plan -->
@@ -239,7 +239,7 @@
                   <!--
                   <div class="mg-h-full" 
                        style="pointer-events:none; background-color:#f59e0b" 
-                       :style="`width:${bar.task.progress}%`"></div>
+                       :style="'width:' + bar.task.progress + '%'"></div>
                   -->
                 </div>
                 <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
@@ -258,7 +258,7 @@
                 <div class="mg-w-full mg-h-full mg-task" style="pointer-events: none;">
                   <div class="mg-h-full" 
                        style="pointer-events:none; background-color:#8492bd" 
-                       :style="`width:${bar.task.progress}%`"></div>
+                       :style="'width:' + bar.task.progress + '%'"></div>
                 </div>
                 <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
                      style="top:3px;left:-6px;cursor:col-resize" 

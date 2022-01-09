@@ -9,69 +9,64 @@
   </head>
   <body>
     <div id="app">
-      <button onclick="saveLocalStorage()" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-24 mg-justify-center mg-inline-block">
-        save
-      </button>
+      <button onclick="saveLocalStorage()" class="mg-inline-button">save</button>
       <span>&nbsp;</span>
-      <button onclick="loadLocalStorage()" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-24 mg-justify-center mg-inline-block">
-        load
-      </button>
+      <button onclick="loadLocalStorage()" class="mg-inline-button">load</button>
       <div id="gantt-header" class="mg-h-12 mg-p-2 mg-flex mg-items-center">
         <h1 class="mg-text-xl ">mingantt</h1>
         <teleport to="#form">
         <div class="mg-base" v-show="show"
           @keyup.ctrl.enter="(update_mode)? updateTask(form.taskId) : saveTask()">
-          <div class="mg-overlay" v-show="show" @click="show=false">
-          </div>
+          <div class="mg-overlay" v-show="show" @click="show=false"></div>
           <div class="mg-content" v-show="show">
             <h2 v-if="update_mode">Edit Task</h2>
             <h2 v-else>Add Task</h2>
-            <div class="mg-my-4">
-              <label class="mg-text-xs">Category ID: </label>
-              <select v-model="form.categoryId" class="mg-text-xs mg-border mg-px-4 mg-py-2 mg-rounded-lg">
+            <div class="mg-form-item">
+              <label>Category ID: </label>
+              <select v-model="form.categoryId" class=" mg-border mg-px-4 mg-py-2 mg-rounded-lg">
                 <option v-for="category in categories" :key="category.taskId" :value="category.taskId">{{ category.subject }}
                 </option>
               </select>
             </div>
-            <div class="mg-my-4">
-              <label class="mg-text-xs">ID: </label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model.number="form.taskId">
+            <div class="mg-form-item">
+              <label>ID: </label>
+              <input class="mg-form-input" v-model.number="form.taskId">
             </div>
-            <div class="mg-my-4">
-              <label class="mg-text-xs">Subject: </label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.subject">
+            <div class="mg-form-item">
+              <label>Subject: </label>
+              <input class="mg-form-input" v-model="form.subject">
             </div>
-            <div class="mg-my-4">
-              <label class="mg-text-xs">AssignedTo: </label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.assignedUserId">
+            <div class="mg-form-item">
+              <label>AssignedTo: </label>
+              <input class="mg-form-input" v-model="form.assignedUserId">
             </div>
-            <div class="mg-my-4">
-              <label class="mg-text-xs">Planned Term: </label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.planStartDate" type="date">
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.planEndDate" type="date">
+            <div class="mg-form-item">
+              <label>Planned Term: </label>
+              <input class="mg-form-input" v-model="form.planStartDate" type="date">
+              <input class="mg-form-input" v-model="form.planEndDate" type="date">
             </div>
-            <div class="mg-my-4">
-              <label class="mg-text-xs">Actual Term: </label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.actualStartDate" type="date">
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.actualEndDate" type="date">
+            <div class="mg-form-item">
+              <label>Actual Term: </label>
+              <input class="mg-form-input" v-model="form.actualStartDate" type="date">
+              <input class="mg-form-input" v-model="form.actualEndDate" type="date">
             </div>
-            <div class="mg-my-4">
-              <label class="mg-text-xs">Plan Workload: </label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2 mg-w-24" v-model="form.planWorkload" type="number">
-              <label class="mg-text-xs"> WL/Map: </label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2 mg-w-24" v-model="form.planWorkloadMap">
+            <div class="mg-form-item">
+              <label>Plan Workload: </label>
+              <input class="mg-form-input mg-w-24" v-model="form.planWorkload" type="number">
+              <label> WL/Map: </label>
+              <input class="mg-form-input mg-w-24" v-model="form.planWorkloadMap">
             </div>
-            <div class="mg-my-4">
-              <label class="mg-text-xs">Actual Workload: </label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2 mg-w-24" v-model="form.actualWorkload" type="number">
+            <div class="mg-form-item">
+              <label>Actual Workload: </label>
+              <input class="mg-form-input mg-w-24" v-model="form.actualWorkload" type="number">
             </div>
-            <div class="mg-my-4">
-              <label class="mg-text-xs">Desc: </label><br>
-              <textarea class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2 mg-w-full" v-model="form.content"></textarea>
+            <div class="mg-form-item">
+              <label>Desc: </label><br>
+              <textarea class="mg-form-input mg-w-full" v-model="form.content"></textarea>
             </div>
-            <div class="mg-my-4">
-              <label class="mg-text-xs">Progress:</label>
-              <input class="mg-text-xs mg-border mg-rounded-lg mg-px-4 mg-py-2" v-model="form.progress" type="number">
+            <div class="mg-form-item">
+              <label>Progress:</label>
+              <input class="mg-form-input" v-model="form.progress" type="number">
             </div>
             <div v-if="update_mode" class="mg-flex mg-items-center mg-justify-between">
               <button @click="updateTask(form.taskId)" class="mg-green mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-text-xs mg-flex mg-items-center">
@@ -89,8 +84,7 @@
               </button>
             </div>
             <div v-else>
-              <button
-                @click="saveTask"
+              <button @click="saveTask"
                 class="mg-indigo mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-flex mg-items-center">
                 <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -110,41 +104,30 @@
         <div id="gantt-task">
           <!-- Header -->
           <div id="gantt-task-title" class="mg-flex mg-items-center mg-bg-gray mg-text-white mg-h-15" ref="task">
-            <div class="mg-flex mg-border-l mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">ID
-            </div>
-            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-96 mg-center mg-items-center mg-justify-center mg-h-full">Subject
-            </div>
-            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-48 mg-center mg-items-center mg-justify-center mg-h-full">Pl/Term
-            </div>
-            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-48 mg-center mg-items-center mg-justify-center mg-h-full">Ac/Term
-            </div>
-            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-16 mg-center mg-items-center mg-justify-center mg-h-full">Assig.
-            </div>
+            <div class="mg-col-header mg-border-l mg-border-r mg-w-12">ID</div>
+            <div class="mg-col-header mg-border-r mg-w-96">Subject</div>
+            <div class="mg-col-header mg-border-r mg-w-48">Pl/Term</div>
+            <div class="mg-col-header mg-border-r mg-w-48">Ac/Term </div>
+            <div class="mg-col-header mg-border-r mg-w-16">Assig.</div>
             <!--
-            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">Progr.
-            </div>
+            <div class="mg-col-header mg-border-r mg-w-12">Progr.</div>
             -->
-            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">Pl/WL
-            </div>
-            <div class="mg-flex mg-border-r mg-border-t mg-border-b mg-text-xs mg-text-dark mg-bd-gray mg-w-12 mg-center mg-items-center mg-justify-center mg-h-full">Ac/WL
-            </div>
+            <div class="mg-col-header mg-border-r mg-w-12">Pl/WL</div>
+            <div class="mg-col-header mg-border-r mg-w-12">Ac/WL</div>
           </div>
           <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="`height:${calendarViewHeight}px`">
 
             <div class="mg-flex mg-h-5 mg-border-b mg-bg-lightgray">
               <div class="mg-flex mg-items-center mg-w-full mg-text-xs mg-flex mg-items-center">
-                <button @click="addTask"
-                  class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-full mg-justify-center">
+                <button @click="addTask" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-full mg-justify-center">
                   <!--
                   <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   -->
-
                   <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-
                   <!--
                   <span class=" mg-text-xs">Add</span>
                   -->
@@ -155,19 +138,16 @@
             <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" draggable="true" @dragstart="dragTask(task)" @dragover.prevent="dragTaskOver(task)">
               <!-- Template for category -->
               <template v-if="task.cat === 'category'">
-                <div
-                  class="mg-flex mg-items-center mg-border-l mg-w-full mg-text-xs mg-pl-2 mg-flex  mg-items-center">
+                <div class="mg-flex mg-items-center mg-border-l mg-w-full mg-text-xs mg-pl-2 mg-flex  mg-items-center">
                   <span>{{task.subject}}</span>
                   <div class="pr-4" @click="toggleCategory(task.taskId)">
                     <span v-if="task.collapsed">
-                      <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                                                      stroke="currentColor">
+                      <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                       </svg>
                     </span>
                     <span v-else>
-                      <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                                                      stroke="currentColor">
+                      <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                       </svg>
                     </span>

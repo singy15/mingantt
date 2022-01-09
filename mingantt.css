@@ -375,3 +375,56 @@ input {
   display: inline-block;
 }
 
+.mg-inline-button {
+  background-color: #888888;
+  color: #fff;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: inline-block;
+}
+
+.mg-form-item {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mg-form-item * {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.mg-form-input {
+  outline: none;
+  border-left: solid 1px #CCC;
+  border-right: solid 1px #CCC;
+  border-top: solid 1px #CCC;
+  border-bottom: solid 1px #CCC;
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.mg-col-header {
+  display: flex;
+  box-sizing: border-box;
+  border-top: solid 1px #CCC;
+  border-bottom: solid 1px #CCC;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #3f3f3f;
+  border-color: #cac8bd;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+

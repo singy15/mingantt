@@ -189,7 +189,8 @@ var mingantt = {
           <div v-for="(calendar,index) in calendars" :key="index">
             <div v-for="(day,index) in calendar.days" :key="index">
               <div class="mg-border-r mg-border-b mg-h-10 mg-absolute mg-flex mg-items-center mg-justify-center mg-flex-col mg-text-xs mg-bg-gray"
-                   :class="{'mg-bg-darkgray mg-text-white': (day.dayOfWeek === 0 || day.dayOfWeek === 6), 'bg-red-600 mg-text-dark': calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date()}"
+                   :class="{'mg-bg-darkgray mg-text-white': (day.dayOfWeek === 0 || day.dayOfWeek === 6)}"
+                   :class="{'mg-bg-darkred mg-text-white': calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date()}"
                    :style="'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px'">
                 <span style="text-align:center;">{{ day.day }}<br><span class="mg-text-xxs">{{ day.dayOfWeekStr }}</span></span>
               </div>
@@ -201,6 +202,7 @@ var mingantt = {
             <div v-for="day in calendar.days" :key="index">
               <div class="mg-border-r mg-border-b mg-absolute"
                    :class="{'mg-bg-lightgray': (day.dayOfWeek === 6 || day.dayOfWeek === 0)}"
+                   :class="{'mg-bg-lightred': calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date()}"
                    :style="'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px;' + 'height:' + calendarViewHeight + 'px'">
               </div>
             </div>

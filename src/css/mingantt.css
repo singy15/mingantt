@@ -228,6 +228,14 @@ input {
   background-color: #888888;
 }
 
+.mg-bg-darkred {
+  background-color: #FF8888;
+}
+
+.mg-bg-lightred {
+  background-color: #FFCCCC;
+}
+
 .mg-text-dark {
   color: #3f3f3f;
 }

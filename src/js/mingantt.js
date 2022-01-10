@@ -1,3 +1,6 @@
+import moment from 'moment';
+import '../css/mingantt.css';
+
 var mingantt = {
   data: function () {
     return {
@@ -652,4 +655,6 @@ var mingantt = {
     },
   }
 };
+
+window.mingantt = mingantt;
 

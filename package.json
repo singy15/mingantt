@@ -1,0 +1,27 @@
+{
+  "name": "mingantt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mingantt.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/singy15/mingantt.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/singy15/mingantt/issues"
+  },
+  "homepage": "https://github.com/singy15/mingantt#readme",
+  "dependencies": {
+    "css-loader": "^6.5.1",
+    "moment": "^2.29.1",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.7.2"
+  }
+}

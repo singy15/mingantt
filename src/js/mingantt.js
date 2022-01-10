@@ -76,91 +76,6 @@ var mingantt = {
   template:
 `
 <div style="width:100%; height:100%;">
-  <!-- Header -->
-  <div id="gantt-header" class="mg-h-12 mg-p-2 mg-flex mg-items-center" style="position:fixed;">
-    <div class="mg-base" v-show="show"
-      @keyup.ctrl.enter="(update_mode)? updateTask(form.taskId) : saveTask()"
-      style="z-index:999;">
-      <div class="mg-overlay" v-show="show" @click="show=false"></div>
-      <div class="mg-content" v-show="show">
-        <h2 v-if="update_mode">Edit Task</h2>
-        <h2 v-else>Add Task</h2>
-        <div class="mg-form-item">
-          <label>Category ID: </label>
-          <select v-model="form.categoryId" class=" mg-border mg-px-4 mg-py-2 mg-rounded-lg">
-            <option v-for="category in categories" :key="category.taskId" :value="category.taskId">{{ category.subject }}
-            </option>
-          </select>
-        </div>
-        <div class="mg-form-item">
-          <label>ID: </label>
-          <input class="mg-form-input" v-model.number="form.taskId">
-        </div>
-        <div class="mg-form-item">
-          <label>Subject: </label>
-          <input class="mg-form-input" v-model="form.subject">
-        </div>
-        <div class="mg-form-item">
-          <label>AssignedTo: </label>
-          <input class="mg-form-input" v-model="form.assignedUserId">
-        </div>
-        <div class="mg-form-item">
-          <label>Planned Term: </label>
-          <input class="mg-form-input" v-model="form.planStartDate" type="date">
-          <input class="mg-form-input" v-model="form.planEndDate" type="date">
-        </div>
-        <div class="mg-form-item">
-          <label>Actual Term: </label>
-          <input class="mg-form-input" v-model="form.actualStartDate" type="date">
-          <input class="mg-form-input" v-model="form.actualEndDate" type="date">
-        </div>
-        <div class="mg-form-item">
-          <label>Plan Workload: </label>
-          <input class="mg-form-input mg-w-24" v-model="form.planWorkload" type="number">
-          <label> WL/Map: </label>
-          <input class="mg-form-input mg-w-24" v-model="form.planWorkloadMap">
-        </div>
-        <div class="mg-form-item">
-          <label>Actual Workload: </label>
-          <input class="mg-form-input mg-w-24" v-model="form.actualWorkload" type="number">
-        </div>
-        <div class="mg-form-item">
-          <label>Desc: </label><br>
-          <textarea class="mg-form-input mg-w-full" v-model="form.content"></textarea>
-        </div>
-        <div class="mg-form-item">
-          <label>Progress:</label>
-          <input class="mg-form-input" v-model="form.progress" type="number">
-        </div>
-        <div v-if="update_mode" class="mg-flex mg-items-center mg-justify-between">
-          <button @click="updateTask(form.taskId)" class="mg-green mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-text-xs mg-flex mg-items-center">
-            <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            <span class="mg-text-xs  mg-text-white">Register</span>
-          </button>
-          <button @click="deleteTask(form.taskId)"
-                  class="mg-red mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-flex mg-items-center mg-ml-2">
-            <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            <span class="mg-text-xs mg-text-white">Delete</span>
-          </button>
-        </div>
-        <div v-else>
-          <button @click="saveTask"
-            class="mg-indigo mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-flex mg-items-center">
-            <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            <span class=" mg-text-xs">
-              Register
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Content -->
   <div id="gantt-content" class="mg-flex mg-h-full mg-w-full">
@@ -340,6 +255,92 @@ var mingantt = {
   </div>
 
   <div id="form">
+  </div>
+
+  <!-- Header -->
+  <div id="gantt-header" class="mg-h-12 mg-p-2 mg-flex mg-items-center" style="position:fixed;">
+    <div class="mg-base" v-show="show"
+      @keyup.ctrl.enter="(update_mode)? updateTask(form.taskId) : saveTask()"
+      style="z-index:999;">
+      <div class="mg-overlay" v-show="show" @click="show=false"></div>
+      <div class="mg-content" v-show="show">
+        <h2 v-if="update_mode">Edit Task</h2>
+        <h2 v-else>Add Task</h2>
+        <div class="mg-form-item">
+          <label>Category ID: </label>
+          <select v-model="form.categoryId" class=" mg-border mg-px-4 mg-py-2 mg-rounded-lg">
+            <option v-for="category in categories" :key="category.taskId" :value="category.taskId">{{ category.subject }}
+            </option>
+          </select>
+        </div>
+        <div class="mg-form-item">
+          <label>ID: </label>
+          <input class="mg-form-input" v-model.number="form.taskId">
+        </div>
+        <div class="mg-form-item">
+          <label>Subject: </label>
+          <input class="mg-form-input" v-model="form.subject">
+        </div>
+        <div class="mg-form-item">
+          <label>AssignedTo: </label>
+          <input class="mg-form-input" v-model="form.assignedUserId">
+        </div>
+        <div class="mg-form-item">
+          <label>Planned Term: </label>
+          <input class="mg-form-input" v-model="form.planStartDate" type="date">
+          <input class="mg-form-input" v-model="form.planEndDate" type="date">
+        </div>
+        <div class="mg-form-item">
+          <label>Actual Term: </label>
+          <input class="mg-form-input" v-model="form.actualStartDate" type="date">
+          <input class="mg-form-input" v-model="form.actualEndDate" type="date">
+        </div>
+        <div class="mg-form-item">
+          <label>Plan Workload: </label>
+          <input class="mg-form-input mg-w-24" v-model="form.planWorkload" type="number">
+          <label> WL/Map: </label>
+          <input class="mg-form-input mg-w-24" v-model="form.planWorkloadMap">
+        </div>
+        <div class="mg-form-item">
+          <label>Actual Workload: </label>
+          <input class="mg-form-input mg-w-24" v-model="form.actualWorkload" type="number">
+        </div>
+        <div class="mg-form-item">
+          <label>Desc: </label><br>
+          <textarea class="mg-form-input mg-w-full" v-model="form.content"></textarea>
+        </div>
+        <div class="mg-form-item">
+          <label>Progress:</label>
+          <input class="mg-form-input" v-model="form.progress" type="number">
+        </div>
+        <div v-if="update_mode" class="mg-flex mg-items-center mg-justify-between">
+          <button @click="updateTask(form.taskId)" class="mg-green mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-text-xs mg-flex mg-items-center">
+            <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span class="mg-text-xs  mg-text-white">Register</span>
+          </button>
+          <button @click="deleteTask(form.taskId)"
+                  class="mg-red mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-flex mg-items-center mg-ml-2">
+            <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span class="mg-text-xs mg-text-white">Delete</span>
+          </button>
+        </div>
+        <div v-else>
+          <button @click="saveTask"
+            class="mg-indigo mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-flex mg-items-center">
+            <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            <span class=" mg-text-xs">
+              Register
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `,

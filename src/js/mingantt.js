@@ -115,7 +115,10 @@ var mingantt = {
           </div>
         </div>
 
-        <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" :style="((task.actualEndDate !== '') && (task.cat !== 'category'))? 'background-color: #DDD;' : ''" draggable="true" @dragstart="dragTask(task)" @dragover.prevent="dragTaskOver(task)">
+        <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" 
+            :style="((task.actualStartDate !== '') && (task.cat !== 'category'))? 'background-color: #EEF;' : ''" 
+            :style="((task.actualEndDate !== '') && (task.cat !== 'category'))? 'background-color: #DDD;' : ''" 
+            draggable="true" @dragstart="dragTask(task)" @dragover.prevent="dragTaskOver(task)">
           <!-- Template for category -->
           <template v-if="task.cat === 'category'">
             <div class="mg-flex mg-items-center mg-border-l mg-w-full mg-text-xs mg-pl-2 mg-flex  mg-items-center">

@@ -274,7 +274,7 @@ var mingantt = {
         <h2 v-else>Add Task</h2>
         <div class="mg-form-item">
           <label>ID: </label>
-          <input class="mg-form-input mg-w-22" v-model.number="form.taskId">
+          <input class="mg-form-input mg-w-22" v-model.number="form.taskId" :disabled="update_mode">
         </div>
         <div class="mg-form-item">
           <label>Category ID: </label>

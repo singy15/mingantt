@@ -131,8 +131,10 @@ function loadLocalStorage() {
 
 function saveLocalStorage() {
   localStorage.setItem("mingantt/tasks", JSON.stringify(app.getTasks()));
-  alert("successfully saved!");
+  console.log("successfully saved!");
 }
+
+var timeoutSaveLocalStorage = null;
 
 const app = Vue.createApp({
   components: {
@@ -144,13 +146,27 @@ const app = Vue.createApp({
     },
     saveLocalStorage() {
       localStorage.setItem("mingantt/tasks", JSON.stringify(this.$refs.mingantt.getTasks()));
-      alert("successfully saved!");
+      console.log("successfully saved!");
     }
   },
   mounted() {
+    var self = this;
     this.$refs.mingantt.encodeFn = encodeTask;
     this.$refs.mingantt.decodeFn = decodeTask;
     this.$refs.mingantt.loadTasks(testData);
+
+    // Set auto-save handler
+    this.$refs.mingantt.handlerOnUpdateTask = function() {
+      if(timeoutSaveLocalStorage) {
+        timeoutSaveLocalStorage.clearTimeout();
+        timeoutSaveLocalStorage = null;
+      }
+
+      timeoutSaveLocalStorage = setTimeout(function() {
+        self.saveLocalStorage();
+      }, 3000);
+    };
+
   }
 }).mount('#app');
 

@@ -71,6 +71,7 @@ var mingantt = {
       encodeFn: null,
       decodeFn: null,
       rowHeight: 20,
+      handlerOnUpdateTask: null,
     };
   },
   template:
@@ -546,6 +547,10 @@ var mingantt = {
       )
       this.form = {}
       this.show = false
+
+      if(this.handlerOnUpdateTask) {
+        this.handlerOnUpdateTask();
+      }
     },
     editTask(task){
       this.update_mode=true;
@@ -559,6 +564,10 @@ var mingantt = {
       Object.assign(task, this.form);
       this.form = {}
       this.show = false;
+
+      if(this.handlerOnUpdateTask) {
+        this.handlerOnUpdateTask();
+      }
     },
     deleteTask(taskId) {
       let delete_index;
@@ -568,6 +577,10 @@ var mingantt = {
       this.tasks.splice(delete_index, 1)
       this.form = {}
       this.show = false;
+
+      if(this.handlerOnUpdateTask) {
+        this.handlerOnUpdateTask();
+      }
     },
   },
   mounted() {

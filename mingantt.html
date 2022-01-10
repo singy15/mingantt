@@ -236,11 +236,9 @@
               <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border mg-task" 
                   v-if="bar.task.cat === 'task' && bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" >
                 <div class="mg-w-full mg-h-full" style="pointer-events: none;">
-                  <!--
                   <div class="mg-h-full" 
-                       style="pointer-events:none; background-color:#f59e0b" 
+                       style="pointer-events:none; background-color:#8492bd" 
                        :style="'width:' + bar.task.progress + '%'"></div>
-                  -->
                 </div>
                 <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
                      style="top:3px;left:-6px;cursor:col-resize" 

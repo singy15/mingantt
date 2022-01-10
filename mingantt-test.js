@@ -143,7 +143,7 @@ const app = Vue.createApp({
       this.$refs.mingantt.loadTasks(JSON.parse(localStorage.getItem("mingantt/tasks")));
     },
     saveLocalStorage() {
-      localStorage.setItem("mingantt/tasks", JSON.stringify($refs.mingantt.getTasks()));
+      localStorage.setItem("mingantt/tasks", JSON.stringify(this.$refs.mingantt.getTasks()));
       alert("successfully saved!");
     }
   },

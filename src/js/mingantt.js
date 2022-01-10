@@ -4,8 +4,8 @@ import '../css/mingantt.css';
 var mingantt = {
   data: function () {
     return {
-      start_month: '2021-10',
-      end_month: '2022-02',
+      start_month: moment().add(-1, "months").format("YYYY-MM") /*'2021-10'*/,
+      end_month: moment().add(2, "months").format("YYYY-MM") /*'2022-02'*/,
       block_size: 24,
       block_number: 0,
       calendars:[],
@@ -69,14 +69,15 @@ var mingantt = {
       },
       update_mode: false,
       encodeFn: null,
-      decodeFn: null
+      decodeFn: null,
+      rowHeight: 20,
     };
   },
   template:
 `
-<div>
-  <div id="gantt-header" class="mg-h-12 mg-p-2 mg-flex mg-items-center">
-    <h1 class="mg-text-xl ">mingantt</h1>
+<div style="width:100%; height:100%;">
+  <!-- Header -->
+  <div id="gantt-header" class="mg-h-12 mg-p-2 mg-flex mg-items-center" style="position:fixed;">
     <div class="mg-base" v-show="show"
       @keyup.ctrl.enter="(update_mode)? updateTask(form.taskId) : saveTask()"
       style="z-index:999;">
@@ -161,7 +162,8 @@ var mingantt = {
     </div>
   </div>
 
-  <div id="gantt-content" class="mg-flex">
+  <!-- Content -->
+  <div id="gantt-content" class="mg-flex mg-h-full mg-w-full">
     <!-- List section -->
     <div id="gantt-task">
       <!-- Header -->
@@ -396,8 +398,9 @@ var mingantt = {
       return block_number;
     },
     getWindowSize() {
-      this.inner_width = window.innerWidth;
-      this.inner_height = window.innerHeight;
+      var content = window.document.querySelector("#gantt-content");
+      this.inner_width = content.getBoundingClientRect().width;
+      this.inner_height = content.getBoundingClientRect().height;
       this.task_width = this.$refs.task.offsetWidth;
       this.task_height = this.$refs.task.offsetHeight;
     },
@@ -583,7 +586,7 @@ var mingantt = {
       return this.inner_width - this.task_width;
     },
     calendarViewHeight() {
-      return this.inner_height - this.task_height - 48 - 60;
+      return this.inner_height - this.task_height;
     },
     scrollDistance() {
       let planStartDate = moment(this.start_month);
@@ -604,7 +607,7 @@ var mingantt = {
     },
     taskBars() {
       let planStartDate = moment(this.start_month);
-      let top = 2 + 20;
+      let top = 2 + this.rowHeight;
       let left;
       let leftAc;
       let between;
@@ -641,7 +644,7 @@ var mingantt = {
             scheduled: (task.actualStartDate !== ""),
           };
         }
-        top = top + 20;
+        top = top + this.rowHeight;
         return {
           style,
           actualStyle,
@@ -650,7 +653,7 @@ var mingantt = {
       })
     },
     displayTasks() {
-      let display_task_number = Math.floor(this.calendarViewHeight / 40);
+      let display_task_number = Math.floor(this.calendarViewHeight / this.rowHeight);
       return this.lists.slice(this.position_id, this.position_id + display_task_number);
     },
   }

@@ -273,6 +273,10 @@ var mingantt = {
         <h2 v-if="update_mode">Edit Task</h2>
         <h2 v-else>Add Task</h2>
         <div class="mg-form-item">
+          <label>ID: </label>
+          <input class="mg-form-input mg-w-22" v-model.number="form.taskId">
+        </div>
+        <div class="mg-form-item">
           <label>Category ID: </label>
           <select v-model="form.categoryId" class=" mg-border mg-px-4 mg-py-2 mg-rounded-lg">
             <option v-for="category in categories" :key="category.taskId" :value="category.taskId">{{ category.subject }}
@@ -280,16 +284,12 @@ var mingantt = {
           </select>
         </div>
         <div class="mg-form-item">
-          <label>ID: </label>
-          <input class="mg-form-input" v-model.number="form.taskId">
-        </div>
-        <div class="mg-form-item">
           <label>Subject: </label>
-          <input class="mg-form-input" v-model="form.subject">
+          <input class="mg-form-input mg-w-full" v-model="form.subject">
         </div>
         <div class="mg-form-item">
           <label>AssignedTo: </label>
-          <input class="mg-form-input" v-model="form.assignedUserId">
+          <input class="mg-form-input mg-w-24" v-model="form.assignedUserId">
         </div>
         <div class="mg-form-item">
           <label>Planned Term: </label>
@@ -303,21 +303,19 @@ var mingantt = {
         </div>
         <div class="mg-form-item">
           <label>Plan Workload: </label>
-          <input class="mg-form-input mg-w-24" v-model="form.planWorkload" type="number">
+          <input class="mg-form-input mg-w-22" v-model="form.planWorkload" type="number">
           <label> WL/Map: </label>
-          <input class="mg-form-input mg-w-24" v-model="form.planWorkloadMap">
+          <input class="mg-form-input mg-w-22" v-model="form.planWorkloadMap">
         </div>
         <div class="mg-form-item">
-          <label>Actual Workload: </label>
-          <input class="mg-form-input mg-w-24" v-model="form.actualWorkload" type="number">
+          <label> Actual Workload: </label>
+          <input class="mg-form-input mg-w-22" v-model="form.actualWorkload" type="number">
+          <label> Progress: </label>
+          <input class="mg-form-input mg-w-22" v-model="form.progress" type="number">
         </div>
         <div class="mg-form-item">
           <label>Desc: </label><br>
           <textarea class="mg-form-input mg-w-full" v-model="form.content"></textarea>
-        </div>
-        <div class="mg-form-item">
-          <label>Progress:</label>
-          <input class="mg-form-input" v-model="form.progress" type="number">
         </div>
         <div v-if="update_mode" class="mg-flex mg-items-center mg-justify-between">
           <button @click="updateTask(form.taskId)" class="mg-green mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-text-xs mg-flex mg-items-center">

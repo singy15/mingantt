@@ -560,6 +560,10 @@ var mingantt = {
         return;
       }
 
+      if(this.form.actualEndDate !== "") {
+        this.form.progress = 100;
+      }
+
       this.tasks.push(
         this.form
       )
@@ -578,6 +582,10 @@ var mingantt = {
       console.log(this.form);
     },
     updateTask(taskId) {
+      if(this.form.actualEndDate !== "") {
+        this.form.progress = 100;
+      }
+
       let task = this.tasks.find(task => task.taskId === taskId);
       Object.assign(task, this.form);
       this.form = {}

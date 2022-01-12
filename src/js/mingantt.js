@@ -86,8 +86,8 @@ var mingantt = {
       <div id="gantt-task-title" class="mg-flex mg-items-center mg-bg-gray mg-text-white mg-h-15" ref="task">
         <div class="mg-col-header mg-border-l mg-border-r mg-w-12">ID</div>
         <div class="mg-col-header mg-border-r mg-w-96">Subject</div>
-        <div class="mg-col-header mg-border-r mg-w-48">Pl/Term</div>
-        <div class="mg-col-header mg-border-r mg-w-48">Ac/Term </div>
+        <div class="mg-col-header mg-border-r mg-w-40">Pl/Term</div>
+        <div class="mg-col-header mg-border-r mg-w-40">Ac/Term </div>
         <div class="mg-col-header mg-border-r mg-w-16">Assig.</div>
         <!--
         <div class="mg-col-header mg-border-r mg-w-12">Progr.</div>
@@ -140,36 +140,36 @@ var mingantt = {
           <!-- Template for task -->
           <template v-else>
             <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs">
-              {{task.taskId}}
+              {{task.taskId }}
             </div>
             <div @click="editTask(task)" class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
-              {{task.subject}}
+              {{task.subject }}
             </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
-              {{task.planStartDate}}
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-20 mg-text-xs">
+              {{ formatDate2ShortDateStr(task.planStartDate) }}
             </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
-              {{task.planEndDate}}
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-20 mg-text-xs">
+              {{ formatDate2ShortDateStr(task.planEndDate) }}
             </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
-              {{task.actualStartDate}}
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-20 mg-text-xs">
+              {{ formatDate2ShortDateStr(task.actualStartDate) }}
             </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-24 mg-text-xs">
-              {{task.actualEndDate}}
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-20 mg-text-xs">
+              {{ formatDate2ShortDateStr(task.actualEndDate) }}
             </div>
             <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs">
-              {{task.assignedUserId}}
+              {{ task.assignedUserId }}
             </div>
             <!--
             <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-              {{task.progress}}%
+              {{ task.progress }}%
             </div>
             -->
             <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-              {{task.planWorkload}}
+              {{ task.planWorkload }}
             </div>
             <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs">
-              {{task.actualWorkload}}
+              {{ task.actualWorkload }}
             </div>
           </template>
         </div>
@@ -585,6 +585,21 @@ var mingantt = {
         this.handlerOnUpdateTask();
       }
     },
+    formatDate2ShortDateStr(date) {
+      if(date === "") {
+        return "";
+      }
+
+      var cur = moment();
+      var dt = moment(date);
+      var pre = "";
+
+      if(cur.format('YY') !== dt.format('YY')) {
+        pre = dt.format('YY') + "/";
+      }
+
+      return pre + dt.format('M/D');
+    }
   },
   mounted() {
     this.getCalendar();

@@ -142,23 +142,29 @@ var mingantt = {
             <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs">
               {{task.taskId }}
             </div>
-            <div @click="editTask(task)" class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
-              {{task.subject }}
+            <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
+              <!-- {{task.subject }} -->
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.subject" >
             </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-20 mg-text-xs">
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planStartDate" type="date">
               {{ formatDate2ShortDateStr(task.planStartDate) }}
             </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-20 mg-text-xs">
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planEndDate" type="date">
               {{ formatDate2ShortDateStr(task.planEndDate) }}
             </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-20 mg-text-xs">
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.actualStartDate" type="date">
               {{ formatDate2ShortDateStr(task.actualStartDate) }}
             </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-20 mg-text-xs">
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.actualEndDate" type="date">
               {{ formatDate2ShortDateStr(task.actualEndDate) }}
             </div>
             <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs">
-              {{ task.assignedUserId }}
+              <!-- {{ task.assignedUserId }} -->
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-16" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.assignedUserId" >
             </div>
             <!--
             <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
@@ -166,10 +172,12 @@ var mingantt = {
             </div>
             -->
             <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-              {{ task.planWorkload }}
+              <!-- {{ task.planWorkload }} -->
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload" type="number">
             </div>
             <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs">
-              {{ task.actualWorkload }}
+              <!-- {{ task.actualWorkload }} -->
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
             </div>
           </template>
         </div>
@@ -562,9 +570,9 @@ var mingantt = {
         this.handlerOnUpdateTask();
       }
     },
-    editTask(task){
+    editTask(task, silent=false){
       this.update_mode=true;
-      this.show = true;
+      this.show = !silent;
       Object.assign(this.form, task);
       console.log(task);
       console.log(this.form);
@@ -578,6 +586,10 @@ var mingantt = {
       if(this.handlerOnUpdateTask) {
         this.handlerOnUpdateTask();
       }
+    },
+    silentEditTask(task) {
+      this.editTask(task, true);
+      this.updateTask(task.taskId);
     },
     deleteTask(taskId) {
       let delete_index;

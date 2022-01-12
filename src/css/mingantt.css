@@ -451,3 +451,16 @@ input {
   height: 100%;
 }
 
+input.nospinner::-webkit-outer-spin-button,
+input.nospinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input.smallcalendar::-webkit-calendar-picker-indicator {
+  margin: 0;
+  padding: 0;
+  padding-right: 2px;
+  opacity: 0.5;
+}
+

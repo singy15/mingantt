@@ -545,6 +545,13 @@ var mingantt = {
       this.show = true;
     },
     saveTask() {
+      let task = this.tasks.find(task => task.taskId === this.form.taskId);
+
+      if(task) {
+        alert("ID Confilict!");
+        return;
+      }
+
       this.tasks.push(
         this.form
       )

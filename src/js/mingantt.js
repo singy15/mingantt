@@ -432,9 +432,9 @@ var mingantt = {
     windowSizeCheck() {
       let height = this.lists.length - this.position_id
       if (event.deltaY > 0 && height * 40 > this.calendarViewHeight) {
-        this.position_id++
+        this.position_id+=3
       } else if (event.deltaY < 0 && this.position_id !== 0) {
-        this.position_id--
+        this.position_id-=3
       }
     },
     mouseDownMove(task){

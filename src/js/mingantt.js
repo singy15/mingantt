@@ -72,6 +72,7 @@ var mingantt = {
       decodeFn: null,
       rowHeight: 20,
       onUpdateTask: null, // (task, oper {"update" | "insert" | "delete"}) => void
+      selectedTask: null
     };
   },
   template:
@@ -117,7 +118,9 @@ var mingantt = {
 
         <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" 
             :style="((task.actualStartDate !== '') && (task.cat !== 'category'))? 'background-color: #EEF;' : ''" 
-            :style="((task.actualEndDate !== '') && (task.cat !== 'category'))? 'background-color: #DDD;' : ''">
+            :style="((task.actualEndDate !== '') && (task.cat !== 'category'))? 'background-color: #DDD;' : ''"
+            :style="((selectedTask !== null) && (selectedTask.taskId === task.taskId))? 'background-color:rgba(253, 226, 184, 0.5)' : ''"
+            @click="selectTask(task)">
           <!-- Template for category -->
           <template v-if="task.cat === 'category'">
             <div class="mg-flex mg-items-center mg-border-l mg-w-full mg-text-xs mg-pl-2 mg-flex  mg-items-center">
@@ -225,9 +228,14 @@ var mingantt = {
       <div id="gantt-bar-area" class="mg-relative" :style="'width:' + calendarViewWidth + 'px;' + 'height:' + calendarViewHeight + 'px'">
         <div v-for="(bar,index) in taskBars" :key="index">
 
+          <!-- Focused -->
+          <div :style="bar.barStyle" style="background-color:rgba(253, 226, 184, 0.5)" class="mg-absolute mg-h-2" v-if="(selectedTask !== null) && (bar.task.cat === 'task') && (bar.task.taskId === selectedTask.taskId)">
+          </div>
+
           <!-- Plan -->
           <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border mg-task" 
-              v-if="bar.task.cat === 'task' && bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" >
+              v-if="bar.task.cat === 'task' && bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
+              @click="selectTask(bar.task)">
             <div class="mg-w-full mg-h-full" style="pointer-events: none;">
               <div class="mg-h-full" 
                    style="pointer-events:none; background-color:#8492bd" 
@@ -245,7 +253,8 @@ var mingantt = {
 
           <!-- Actual -->
           <div :style="bar.actualStyle" style="cursor:pointer; " class="mg-absolute mg-h-2 mg-border mg-actual mg-task" 
-              v-if="bar.task.cat === 'task' && bar.actualStyle.scheduled === true" @mousedown="mouseDownMove(bar.task)" >
+              v-if="bar.task.cat === 'task' && bar.actualStyle.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
+              @click="selectTask(bar.task)">
             <div class="mg-w-full mg-h-full mg-task" style="pointer-events: none;">
               <div class="mg-h-full" 
                    style="pointer-events:none; background-color:#8492bd" 
@@ -658,6 +667,9 @@ var mingantt = {
       }
 
       return pre + dt.format('M/D');
+    },
+    selectTask(task) {
+      this.selectedTask = task;
     }
   },
   mounted() {
@@ -707,6 +719,7 @@ var mingantt = {
       let startAc;
       let style;
       let actualStyle;
+      let barStyle;
       return this.displayTasks.map(task => {
         style = {}
         if(task.cat==='task'){
@@ -734,11 +747,22 @@ var mingantt = {
             width: `${this.block_size * betweenAc + 1}px`,
             scheduled: (task.actualStartDate !== ""),
           };
+          var blocks = 0;
+          this.calendars.map((cal) => {  
+            blocks = blocks + cal.days.length;
+          });
+          barStyle = {
+            top: `${top - 3}px`,
+            height: `${this.rowHeight}px`,
+            left: `${0}px`,
+            width: `${this.block_size * blocks}px`,
+          };
         }
         top = top + this.rowHeight;
         return {
           style,
           actualStyle,
+          barStyle,
           task
         }
       })

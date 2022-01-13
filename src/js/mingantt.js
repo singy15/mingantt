@@ -117,8 +117,7 @@ var mingantt = {
 
         <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" 
             :style="((task.actualStartDate !== '') && (task.cat !== 'category'))? 'background-color: #EEF;' : ''" 
-            :style="((task.actualEndDate !== '') && (task.cat !== 'category'))? 'background-color: #DDD;' : ''" 
-            draggable="true" @dragstart="dragTask(task)" @dragover.prevent="dragTaskOver(task)">
+            :style="((task.actualEndDate !== '') && (task.cat !== 'category'))? 'background-color: #DDD;' : ''">
           <!-- Template for category -->
           <template v-if="task.cat === 'category'">
             <div class="mg-flex mg-items-center mg-border-l mg-w-full mg-text-xs mg-pl-2 mg-flex  mg-items-center">
@@ -139,7 +138,8 @@ var mingantt = {
           </template>
           <!-- Template for task -->
           <template v-else>
-            <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs">
+            <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs"
+              draggable="true" @dragstart="dragTask(task)" @dragover.prevent="dragTaskOver(task)">
               {{task.taskId }}
             </div>
             <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">

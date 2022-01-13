@@ -156,7 +156,9 @@ const app = Vue.createApp({
     this.$refs.mingantt.loadTasks(testData);
 
     // Set auto-save handler
-    this.$refs.mingantt.handlerOnUpdateTask = function() {
+    this.$refs.mingantt.onUpdateTask = function(task, oper) {
+      console.log(task, oper);
+
       if(timeoutSaveLocalStorage) {
         clearTimeout(timeoutSaveLocalStorage);
         timeoutSaveLocalStorage = null;

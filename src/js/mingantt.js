@@ -71,7 +71,7 @@ var mingantt = {
       encodeFn: null,
       decodeFn: null,
       rowHeight: 20,
-      handlerOnUpdateTask: null,
+      onUpdateTask: null, // (task, oper {"update" | "insert" | "delete"}) => void
     };
   },
   template:
@@ -567,12 +567,17 @@ var mingantt = {
       this.tasks.push(
         this.form
       )
-      this.form = {}
-      this.show = false
 
-      if(this.handlerOnUpdateTask) {
-        this.handlerOnUpdateTask();
+      // Fires handler
+      if(this.onUpdateTask) {
+        this.onUpdateTask(this.form, "insert");
       }
+
+      // Clear form
+      this.form = {}
+
+      // Close edit form
+      this.show = false
     },
     editTask(task, silent=false){
       this.update_mode=true;
@@ -588,12 +593,17 @@ var mingantt = {
 
       let task = this.tasks.find(task => task.taskId === taskId);
       Object.assign(task, this.form);
-      this.form = {}
-      this.show = false;
 
-      if(this.handlerOnUpdateTask) {
-        this.handlerOnUpdateTask();
+      // Fires handler
+      if(this.onUpdateTask) {
+        this.onUpdateTask(task, "update");
       }
+
+      // Clear form
+      this.form = {}
+
+      // Close edit form
+      this.show = false;
     },
     silentEditTask(task) {
       this.editTask(task, true);
@@ -604,13 +614,19 @@ var mingantt = {
       this.tasks.map((task, index) => {
         if (task.taskId === taskId) delete_index = index;
       })
-      this.tasks.splice(delete_index, 1)
-      this.form = {}
-      this.show = false;
 
-      if(this.handlerOnUpdateTask) {
-        this.handlerOnUpdateTask();
+      let deleted = this.tasks.splice(delete_index, 1)
+
+      // Fires handler
+      if(this.onUpdateTask) {
+        this.onUpdateTask(deleted[0], "delete");
       }
+
+      // Clear form
+      this.form = {}
+
+      // Close edit form
+      this.show = false;
     },
     formatDate2ShortDateStr(date) {
       if(date === "") {

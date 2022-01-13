@@ -139,7 +139,7 @@ var mingantt = {
           <!-- Template for task -->
           <template v-else>
             <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs"
-              draggable="true" @dragstart="dragTask(task)" @dragover.prevent="dragTaskOver(task)">
+              draggable="true" @dragstart="dragTask(task)" @dragenter.prevent @dragover.prevent @drop.prevent="dragTaskOver(task)">
               {{task.taskId }}
             </div>
             <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
@@ -532,6 +532,11 @@ var mingantt = {
         if (overTask.cat === 'category') {
           let updateTask = this.tasks.find(task => task.taskId === this.task.taskId)
           updateTask['categoryId'] = overTask['taskId']
+
+          // Fires handler
+          if(this.onUpdateTask) {
+            this.onUpdateTask(this.task, "update");
+          }
         } else {
           if (overTask.taskId !== this.task.taskId) {
             this.tasks.map((task, index) => { if (task.taskId === this.task.taskId) deleteIndex = index })
@@ -539,6 +544,11 @@ var mingantt = {
             this.tasks.splice(deleteIndex, 1)
             this.task['categoryId'] = overTask['categoryId']
             this.tasks.splice(addIndex, 0, this.task)
+
+            // Fires handler
+            if(this.onUpdateTask) {
+              this.onUpdateTask(this.task, "update");
+            }
           }
         }
       }

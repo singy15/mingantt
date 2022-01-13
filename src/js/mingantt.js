@@ -560,8 +560,11 @@ var mingantt = {
         return;
       }
 
+      // Auto set progress
       if(this.form.actualEndDate !== "") {
         this.form.progress = 100;
+      } else if(this.form.actualEndDate === "") {
+        this.form.progress = 0;
       }
 
       this.tasks.push(
@@ -587,8 +590,11 @@ var mingantt = {
       console.log(this.form);
     },
     updateTask(taskId) {
+      // Auto set progress
       if(this.form.actualEndDate !== "") {
         this.form.progress = 100;
+      } else if(this.form.actualEndDate === "") {
+        this.form.progress = 0;
       }
 
       let task = this.tasks.find(task => task.taskId === taskId);

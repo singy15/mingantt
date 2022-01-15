@@ -167,6 +167,8 @@ const app = Vue.createApp({
       timeoutSaveLocalStorage = setTimeout(function() {
         self.saveLocalStorage();
       }, 3000);
+
+      self.$refs.mingantt.showNotify("Save successful", 1000);
     };
 
   }

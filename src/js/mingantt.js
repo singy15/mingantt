@@ -72,12 +72,20 @@ var mingantt = {
       decodeFn: null,
       rowHeight: 20,
       onUpdateTask: null, // (task, oper {"update" | "insert" | "delete"}) => void
-      selectedTask: null
+      selectedTask: null,
+      notifyStyle: {
+        position: "absolute",
+        display: "none",
+      },
+      notifyMessage: ""
     };
   },
   template:
 `
 <div style="width:100%; height:100%;">
+  <div :style="notifyStyle">
+    {{ notifyMessage }}
+  </div>
 
   <!-- Content -->
   <div id="gantt-content" class="mg-flex mg-h-full mg-w-full">
@@ -670,6 +678,15 @@ var mingantt = {
     },
     selectTask(task) {
       this.selectedTask = task;
+    },
+    showNotify(msg, time) {
+      this.notifyMessage = msg;
+      this.notifyStyle.display = "block";
+
+      setTimeout(() => {
+        this.notifyMessage = "";
+        this.notifyStyle.display = "none";
+      }, time);
     }
   },
   mounted() {

@@ -151,11 +151,11 @@ const app = Vue.createApp({
   },
   mounted() {
     var self = this;
+
+    // Configure mingantt
     this.$refs.mingantt.encodeFn = encodeTask;
     this.$refs.mingantt.decodeFn = decodeTask;
     this.$refs.mingantt.loadTasks(testData);
-
-    // Set auto-save handler
     this.$refs.mingantt.onUpdateTask = function(task, oper) {
       console.log(task, oper);
 
@@ -171,6 +171,8 @@ const app = Vue.createApp({
       self.$refs.mingantt.showNotify("Save successful", 1000);
     };
 
+    // Load LocalStorage
+    this.loadLocalStorage();
   }
 }).mount('#app');
 

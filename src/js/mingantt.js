@@ -80,7 +80,8 @@ var mingantt = {
         display: "none",
       },
       notifyMessage: "",
-      hideCompletedTask: false
+      hideCompletedTask: false,
+      collapseInfoSet: {}
     };
   },
   template:
@@ -159,7 +160,19 @@ var mingantt = {
             </div>
             <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
               <!-- {{task.subject }} -->
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" :style="'hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left;' + 'margin-left:' + (task.__viewInfo.level*10) + 'px'" v-model="task.subject" >
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" :style="'hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left;' + 'margin-left:' + (viewInfoSet[task.taskId].level*10) + 'px'" v-model="task.subject" >
+              <div class="pr-4" @click="toggleCollapsed(task.taskId)" v-if="viewInfoSet[task.taskId].children">
+                <span v-if="collapseInfoSet[task.taskId]">
+                  <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+                <span v-else>
+                  <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+              </div>
             </div>
             <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
               <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planStartDate" type="date">
@@ -399,6 +412,11 @@ var mingantt = {
     loadTasks(tasks) {
       if(this.encodeFn) {
         this.tasks = tasks.map(this.encodeFn);
+
+        // Set collapse info
+        this.tasks.map((x) => {
+          this.collapseInfoSet[x.taskId] = false;
+        });
       } else {
         this.tasks = tasks;
       }
@@ -616,6 +634,9 @@ var mingantt = {
       let category = this.categories.find(category => category.taskId === task_id)
       category['collapsed'] = !category['collapsed'];
     },
+    toggleCollapsed(taskId) {
+      this.collapseInfoSet[taskId] = !this.collapseInfoSet[taskId];
+    },
     addTask() {
       this.update_mode = false;
       this.form = {...this.formDefault};
@@ -757,32 +778,106 @@ var mingantt = {
       let between_days = this.today.diff(planStartDate, 'days')
       return (between_days + 1) * this.block_size - this.calendarViewWidth / 2;
     },
-    lists() {
-      const self = this;
-      let lists = [];
+    viewInfoSet() {
+      console.log("calculate viewInfoSet");
 
+      // Initialize taskHashSet and viewInfoSet
+      let vis = {};
+      let taskHashSet = {};
+      let taskChildrenHashSet = {};
+      this.tasks.map((x) => { 
+        taskHashSet[x.taskId] = x; 
+        vis[x.taskId] = {};
+        if(x.parentTaskId !== 0) {
+          if(taskChildrenHashSet[x.parentTaskId]) {
+            taskChildrenHashSet[x.parentTaskId].push(x);
+          } else {
+            taskChildrenHashSet[x.parentTaskId] = [];
+            taskChildrenHashSet[x.parentTaskId].push(x);
+          }
+        }
+      });
+
+      // format function
       let paddedTaskId = (taskId) => {
         return taskId.toString().padStart(7,"0");
       };
 
-      let calcViewInfo = (task, cur, tasks) => {
+      // Calulate sortKey and level info
+      let calcSortAndLevelInfo = (task, cur, tasks) => {
         return (task.parentTaskId === 0)? 
             cur 
-            : calcViewInfo(
-                tasks.find(x => x.taskId === task.parentTaskId), 
+            : calcSortAndLevelInfo(
+                taskHashSet[task.parentTaskId], 
                 { sortKey: paddedTaskId(task.parentTaskId) + "-" + cur.sortKey, level: cur.level + 1 }, 
                 tasks);
       };
 
-      let setViewInfo = (task) => {
-        task.__viewInfo = calcViewInfo(task, { sortKey: paddedTaskId(task.taskId), level: 0 }, this.tasks);
+      // Calculate show info
+      let calcShowInfo = (x) => {
+        if(x.parentTaskId === 0) {
+          return true;
+        }
+
+        let par = taskHashSet[x.parentTaskId];
+
+        return !this.collapseInfoSet[par.taskId] && calcShowInfo(par);
       };
 
-      this.tasks.map(setViewInfo);
+      this.tasks.map((x) => {
+        var vi = vis[x.taskId];
 
-      this.tasks.sort((a,b) => {
-        let sortKeyA = a.__viewInfo.sortKey;
-        let sortKeyB = b.__viewInfo.sortKey;
+        // Set sortKey and level info
+        let sortAndLevelInfo = calcSortAndLevelInfo(x, { sortKey: paddedTaskId(x.taskId), level: 0 }, this.tasks);
+        vi.sortKey = sortAndLevelInfo.sortKey;
+        vi.level = sortAndLevelInfo.level;
+
+        // Set show flag
+        vi.show = calcShowInfo(x);
+
+        // Set children
+        vi.children = taskChildrenHashSet[x.taskId];
+      });
+      
+      return vis;
+    },
+    lists() {
+      const self = this;
+      let lists = [];
+
+      // let paddedTaskId = (taskId) => {
+      //   return taskId.toString().padStart(7,"0");
+      // };
+
+      // let taskHashSet = {};
+      // this.tasks.map((x) => { 
+      //   taskHashSet[x.taskId] = x; 
+      // });
+
+      // let calcViewInfo = (task, cur, tasks) => {
+      //   return (task.parentTaskId === 0)? 
+      //       cur 
+      //       : calcViewInfo(
+      //           taskHashSet[task.parentTaskId], 
+      //           { sortKey: paddedTaskId(task.parentTaskId) + "-" + cur.sortKey, level: cur.level + 1 }, 
+      //           tasks);
+      // };
+
+      // let setViewInfo = (task) => {
+      //   task.__viewInfo = calcViewInfo(task, { sortKey: paddedTaskId(task.taskId), level: 0 }, this.tasks);
+      // };
+
+      // this.tasks.map(setViewInfo);
+
+      let vis = this.viewInfoSet;
+
+      lists = this.tasks.filter((x) => {
+        return vis[x.taskId].show;
+      });
+
+      lists.sort((a,b) => {
+        let sortKeyA = vis[a.taskId].sortKey;
+        let sortKeyB = vis[b.taskId].sortKey;
 
         if(sortKeyA < sortKeyB) {
           return -1;
@@ -792,8 +887,6 @@ var mingantt = {
           return 1;
         }
       });
-
-      lists = this.tasks;
 
       // this.categories.map(category => {
       //   lists.push({ cat: 'category', ...category });

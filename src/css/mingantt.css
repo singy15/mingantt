@@ -359,6 +359,16 @@ input {
   padding-right: 1rem;
 }
 
+.mg-px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.mg-px-16 {
+  padding-left: 4rem;
+  padding-right: 4rem;
+}
+
 .mg-rounded-lg {
   border-radius: 0.5rem;
 }

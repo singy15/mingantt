@@ -77,7 +77,8 @@ var mingantt = {
         position: "absolute",
         display: "none",
       },
-      notifyMessage: ""
+      notifyMessage: "",
+      hideCompletedTask: false
     };
   },
   template:
@@ -121,6 +122,7 @@ var mingantt = {
               <span class=" mg-text-xs">Add</span>
               -->
             </button>
+            <label class="mg-text-xs"><input type="checkbox" v-model="hideCompletedTask"/>Hide Cmpl.</label>
           </div>
         </div>
 
@@ -734,10 +736,15 @@ var mingantt = {
       return (between_days + 1) * this.block_size - this.calendarViewWidth / 2;
     },
     lists() {
+      const self = this;
       let lists = [];
       this.categories.map(category => {
         lists.push({ cat: 'category', ...category });
         this.tasks.map(task => {
+          if(task.actualEndDate !== "" && self.hideCompletedTask) {
+            return;
+          }
+
           if (task.categoryId === category.taskId && !category.collapsed) {
             lists.push({ cat: 'task', ...task })
           }

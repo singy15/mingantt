@@ -125,15 +125,6 @@ function decodeTask(task) {
   return decoded;
 }
 
-function loadLocalStorage() {
-  app.loadTasks(JSON.parse(localStorage.getItem("mingantt/tasks")));
-}
-
-function saveLocalStorage() {
-  localStorage.setItem("mingantt/tasks", JSON.stringify(app.getTasks()));
-  console.log("successfully saved!");
-}
-
 var timeoutSaveLocalStorage = null;
 
 const app = Vue.createApp({
@@ -144,9 +135,19 @@ const app = Vue.createApp({
     loadLocalStorage() {
       this.$refs.mingantt.loadTasks(JSON.parse(localStorage.getItem("mingantt/tasks")));
     },
+    restoreLocalStorage() {
+      this.$refs.mingantt.loadTasks(JSON.parse(localStorage.getItem("mingantt/tasks/backup")));
+    },
     saveLocalStorage() {
       localStorage.setItem("mingantt/tasks", JSON.stringify(this.$refs.mingantt.getTasks()));
       console.log("successfully saved!");
+    },
+    backupLocalStorage() {
+      localStorage.setItem("mingantt/tasks/backup", JSON.stringify(this.$refs.mingantt.getTasks()));
+      console.log("successfully backed up!");
+    },
+    getTasks() {
+      return this.$refs.mingantt.getTasks();
     }
   },
   mounted() {

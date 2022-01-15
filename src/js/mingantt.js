@@ -50,7 +50,8 @@ var mingantt = {
         planWorkload: 0,
         actualWorkload: 0,
         planWorkloadMap: "",
-        content: ""
+        content: "",
+        parentTaskId: 0
       },
       form: {
         categoryId: '',
@@ -65,7 +66,8 @@ var mingantt = {
         planWorkload: 0,
         actualWorkload: 0,
         planWorkloadMap: "",
-        content: ""
+        content: "",
+        parentTaskId: 0
       },
       update_mode: false,
       encodeFn: null,
@@ -343,6 +345,8 @@ var mingantt = {
             <div class="mg-form-item">
               <label> Progress: </label>
               <input class="mg-form-input mg-w-22" v-model="form.progress" type="number"><span>%</span>
+              <label> Parent: </label>
+              <input class="mg-form-input mg-w-22" v-model="form.parentTaskId" type="number">
             </div>
           </div>
           <div name="right" style="float:right; padding:5px;">
@@ -756,18 +760,47 @@ var mingantt = {
     lists() {
       const self = this;
       let lists = [];
-      this.categories.map(category => {
-        lists.push({ cat: 'category', ...category });
-        this.tasks.map(task => {
-          if(task.actualEndDate !== "" && self.hideCompletedTask) {
-            return;
-          }
 
-          if (task.categoryId === category.taskId && !category.collapsed) {
-            lists.push({ cat: 'task', ...task })
-          }
-        })
-      })
+      let recursiveMakeSortKey = (task, cur, tasks) => {
+        return (task.parentTaskId === 0)? 
+            cur 
+            : recursiveMakeSortKey(
+                tasks.find(x => x.taskId === task.parentTaskId), 
+                task.parentTaskId.toString().padStart(7,"0") + "-" + cur, 
+                tasks);
+      };
+
+      let makeSortKey = (task) => {
+        return recursiveMakeSortKey(task, task.taskId.toString().padStart(7,"0"), this.tasks);
+      };
+
+      this.tasks.sort((a,b) => {
+        let sortKeyA = makeSortKey(a);
+        let sortKeyB = makeSortKey(b);
+
+        if(sortKeyA < sortKeyB) {
+          return -1;
+        } else if(sortKeyA = sortKeyB) {
+          return 0;
+        }  else if(sortKeyA > sortKeyB) {
+          return 1;
+        }
+      });
+
+      lists = this.tasks;
+
+      // this.categories.map(category => {
+      //   lists.push({ cat: 'category', ...category });
+      //   this.tasks.map(task => {
+      //     if(task.actualEndDate !== "" && self.hideCompletedTask) {
+      //       return;
+      //     }
+
+      //     if (task.categoryId === category.taskId && !category.collapsed) {
+      //       lists.push({ cat: 'task', ...task })
+      //     }
+      //   })
+      // })
       return lists;
     },
     taskBars() {

@@ -350,13 +350,19 @@ var mingantt = {
             </div>
           </div>
         </div>
-        <div style="clear:right; clear:left;">
+        <div style="clear:both;">
           <div v-if="update_mode" class="mg-flex mg-items-center mg-justify-left">
             <button @click="updateTask(form.taskId)" class="mg-green mg-text-white mg-py-2 mg-px-16 mg-rounded-lg mg-text-xs mg-flex mg-items-center">
               <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              <span class="mg-text-xs  mg-text-white">Register</span>
+              <span class="mg-text-xs  mg-text-white" style="white-space: nowrap;">Save and Close</span>
+            </button>
+            <button @click="updateTask(form.taskId, false)" class="mg-green mg-text-white mg-py-2 mg-px-16 mg-rounded-lg mg-text-xs mg-flex mg-items-center mg-ml-2">
+              <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              <span class="mg-text-xs  mg-text-white">Save</span>
             </button>
             <button @click="deleteTask(form.taskId)"
                     class="mg-red mg-text-white mg-py-2 mg-px-4 mg-rounded-lg mg-flex mg-items-center mg-ml-2" >
@@ -646,7 +652,7 @@ var mingantt = {
       console.log(task);
       console.log(this.form);
     },
-    updateTask(taskId) {
+    updateTask(taskId, clear=true) {
       // Auto set progress
       if(this.form.actualEndDate !== "") {
         this.form.progress = 100;
@@ -662,11 +668,13 @@ var mingantt = {
         this.onUpdateTask(task, "update");
       }
 
-      // Clear form
-      this.form = {}
+      if(clear) {
+        // Clear form
+        this.form = {}
 
-      // Close edit form
-      this.show = false;
+        // Close edit form
+        this.show = false;
+      }
     },
     silentEditTask(task) {
       this.editTask(task, true);

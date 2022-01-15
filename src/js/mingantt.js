@@ -470,6 +470,11 @@ var mingantt = {
           let planEndDate = moment(task.planEndDate).add(-days, 'days')
           task['planStartDate'] = planStartDate.format('YYYY-MM-DD')
           task['planEndDate'] = planEndDate.format('YYYY-MM-DD')
+
+          // Fires handler
+          if(this.onUpdateTask) {
+            this.onUpdateTask(task, "update");
+          }
         } else {
           this.element.style.left = `${this.left.replace('px', '')}px`;
         }
@@ -486,6 +491,11 @@ var mingantt = {
           } else {
             task['planStartDate'] = planStartDate.format('YYYY-MM-DD')
           }
+
+          // Fires handler
+          if(this.onUpdateTask) {
+            this.onUpdateTask(task, "update");
+          }
         } else {
           this.element.style.width = this.width;
           this.element.style.left = `${this.left.replace('px', '')}px`;
@@ -501,6 +511,11 @@ var mingantt = {
           let task = this.tasks.find(task => task.taskId === this.task_id);
           let planEndDate = moment(task.planEndDate).add(-days, 'days')
           task['planEndDate'] = planEndDate.format('YYYY-MM-DD')
+
+          // Fires handler
+          if(this.onUpdateTask) {
+            this.onUpdateTask(task, "update");
+          }
         } else {
           let task = this.tasks.find(task => task.taskId === this.task_id);
           let planStartDate = moment(task.planStartDate);
@@ -509,6 +524,11 @@ var mingantt = {
             task['planEndDate'] = planStartDate.format('YYYY-MM-DD')
           } else {
             task['planEndDate'] = planEndDate.format('YYYY-MM-DD')
+          }
+
+          // Fires handler
+          if(this.onUpdateTask) {
+            this.onUpdateTask(task, "update");
           }
         }
       }

@@ -254,12 +254,12 @@ var mingantt = {
         <div v-for="(bar,index) in taskBars" :key="index">
 
           <!-- Focused -->
-          <div :style="bar.barStyle" style="background-color:rgba(253, 226, 184, 0.5)" class="mg-absolute mg-h-2" v-if="(selectedTask !== null) && (bar.task.cat === 'task') && (bar.task.taskId === selectedTask.taskId)">
+          <div :style="bar.barStyle" style="background-color:rgba(253, 226, 184, 0.5)" class="mg-absolute mg-h-2" v-if="(selectedTask !== null) && (bar.task.taskId === selectedTask.taskId)">
           </div>
 
           <!-- Plan -->
           <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border mg-task" 
-              v-if="bar.task.cat === 'task' && bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
+              v-if="bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
               @click="selectTask(bar.task)">
             <div class="mg-w-full mg-h-full" style="pointer-events: none;">
               <div class="mg-h-full" 
@@ -278,7 +278,7 @@ var mingantt = {
 
           <!-- Actual -->
           <div :style="bar.actualStyle" style="cursor:pointer; " class="mg-absolute mg-h-2 mg-border mg-actual mg-task" 
-              v-if="bar.task.cat === 'task' && bar.actualStyle.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
+              v-if="bar.actualStyle.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
               @click="selectTask(bar.task)">
             <div class="mg-w-full mg-h-full mg-task" style="pointer-events: none;">
               <div class="mg-h-full" 
@@ -415,7 +415,12 @@ var mingantt = {
 
         // Set collapse info
         this.tasks.map((x) => {
-          this.collapseInfoSet[x.taskId] = false;
+          let savedCollapseState = localStorage.getItem("mingantt/collapsed/" + x.taskId.toString());
+          if(savedCollapseState) {
+            this.collapseInfoSet[x.taskId] = JSON.parse(savedCollapseState);
+          } else {
+            this.collapseInfoSet[x.taskId] = false;
+          }
         });
       } else {
         this.tasks = tasks;
@@ -605,30 +610,34 @@ var mingantt = {
     dragTaskOver(overTask) {
       let deleteIndex;
       let addIndex;
-      if (this.task.cat !== 'category') {
-        if (overTask.cat === 'category') {
-          let updateTask = this.tasks.find(task => task.taskId === this.task.taskId)
-          updateTask['categoryId'] = overTask['taskId']
+      // if (this.task.cat !== 'category') {
+        // if (overTask.cat === 'category') {
+        //   let updateTask = this.tasks.find(task => task.taskId === this.task.taskId)
+        //   updateTask['categoryId'] = overTask['taskId']
 
-          // Fires handler
-          if(this.onUpdateTask) {
-            this.onUpdateTask(this.task, "update");
-          }
-        } else {
-          if (overTask.taskId !== this.task.taskId) {
-            this.tasks.map((task, index) => { if (task.taskId === this.task.taskId) deleteIndex = index })
-            this.tasks.map((task, index) => { if (task.taskId === overTask.taskId) addIndex = index })
-            this.tasks.splice(deleteIndex, 1)
-            this.task['categoryId'] = overTask['categoryId']
-            this.tasks.splice(addIndex, 0, this.task)
+        //   // Fires handler
+        //   if(this.onUpdateTask) {
+        //     this.onUpdateTask(this.task, "update");
+        //   }
+        // } else {
+          if (overTask.taskId !== this.task.taskId && overTask.parentTaskId === this.task.parentTaskId) {
+            // this.tasks.map((task, index) => { if (task.taskId === this.task.taskId) deleteIndex = index })
+            // this.tasks.map((task, index) => { if (task.taskId === overTask.taskId) addIndex = index })
+            // this.tasks.splice(deleteIndex, 1)
+            // this.task['categoryId'] = overTask['categoryId']
+            // this.tasks.splice(addIndex, 0, this.task)
+
+            let tmp = this.task.sortOrder;
+            this.task.sortOrder = overTask.sortOrder;
+            overTask.sortOrder = tmp;
 
             // Fires handler
             if(this.onUpdateTask) {
               this.onUpdateTask(this.task, "update");
             }
           }
-        }
-      }
+        // }
+      // }
     },
     toggleCategory(task_id) {
       let category = this.categories.find(category => category.taskId === task_id)
@@ -636,6 +645,7 @@ var mingantt = {
     },
     toggleCollapsed(taskId) {
       this.collapseInfoSet[taskId] = !this.collapseInfoSet[taskId];
+      localStorage.setItem("mingantt/collapsed/" + taskId.toString(), JSON.stringify(this.collapseInfoSet[taskId]));
     },
     addTask() {
       this.update_mode = false;
@@ -799,8 +809,8 @@ var mingantt = {
       });
 
       // format function
-      let paddedTaskId = (taskId) => {
-        return taskId.toString().padStart(7,"0");
+      let makeSortKey = (task) => {
+        return task.sortOrder.toString().padStart(7,"0") + task.taskId.toString().padStart(7,"0");
       };
 
       // Calulate sortKey and level info
@@ -809,7 +819,7 @@ var mingantt = {
             cur 
             : calcSortAndLevelInfo(
                 taskHashSet[task.parentTaskId], 
-                { sortKey: paddedTaskId(task.parentTaskId) + "-" + cur.sortKey, level: cur.level + 1 }, 
+                { sortKey: makeSortKey(taskHashSet[task.parentTaskId]) + "-" + cur.sortKey, level: cur.level + 1 }, 
                 tasks);
       };
 
@@ -828,7 +838,7 @@ var mingantt = {
         var vi = vis[x.taskId];
 
         // Set sortKey and level info
-        let sortAndLevelInfo = calcSortAndLevelInfo(x, { sortKey: paddedTaskId(x.taskId), level: 0 }, this.tasks);
+        let sortAndLevelInfo = calcSortAndLevelInfo(x, { sortKey: makeSortKey(x), level: 0 }, this.tasks);
         vi.sortKey = sortAndLevelInfo.sortKey;
         vi.level = sortAndLevelInfo.level;
 
@@ -845,7 +855,7 @@ var mingantt = {
       const self = this;
       let lists = [];
 
-      // let paddedTaskId = (taskId) => {
+      // let makeSortKey = (taskId) => {
       //   return taskId.toString().padStart(7,"0");
       // };
 
@@ -859,12 +869,12 @@ var mingantt = {
       //       cur 
       //       : calcViewInfo(
       //           taskHashSet[task.parentTaskId], 
-      //           { sortKey: paddedTaskId(task.parentTaskId) + "-" + cur.sortKey, level: cur.level + 1 }, 
+      //           { sortKey: makeSortKey(task.parentTaskId) + "-" + cur.sortKey, level: cur.level + 1 }, 
       //           tasks);
       // };
 
       // let setViewInfo = (task) => {
-      //   task.__viewInfo = calcViewInfo(task, { sortKey: paddedTaskId(task.taskId), level: 0 }, this.tasks);
+      //   task.__viewInfo = calcViewInfo(task, { sortKey: makeSortKey(task.taskId), level: 0 }, this.tasks);
       // };
 
       // this.tasks.map(setViewInfo);
@@ -916,42 +926,40 @@ var mingantt = {
       let barStyle;
       return this.displayTasks.map(task => {
         style = {}
-        if(task.cat==='task'){
-          let date_from = moment(task.planStartDate);
-          let date_to = moment(task.planEndDate);
-          let ac_date_from = moment(task.actualStartDate);
-          let ac_date_to = (task.actualEndDate !== "")? (moment(task.actualEndDate)) : (moment());
-          between = date_to.diff(date_from, 'days');
-          between++;
-          betweenAc = ac_date_to.diff(ac_date_from, 'days');
-          betweenAc++;
-          start = date_from.diff(planStartDate, 'days');
-          startAc = ac_date_from.diff(planStartDate, 'days');
-          left = start * this.block_size - 1;
-          leftAc = startAc * this.block_size - 1;
-          style = {
-            top: `${top}px`,
-            left: `${left}px`,
-            width: `${this.block_size * between + 1}px`,
-            scheduled: (task.planStartDate !== ""),
-          };
-          actualStyle = {
-            top: `${top+7}px`,
-            left: `${leftAc}px`,
-            width: `${this.block_size * betweenAc + 1}px`,
-            scheduled: (task.actualStartDate !== ""),
-          };
-          var blocks = 0;
-          this.calendars.map((cal) => {  
-            blocks = blocks + cal.days.length;
-          });
-          barStyle = {
-            top: `${top - 3}px`,
-            height: `${this.rowHeight}px`,
-            left: `${0}px`,
-            width: `${this.block_size * blocks}px`,
-          };
-        }
+        let date_from = moment(task.planStartDate);
+        let date_to = moment(task.planEndDate);
+        let ac_date_from = moment(task.actualStartDate);
+        let ac_date_to = (task.actualEndDate !== "")? (moment(task.actualEndDate)) : (moment());
+        between = date_to.diff(date_from, 'days');
+        between++;
+        betweenAc = ac_date_to.diff(ac_date_from, 'days');
+        betweenAc++;
+        start = date_from.diff(planStartDate, 'days');
+        startAc = ac_date_from.diff(planStartDate, 'days');
+        left = start * this.block_size - 1;
+        leftAc = startAc * this.block_size - 1;
+        style = {
+          top: `${top}px`,
+          left: `${left}px`,
+          width: `${this.block_size * between + 1}px`,
+          scheduled: (task.planStartDate !== ""),
+        };
+        actualStyle = {
+          top: `${top+7}px`,
+          left: `${leftAc}px`,
+          width: `${this.block_size * betweenAc + 1}px`,
+          scheduled: (task.actualStartDate !== ""),
+        };
+        var blocks = 0;
+        this.calendars.map((cal) => {  
+          blocks = blocks + cal.days.length;
+        });
+        barStyle = {
+          top: `${top - 3}px`,
+          height: `${this.rowHeight}px`,
+          left: `${0}px`,
+          width: `${this.block_size * blocks}px`,
+        };
         top = top + this.rowHeight;
         return {
           style,

@@ -159,7 +159,7 @@ var mingantt = {
             </div>
             <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
               <!-- {{task.subject }} -->
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.subject" >
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" :style="'hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left;' + 'margin-left:' + (task.__viewInfo.level*10) + 'px'" v-model="task.subject" >
             </div>
             <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
               <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planStartDate" type="date">
@@ -761,22 +761,28 @@ var mingantt = {
       const self = this;
       let lists = [];
 
-      let recursiveMakeSortKey = (task, cur, tasks) => {
+      let paddedTaskId = (taskId) => {
+        return taskId.toString().padStart(7,"0");
+      };
+
+      let calcViewInfo = (task, cur, tasks) => {
         return (task.parentTaskId === 0)? 
             cur 
-            : recursiveMakeSortKey(
+            : calcViewInfo(
                 tasks.find(x => x.taskId === task.parentTaskId), 
-                task.parentTaskId.toString().padStart(7,"0") + "-" + cur, 
+                { sortKey: paddedTaskId(task.parentTaskId) + "-" + cur.sortKey, level: cur.level + 1 }, 
                 tasks);
       };
 
-      let makeSortKey = (task) => {
-        return recursiveMakeSortKey(task, task.taskId.toString().padStart(7,"0"), this.tasks);
+      let setViewInfo = (task) => {
+        task.__viewInfo = calcViewInfo(task, { sortKey: paddedTaskId(task.taskId), level: 0 }, this.tasks);
       };
 
+      this.tasks.map(setViewInfo);
+
       this.tasks.sort((a,b) => {
-        let sortKeyA = makeSortKey(a);
-        let sortKeyB = makeSortKey(b);
+        let sortKeyA = a.__viewInfo.sortKey;
+        let sortKeyB = b.__viewInfo.sortKey;
 
         if(sortKeyA < sortKeyB) {
           return -1;

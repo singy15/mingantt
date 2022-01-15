@@ -113,6 +113,12 @@ function encodeTask(task) {
   encoded.planEndDate = encodeDateFormat(encoded.planEndDate);
   encoded.actualStartDate = encodeDateFormat(encoded.actualStartDate);
   encoded.actualEndDate = encodeDateFormat(encoded.actualEndDate);
+  // encoded.sortOrder = encoded.taskId;
+  // if(encoded.parentTaskId === 1) {
+  //   encoded.parentTaskId = 0;
+  // }
+  encoded.cat = undefined;
+  console.log(encoded);
   return encoded;
 }
 

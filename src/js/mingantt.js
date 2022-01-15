@@ -620,12 +620,16 @@ var mingantt = {
         //     this.onUpdateTask(this.task, "update");
         //   }
         // } else {
-          if (overTask.taskId !== this.task.taskId && overTask.parentTaskId === this.task.parentTaskId) {
+          if (overTask.taskId !== this.task.taskId) {
             // this.tasks.map((task, index) => { if (task.taskId === this.task.taskId) deleteIndex = index })
             // this.tasks.map((task, index) => { if (task.taskId === overTask.taskId) addIndex = index })
             // this.tasks.splice(deleteIndex, 1)
             // this.task['categoryId'] = overTask['categoryId']
             // this.tasks.splice(addIndex, 0, this.task)
+
+            if(overTask.parentTaskId !== this.task.parentTaskId) {
+              this.task.parentTaskId = overTask.parentTaskId;
+            }
 
             let tmp = this.task.sortOrder;
             this.task.sortOrder = overTask.sortOrder;
@@ -666,6 +670,9 @@ var mingantt = {
       } else if(this.form.actualEndDate === "") {
         this.form.progress = 0;
       }
+
+      // Set sortOrder
+      this.form.sortOrder = this.form.taskId;
 
       this.tasks.push(
         this.form

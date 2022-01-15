@@ -304,13 +304,13 @@ var mingantt = {
             <div class="mg-form-item">
               <label>ID: </label>
               <input class="mg-form-input mg-w-22" v-model.number="form.taskId" :disabled="update_mode">
-            </div>
-            <div class="mg-form-item">
-              <label>Category ID: </label>
+              <label> Category: </label>
               <select v-model="form.categoryId" class=" mg-border mg-px-4 mg-py-2 mg-rounded-lg">
                 <option v-for="category in categories" :key="category.taskId" :value="category.taskId">{{ category.subject }}
                 </option>
               </select>
+            </div>
+            <div class="mg-form-item">
             </div>
             <div class="mg-form-item">
               <label>Subject: </label>
@@ -321,26 +321,28 @@ var mingantt = {
               <input class="mg-form-input mg-w-24" v-model="form.assignedUserId">
             </div>
             <div class="mg-form-item">
-              <label>Planned Term: </label>
-              <input class="mg-form-input" v-model="form.planStartDate" type="date">
-              <input class="mg-form-input" v-model="form.planEndDate" type="date">
+              <label>Pl. Term: </label>
+              <input class="mg-form-input mg-no-rounded-br mg-no-rounded-tr" v-model="form.planStartDate" type="date">
+              <input class="mg-form-input mg-no-rounded-bl mg-no-rounded-tl" v-model="form.planEndDate" type="date">
             </div>
             <div class="mg-form-item">
-              <label>Actual Term: </label>
-              <input class="mg-form-input" v-model="form.actualStartDate" type="date">
-              <input class="mg-form-input" v-model="form.actualEndDate" type="date">
+              <label>Ac. Term: </label>
+              <input class="mg-form-input mg-no-rounded-br mg-no-rounded-tr" v-model="form.actualStartDate" type="date">
+              <input class="mg-form-input mg-no-rounded-bl mg-no-rounded-tl" v-model="form.actualEndDate" type="date">
             </div>
             <div class="mg-form-item">
-              <label>Plan Workload: </label>
+              <label>Pl. Workload: </label>
               <input class="mg-form-input mg-w-22" v-model="form.planWorkload" type="number">
               <label> WL/Map: </label>
               <input class="mg-form-input mg-w-22" v-model="form.planWorkloadMap">
             </div>
             <div class="mg-form-item">
-              <label> Actual Workload: </label>
+              <label> Ac. Workload: </label>
               <input class="mg-form-input mg-w-22" v-model="form.actualWorkload" type="number">
+            </div>
+            <div class="mg-form-item">
               <label> Progress: </label>
-              <input class="mg-form-input mg-w-22" v-model="form.progress" type="number">
+              <input class="mg-form-input mg-w-22" v-model="form.progress" type="number"><span>%</span>
             </div>
           </div>
           <div name="right" style="float:right; padding:5px;">

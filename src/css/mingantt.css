@@ -373,6 +373,22 @@ input {
   border-radius: 0.5rem;
 }
 
+.mg-no-rounded-tr {
+  border-top-right-radius: 0rem 0rem !important;
+}
+
+.mg-no-rounded-br {
+  border-bottom-right-radius: 0rem 0rem !important;
+}
+
+.mg-no-rounded-tl {
+  border-top-left-radius: 0rem 0rem !important;
+}
+
+.mg-no-rounded-bl {
+  border-bottom-left-radius: 0rem 0rem !important;
+}
+
 .mg-ml-2 {
   margin-left: 0.5rem;
 }

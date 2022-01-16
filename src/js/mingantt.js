@@ -878,30 +878,6 @@ var mingantt = {
       const self = this;
       let lists = [];
 
-      // let makeSortKey = (taskId) => {
-      //   return taskId.toString().padStart(7,"0");
-      // };
-
-      // let taskHashSet = {};
-      // this.tasks.map((x) => { 
-      //   taskHashSet[x.taskId] = x; 
-      // });
-
-      // let calcViewInfo = (task, cur, tasks) => {
-      //   return (task.parentTaskId === 0)? 
-      //       cur 
-      //       : calcViewInfo(
-      //           taskHashSet[task.parentTaskId], 
-      //           { sortKey: makeSortKey(task.parentTaskId) + "-" + cur.sortKey, level: cur.level + 1 }, 
-      //           tasks);
-      // };
-
-      // let setViewInfo = (task) => {
-      //   task.__viewInfo = calcViewInfo(task, { sortKey: makeSortKey(task.taskId), level: 0 }, this.tasks);
-      // };
-
-      // this.tasks.map(setViewInfo);
-
       let vis = this.viewInfoSet;
 
       lists = this.tasks.filter((x) => {
@@ -921,18 +897,6 @@ var mingantt = {
         }
       });
 
-      // this.categories.map(category => {
-      //   lists.push({ cat: 'category', ...category });
-      //   this.tasks.map(task => {
-      //     if(task.actualEndDate !== "" && self.hideCompletedTask) {
-      //       return;
-      //     }
-
-      //     if (task.categoryId === category.taskId && !category.collapsed) {
-      //       lists.push({ cat: 'task', ...task })
-      //     }
-      //   })
-      // })
       return lists;
     },
     taskBars() {

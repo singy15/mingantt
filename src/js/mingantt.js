@@ -81,7 +81,8 @@ var mingantt = {
       },
       notifyMessage: "",
       hideCompletedTask: false,
-      collapseInfoSet: {}
+      collapseInfoSet: {},
+      autoSetProgress: true
     };
   },
   template:
@@ -354,12 +355,24 @@ var mingantt = {
             <div class="mg-form-item">
               <label> Ac. Workload: </label>
               <input class="mg-form-input mg-w-22" v-model="form.actualWorkload" type="number">
+              <label> Parent: </label>
+              <input class="mg-form-input mg-w-22" v-model="form.parentTaskId" type="number">
             </div>
             <div class="mg-form-item">
               <label> Progress: </label>
               <input class="mg-form-input mg-w-22" v-model="form.progress" type="number"><span>%</span>
-              <label> Parent: </label>
-              <input class="mg-form-input mg-w-22" v-model="form.parentTaskId" type="number">
+              <span>&nbsp;</span>
+              <label><input type="checkbox" v-model="autoSetProgress"/>Auto-Set</label>
+              <br>
+              <progress :value="form.progress" max="100" class="mg-w-full"></progress>
+              <br>
+              <div class="mg-w-full" style="display:flex; justify-content: space-between;">
+                <div style="cursor:pointer;" @click="setFormProgress(0)">0%</div>
+                <div style="cursor:pointer;" @click="setFormProgress(25)">25%</div>
+                <div style="cursor:pointer;" @click="setFormProgress(50)">50%</div>
+                <div style="cursor:pointer;" @click="setFormProgress(75)">75%</div>
+                <div style="cursor:pointer;" @click="setFormProgress(100)">100%</div>
+              </div>
             </div>
           </div>
           <div name="right" style="float:right; padding:5px;">
@@ -665,9 +678,9 @@ var mingantt = {
       }
 
       // Auto set progress
-      if(this.form.actualEndDate !== "") {
+      if(this.autoSetProgress && this.form.actualEndDate !== "") {
         this.form.progress = 100;
-      } else if(this.form.actualEndDate === "") {
+      } else if(this.autoSetProgress && this.form.actualEndDate === "") {
         this.form.progress = 0;
       }
 
@@ -698,9 +711,9 @@ var mingantt = {
     },
     updateTask(taskId, clear=true) {
       // Auto set progress
-      if(this.form.actualEndDate !== "") {
+      if(this.autoSetProgress && this.form.actualEndDate !== "") {
         this.form.progress = 100;
-      } else if(this.form.actualEndDate === "") {
+      } else if(this.autoSetProgress && this.form.actualEndDate === "") {
         this.form.progress = 0;
       }
 
@@ -769,6 +782,9 @@ var mingantt = {
         this.notifyMessage = "";
         this.notifyStyle.display = "none";
       }, time);
+    },
+    setFormProgress(progress) {
+      this.form.progress = progress;
     }
   },
   mounted() {

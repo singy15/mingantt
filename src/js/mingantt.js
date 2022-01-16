@@ -4,8 +4,8 @@ import '../css/mingantt.css';
 var mingantt = {
   data: function () {
     return {
-      start_month: moment().add(-1, "months").format("YYYY-MM") /*'2021-10'*/,
-      end_month: moment().add(2, "months").format("YYYY-MM") /*'2022-02'*/,
+      start_month: moment().add(-1, "months").format("YYYY-MM"),
+      end_month: moment().add(2, "months").format("YYYY-MM"),
       block_size: 24,
       block_number: 0,
       calendars:[],

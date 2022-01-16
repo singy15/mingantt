@@ -320,11 +320,11 @@ var mingantt = {
             <div class="mg-form-item">
               <label>ID: </label>
               <input class="mg-form-input mg-w-22" v-model.number="form.taskId" :disabled="update_mode">
-              <label> Category: </label>
-              <select v-model="form.categoryId" class=" mg-border mg-px-4 mg-py-2 mg-rounded-lg">
-                <option v-for="category in categories" :key="category.taskId" :value="category.taskId">{{ category.subject }}
-                </option>
-              </select>
+              <!-- <label> Category: </label> -->
+              <!-- <select v-model="form.categoryId" class=" mg-border mg-px-4 mg-py-2 mg-rounded-lg"> -->
+              <!--   <option v-for="category in categories" :key="category.taskId" :value="category.taskId">{{ category.subject }} -->
+              <!--   </option> -->
+              <!-- </select> -->
             </div>
             <div class="mg-form-item">
             </div>

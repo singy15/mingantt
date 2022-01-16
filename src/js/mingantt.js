@@ -787,6 +787,11 @@ var mingantt = {
       this.updateTask(task.taskId);
     },
     deleteTask(taskId) {
+      if(this.tasks.find((x) => x.parentTaskId === taskId)) {
+        alert("Delete children of this task first!");
+        return;
+      }
+
       let delete_index;
       this.tasks.map((task, index) => {
         if (task.taskId === taskId) delete_index = index;

@@ -258,6 +258,10 @@ var mingantt = {
           <div :style="bar.barStyle" style="background-color:rgba(253, 226, 184, 0.5)" class="mg-absolute mg-h-2" v-if="(selectedTask !== null) && (bar.task.taskId === selectedTask.taskId)">
           </div>
 
+          <!-- Focused -->
+          <div :style="bar.barStyle" style="background-color:transparent; border-top:solid 1px #DDD;" class="mg-absolute mg-h-2">
+          </div>
+
           <!-- Plan -->
           <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border mg-task" 
               v-if="bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" 

@@ -677,7 +677,7 @@ var mingantt = {
 
             // Fires handler
             if(this.onUpdateTask) {
-              this.onUpdateTask({update: [this.task]});
+              this.onUpdateTask({update: [this.task, overTask]});
             }
           }
         // }

@@ -163,8 +163,8 @@ const app = Vue.createApp({
     this.$refs.mingantt.encodeFn = encodeTask;
     this.$refs.mingantt.decodeFn = decodeTask;
     this.$refs.mingantt.loadTasks(testData);
-    this.$refs.mingantt.onUpdateTask = function(task, oper) {
-      console.log(task, oper);
+    this.$refs.mingantt.onUpdateTask = function(info) {
+      console.log(info);
 
       if(timeoutSaveLocalStorage) {
         clearTimeout(timeoutSaveLocalStorage);

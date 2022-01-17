@@ -73,7 +73,7 @@ var mingantt = {
       encodeFn: null,
       decodeFn: null,
       rowHeight: 20,
-      onUpdateTask: null, // (task, oper {"update" | "insert" | "delete"}) => void
+      onUpdateTask: null, // (updateInfo => { update: [...], delete: [...], insert: [...] }) => void
       selectedTask: null,
       notifyStyle: {
         position: "absolute",
@@ -531,7 +531,7 @@ var mingantt = {
 
           // Fires handler
           if(this.onUpdateTask) {
-            this.onUpdateTask(task, "update");
+            this.onUpdateTask({update: [task]});
           }
         } else {
           this.element.style.left = `${this.left.replace('px', '')}px`;
@@ -552,7 +552,7 @@ var mingantt = {
 
           // Fires handler
           if(this.onUpdateTask) {
-            this.onUpdateTask(task, "update");
+            this.onUpdateTask({update: [task]});
           }
         } else {
           this.element.style.width = this.width;
@@ -572,7 +572,7 @@ var mingantt = {
 
           // Fires handler
           if(this.onUpdateTask) {
-            this.onUpdateTask(task, "update");
+            this.onUpdateTask({update: [task]});
           }
         } else {
           let task = this.tasks.find(task => task.taskId === this.task_id);
@@ -586,7 +586,7 @@ var mingantt = {
 
           // Fires handler
           if(this.onUpdateTask) {
-            this.onUpdateTask(task, "update");
+            this.onUpdateTask({update: [task]});
           }
         }
       }
@@ -677,7 +677,7 @@ var mingantt = {
 
             // Fires handler
             if(this.onUpdateTask) {
-              this.onUpdateTask(this.task, "update");
+              this.onUpdateTask({update: [this.task]});
             }
           }
         // }
@@ -720,7 +720,7 @@ var mingantt = {
 
       // Fires handler
       if(this.onUpdateTask) {
-        this.onUpdateTask(this.form, "insert");
+        this.onUpdateTask({insert: this.form});
       }
 
       // Clear form
@@ -771,7 +771,7 @@ var mingantt = {
 
       // Fires handler
       if(this.onUpdateTask) {
-        this.onUpdateTask(task, "update");
+        this.onUpdateTask({update: task});
       }
 
       if(clear) {
@@ -801,7 +801,7 @@ var mingantt = {
 
       // Fires handler
       if(this.onUpdateTask) {
-        this.onUpdateTask(deleted[0], "delete");
+        this.onUpdateTask({delete: [deleted[0]]});
       }
 
       // Clear form

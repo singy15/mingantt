@@ -161,9 +161,8 @@ var mingantt = {
             </div>
             <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
               <!-- {{task.subject }} -->
-              <span v-for="n of viewInfoSet[task.taskId].level" :key="n" style="display:inline-block; width:15px; height:100%; border:none; border-left:solid 1px #AAA; margin-left: 5px; box-sizing:border-box;"></span>
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" :style="'hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left;'" v-model="task.subject" >
-              <div class="pr-4" @click="toggleCollapsed(task.taskId)" v-if="viewInfoSet[task.taskId].children">
+              <span v-for="n of viewInfoSet[task.taskId].level" :key="n" style="display:inline-block; width:13px; height:100%; border:none; border-left:solid 1px #AAA; margin-left: 7px; box-sizing:border-box;"></span>
+              <div class="pr-4" @click="toggleCollapsed(task.taskId)" v-if="viewInfoSet[task.taskId].children" style="width:16px;">
                 <span v-if="collapseInfoSet[task.taskId]">
                   <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -175,6 +174,7 @@ var mingantt = {
                   </svg>
                 </span>
               </div>
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" :style="'width:'+'calc(100% - '+(viewInfoSet[task.taskId].level*21+((viewInfoSet[task.taskId].children)? 16 : 0)).toString()+'px)'+';'+'hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left;'" v-model="task.subject" >
             </div>
             <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
               <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planStartDate" type="date">

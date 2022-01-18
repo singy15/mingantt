@@ -126,6 +126,17 @@ var mingantt = {
               <span class=" mg-text-xs">Add</span>
               -->
             </button>
+            <button @click="addChildTask" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-full mg-justify-center" style="margin-left:5px">
+              <!--
+              <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              -->
+              <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              <span class=" mg-text-xs">Sub</span>
+            </button>
             <label class="mg-text-xs"><input type="checkbox" v-model="hideCompletedTask"/>Hide Cmpl.</label>
           </div>
         </div>
@@ -699,6 +710,17 @@ var mingantt = {
     addTask() {
       this.update_mode = false;
       this.form = {...this.formDefault};
+      this.show = true;
+    },
+    addChildTask() {
+      if(this.selectedTask == null || this.tasks.find(x => x.taskId === this.selectedTask.taskId) === undefined) {
+        alert("Select parent task!");
+        return;
+      }
+
+      this.update_mode = false;
+      this.form = {...this.formDefault};
+      this.form.parentTaskId = this.selectedTask.taskId;
       this.show = true;
     },
     saveTask() {

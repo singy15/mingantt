@@ -266,6 +266,15 @@ var mingantt = {
       <div id="gantt-bar-area" class="mg-relative" :style="'width:' + calendarViewWidth + 'px;' + 'height:' + calendarViewHeight + 'px'">
         <div v-for="(bar,index) in taskBars" :key="index">
 
+          <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:90;' + 'top:' + (bar.style.topRaw + 5).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - 15).toString() + 'px' + ';' + '' + ';'">
+            +
+          </span>
+          <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && !collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:90;' + 'top:' + (bar.style.topRaw + 5).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - (viewInfoSet[bar.task.taskId].deepestLevel - viewInfoSet[bar.task.taskId].level) * 10 - 10).toString() + 'px' + ';' + '' + ';'">
+            -
+          </span>
+
+          <div v-if="viewInfoSet[bar.task.taskId].children && !collapseInfoSet[bar.task.taskId]" :style="'position:absolute; border-top-left-radius:3px; border-bottom-left-radius:3px; ' + 'top:' + (bar.style.topRaw).toString() + 'px' + ';' + ' left:' + ((bar.style.leftRaw - (viewInfoSet[bar.task.taskId].deepestLevel - viewInfoSet[bar.task.taskId].level) * 10)).toString() + 'px' + ';' + ' color:#888; border-left:solid 2px #CCC; border-top:solid 2px #CCC; border-bottom:solid 2px #CCC; width:2px;' + 'height:' + ((!collapseInfoSet[bar.task.taskId])? (viewInfoSet[bar.task.taskId].showMemberCount + 1) * rowHeight - 9 : rowHeight - 4).toString() + ';'"></div>
+
           <!-- Focused -->
           <div :style="bar.barStyle" style="background-color:rgba(253, 226, 184, 0.5)" class="mg-absolute mg-h-2" v-if="(selectedTask !== null) && (bar.task.taskId === selectedTask.taskId)">
           </div>
@@ -896,10 +905,13 @@ var mingantt = {
     viewInfoSet() {
       console.log("calculate viewInfoSet");
 
+
       // Initialize taskHashSet and viewInfoSet
+ 
       let vis = {};
       let taskHashSet = {};
       let taskChildrenHashSet = {};
+      let taskDeepestLevelHashSet = {};
       this.tasks.map((x) => { 
         taskHashSet[x.taskId] = x; 
         vis[x.taskId] = {};
@@ -911,6 +923,7 @@ var mingantt = {
             taskChildrenHashSet[x.parentTaskId].push(x);
           }
         }
+
       });
 
       // format function
@@ -952,6 +965,42 @@ var mingantt = {
 
         // Set children
         vi.children = taskChildrenHashSet[x.taskId];
+
+        vi.deepestLevel = 0;
+
+        vi.memberCount = 0;
+        vi.showMemberCount = 0;
+      });
+
+      let deepestLevel = (task, cur) => {
+        if(vis[cur.taskId].deepestLevel < vis[task.taskId].level) {
+          vis[cur.taskId].deepestLevel = vis[task.taskId].level;
+        }
+
+        vis[cur.taskId].memberCount = vis[cur.taskId].memberCount + 1;
+        if(vis[task.taskId].show) {
+          vis[cur.taskId].showMemberCount = vis[cur.taskId].showMemberCount + 1;
+        }
+
+        if(cur.parentTaskId === 0) {
+          return;
+        }
+
+        deepestLevel(task, taskHashSet[cur.parentTaskId]);
+      };
+
+      this.tasks.map((x) => {
+        // var vi = vis[x.taskId];
+
+        // // Set deepest level
+        // if(vi.children) {
+        //   vi.deepestLevel = taskDeepestLevelHashSet[x.taskId];
+        //   console.log(x.taskId, vi.deepestLevel);
+        // }
+
+        if(x.parentTaskId !== 0) {
+          deepestLevel(x, taskHashSet[x.parentTaskId]);
+        }
       });
       
       return vis;
@@ -1010,6 +1059,8 @@ var mingantt = {
         style = {
           top: `${top}px`,
           left: `${left}px`,
+          topRaw: top,
+          leftRaw: left,
           width: `${this.block_size * between + 1}px`,
           scheduled: (task.planStartDate !== ""),
         };

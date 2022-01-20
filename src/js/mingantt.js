@@ -659,33 +659,34 @@ var mingantt = {
             // this.task['categoryId'] = overTask['categoryId']
             // this.tasks.splice(addIndex, 0, this.task)
 
-            if(overTask.parentTaskId !== this.task.parentTaskId && overTask.parentTaskId !== this.task.taskId) {
-              let before = this.task.parentTaskId;
-              this.task.parentTaskId = overTask.parentTaskId;
+            // Change parent
+            // if(overTask.parentTaskId !== this.task.parentTaskId && overTask.parentTaskId !== this.task.taskId) {
+            //   let before = this.task.parentTaskId;
+            //   this.task.parentTaskId = overTask.parentTaskId;
 
-              // Validate circular relation
-              let checkCircularRelation = (task, tasks, state) => {
-                if(state[task.taskId]) {
-                  return false;
-                }
+            //   // Validate circular relation
+            //   let checkCircularRelation = (task, tasks, state) => {
+            //     if(state[task.taskId]) {
+            //       return false;
+            //     }
 
-                if(task.parentTaskId === 0) {
-                  return true;
-                }
+            //     if(task.parentTaskId === 0) {
+            //       return true;
+            //     }
 
-                state[task.taskId] = true;
+            //     state[task.taskId] = true;
 
-                let par = this.tasks.find(x => x.taskId === task.parentTaskId);
+            //     let par = this.tasks.find(x => x.taskId === task.parentTaskId);
 
-                return checkCircularRelation(par, tasks, state);
-              };
+            //     return checkCircularRelation(par, tasks, state);
+            //   };
 
-              if(!checkCircularRelation(this.task, this.tasks, {})) {
-                this.task.parentTaskId = before;
-                alert("Error: circular relation!");
-                return;
-              }
-            }
+            //   if(!checkCircularRelation(this.task, this.tasks, {})) {
+            //     this.task.parentTaskId = before;
+            //     alert("Error: circular relation!");
+            //     return;
+            //   }
+            // }
 
             let tmp = this.task.sortOrder;
             this.task.sortOrder = overTask.sortOrder;

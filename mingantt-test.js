@@ -157,25 +157,28 @@ const app = Vue.createApp({
     }
   },
   mounted() {
-    var self = this;
-
     // Configure mingantt
     this.$refs.mingantt.encodeFn = encodeTask;
     this.$refs.mingantt.decodeFn = decodeTask;
     this.$refs.mingantt.loadTasks(testData);
-    this.$refs.mingantt.onUpdateTask = function(info) {
-      console.log(info);
+    this.$refs.mingantt.onUpdateTask = (info) => {
+      // Set new id
+      if(info.insert) {
+        let newid = Math.max(...this.$refs.mingantt.tasks.map((x) => x.taskId)) + 1;
+        info.insert.taskId = newid;
+        info.insert.sortOrder = newid;
+      }
 
       if(timeoutSaveLocalStorage) {
         clearTimeout(timeoutSaveLocalStorage);
         timeoutSaveLocalStorage = null;
       }
 
-      timeoutSaveLocalStorage = setTimeout(function() {
-        self.saveLocalStorage();
+      timeoutSaveLocalStorage = setTimeout(() => {
+        this.saveLocalStorage();
       }, 3000);
 
-      self.$refs.mingantt.showNotify("Save successful", 1000);
+      this.$refs.mingantt.showNotify("Save successful", 1000);
     };
 
     // Load LocalStorage

@@ -1062,7 +1062,9 @@ var mingantt = {
       let barStyle;
       let preStyle;
       let aftStyle;
+      let index = -1;
       return this.displayTasks.map(task => {
+        index++;
         style = {}
         let date_from = moment(task.planStartDate);
         let date_to = moment(task.planEndDate);
@@ -1120,6 +1122,7 @@ var mingantt = {
         };
         top = top + this.rowHeight;
         return {
+          index:index,
           style,
           preStyle,
           aftStyle,

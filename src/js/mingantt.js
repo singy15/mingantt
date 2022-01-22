@@ -27,6 +27,7 @@ var mingantt = {
       ],
       tasks: [],
       position_id: 0,
+      positionY: 0,
       dragging:false,
       pageX:'',
       elememt:'',
@@ -110,9 +111,8 @@ var mingantt = {
         <div class="mg-col-header mg-border-r mg-w-12">Pl/WL</div>
         <div class="mg-col-header mg-border-r mg-w-12">Ac/WL</div>
       </div>
-      <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + calendarViewHeight + 'px'">
+      <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + 20 + 'px;' + 'border-bottom:solid 1px #CCC; box-sizing:border-box;'">
 
-        <div class="mg-flex mg-h-5 mg-border-b mg-bg-lightgray">
           <div class="mg-flex mg-items-center mg-w-full mg-text-xs mg-flex mg-items-center">
             <button @click="addTask" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-full mg-justify-center">
               <!--
@@ -141,6 +141,9 @@ var mingantt = {
             <label class="mg-text-xs"><input type="checkbox" v-model="hideCompletedTask"/>Hide Cmpl.</label>
             <label class="mg-text-xs"><input type="checkbox" v-model="showGuide"/>Guide</label>
           </div>
+      </div>
+      <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + (calendarViewHeight - rowHeight*2) + 'px;'">
+        <div class="mg-flex mg-border-b mg-bg-lightgray" :style="'height:0px;' + 'margin-top:' + positionY + 'px;'">
         </div>
 
         <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" 
@@ -228,9 +231,9 @@ var mingantt = {
     </div>
 
     <!-- Calendar section -->
-    <div id="gantt-calendar" class="mg-overflow-x-scroll mg-overflow-y-hidden mg-border-l" :style="'width:' + calendarViewWidth + 'px'" ref="calendar">
+    <div id="gantt-calendar" class="mg-overflow-x-scroll mg-overflow-y-hidden mg-border-l" :style="'width:' + calendarViewWidth + 'px;'" ref="calendar">
       <div id="gantt-date" class="mg-h-15">
-        <div id="gantt-year-month" class="mg-relative mg-h-5">
+        <div id="gantt-year-month" class="mg-relative mg-h-5" style="z-index:890;">
           <div v-for="(calendar,index) in calendars" :key="index">
             <div
               class="mg-text-black mg-bg-gray mg-text-dark mg-border-b mg-border-r mg-border-t mg-h-5 mg-absolute mg-text-xs mg-flex mg-items-center mg-justify-center"
@@ -239,7 +242,7 @@ var mingantt = {
             </div>
           </div>
         </div>
-        <div id="gantt-day" class="mg-relative mg-h-10">
+        <div id="gantt-day" class="mg-relative mg-h-10" style="z-index:890;">
           <div v-for="(calendar,index) in calendars" :key="index">
             <div v-for="(day,index) in calendar.days" :key="index">
               <div class="mg-border-r mg-border-b mg-h-10 mg-absolute mg-flex mg-items-center mg-justify-center mg-flex-col mg-text-xs mg-bg-gray"
@@ -265,7 +268,7 @@ var mingantt = {
       </div>
 
       <!-- Bar Area -->
-      <div id="gantt-bar-area" class="mg-relative" :style="'width:' + calendarViewWidth + 'px;' + 'height:' + calendarViewHeight + 'px'">
+      <div id="gantt-bar-area" class="mg-relative" :style="'width:' + calendarViewWidth + 'px;' + 'height:' + calendarViewHeight + 'px;' + 'top:' + positionY + 'px;'">
         <div v-for="(bar,index) in taskBars" :key="index">
           
           <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:10;' + 'top:' + (bar.style.topRaw + 3).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - 11).toString() + 'px' + ';' + '' + ';'">
@@ -529,9 +532,18 @@ var mingantt = {
     windowSizeCheck() {
       let height = this.lists.length - this.position_id
       if (event.deltaY > 0 && height * 40 > this.calendarViewHeight) {
-        this.position_id+=3
+        // this.position_id+=3;
       } else if (event.deltaY < 0 && this.position_id !== 0) {
-        this.position_id-=3
+        // this.position_id-=3;
+      }
+
+      // this.position_id = this.positionY/this.rowHeight;
+      this.positionY = this.positionY - event.deltaY;
+
+      if(this.positionY > 0) {
+        this.positionY = 0;
+      } else if(this.positionY < (((this.displayTasks.length - 0) * this.rowHeight) * (-1))){
+        this.positionY = (((this.displayTasks.length - 0) * this.rowHeight) * (-1));
       }
     },
     mouseDownMove(task){
@@ -1119,7 +1131,11 @@ var mingantt = {
     },
     displayTasks() {
       let display_task_number = Math.floor(this.calendarViewHeight / this.rowHeight);
-      return this.lists.slice(this.position_id, this.position_id + display_task_number);
+      // return this.lists.slice(this.position_id, this.position_id + display_task_number);
+      // return this.lists.slice(
+      //   Math.floor(((this.positionY - 22) * (-1)) / (this.rowHeight)), 
+      //   Math.floor(((this.positionY - 22) * (-1)) / (this.rowHeight)) + display_task_number);
+      return this.lists;
     },
   }
 };

@@ -138,6 +138,16 @@ var mingantt = {
               </svg>
               <span class=" mg-text-xs">Sub</span>
             </button>
+            <button @click="moveTask(-1)" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-16 mg-flex mg-items-center mg-h-full mg-justify-center" style="margin-left:5px">
+              <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <polyline points="0,18 12,6 24,18" stroke="currentColor" stroke-width="2" fill="none" />
+              </svg>
+            </button>
+            <button @click="moveTask(1)" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-16 mg-flex mg-items-center mg-h-full mg-justify-center" style="margin-left:5px">
+              <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <polyline points="0,6 12,18 24,6" stroke="currentColor" stroke-width="2" fill="none" />
+              </svg>
+            </button>
             <label class="mg-text-xs"><input type="checkbox" v-model="hideCompletedTask"/>Hide Cmpl.</label>
             <label class="mg-text-xs"><input type="checkbox" v-model="showGuide"/>Guide</label>
           </div>
@@ -894,6 +904,39 @@ var mingantt = {
     },
     setFormProgress(progress) {
       this.form.progress = progress;
+    },
+    moveTask(dir) {
+      if(this.selectedTask) {
+        let index = this.lists.indexOf(this.selectedTask);
+
+        if((dir < 0) && (index > 0) 
+            && (this.lists[index-1].level === this.selectedTask.level) 
+            && (this.lists[index-1].parentTaskId === this.selectedTask.parentTaskId)) {
+          let src = this.selectedTask;
+          let tgt = this.lists[index-1];
+          let tmp = src.sortOrder;
+          src.sortOrder = tgt.sortOrder;
+          tgt.sortOrder = tmp;
+
+          // Fires handler
+          if(this.onUpdateTask) {
+            this.onUpdateTask({update: [src, tgt]});
+          }
+        } else if((dir > 0) && (index < this.lists.length - 1) 
+            && (this.lists[index+1].level === this.selectedTask.level) 
+            && (this.lists[index+1].parentTaskId === this.selectedTask.parentTaskId)) {
+          let src = this.selectedTask;
+          let tgt = this.lists[index+1];
+          let tmp = src.sortOrder;
+          src.sortOrder = tgt.sortOrder;
+          tgt.sortOrder = tmp;
+
+          // Fires handler
+          if(this.onUpdateTask) {
+            this.onUpdateTask({update: [src, tgt]});
+          }
+        }
+      }
     }
   },
   mounted() {

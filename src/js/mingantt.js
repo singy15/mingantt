@@ -266,10 +266,10 @@ var mingantt = {
       <div id="gantt-bar-area" class="mg-relative" :style="'width:' + calendarViewWidth + 'px;' + 'height:' + calendarViewHeight + 'px'">
         <div v-for="(bar,index) in taskBars" :key="index">
 
-          <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:90;' + 'top:' + (bar.style.topRaw + 5).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - 15).toString() + 'px' + ';' + '' + ';'">
+          <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:10;' + 'top:' + (bar.style.topRaw + 5).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - 15).toString() + 'px' + ';' + '' + ';'">
             +
           </span>
-          <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && !collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:90;' + 'top:' + (bar.style.topRaw + 5).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - (viewInfoSet[bar.task.taskId].deepestLevel - viewInfoSet[bar.task.taskId].level) * 10 - 10).toString() + 'px' + ';' + '' + ';'">
+          <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && !collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:10;' + 'top:' + (bar.style.topRaw + 5).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - (viewInfoSet[bar.task.taskId].deepestLevel - viewInfoSet[bar.task.taskId].level) * 10 - 10).toString() + 'px' + ';' + '' + ';'">
             -
           </span>
 
@@ -303,7 +303,7 @@ var mingantt = {
           </div>
 
           <!-- Actual -->
-          <div :style="bar.actualStyle" style="cursor:pointer; " class="mg-absolute mg-h-2 mg-border mg-actual mg-task" 
+          <div :style="bar.actualStyle" style="cursor:pointer; " class="mg-absolute mg-h-1 mg-border mg-actual mg-task" 
               v-if="bar.actualStyle.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
               @click="selectTask(bar.task)">
             <div class="mg-w-full mg-h-full mg-task" style="pointer-events: none;">
@@ -332,12 +332,10 @@ var mingantt = {
   </div>
 
   <!-- Header -->
-  <div id="gantt-header" class="mg-h-12 mg-p-2 mg-flex mg-items-center" style="position:fixed;">
-    <div class="mg-base" v-show="show"
-      @keyup.ctrl.enter="(update_mode)? updateTask(form.taskId) : saveTask()"
-      style="z-index:999;">
-      <div class="mg-overlay" v-show="show" @click="show=false"></div>
-      <div class="mg-content" v-show="show">
+  <div id="gantt-header" v-show="show" class="mg-h-12 mg-p-2 mg-flex mg-items-center" style="position:fixed; z-index:900">
+    <div class="mg-base" @keyup.ctrl.enter="(update_mode)? updateTask(form.taskId) : saveTask()" >
+      <div class="mg-overlay" @click="show=false"></div>
+      <div class="mg-content">
         <h2 v-if="update_mode">Edit Task</h2>
         <h2 v-else>Add Task</h2>
         <div class="mg-form-item">

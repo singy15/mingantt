@@ -257,7 +257,7 @@ var mingantt = {
               <div class="mg-border-r mg-border-b mg-absolute"
                    :class="{'mg-bg-lightgray': (day.dayOfWeek === 6 || day.dayOfWeek === 0)}"
                    :class="{'mg-bg-lightred': calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date()}"
-                   :style="'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px;' + 'height:' + calendarViewHeight + 'px'">
+                   :style="'border-right:solid 1px rgba(221,221,221,0.4); border-bottom:solid 1px rgba(221,221,221,0.4);' + 'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px;' + 'height:' + calendarViewHeight + 'px'">
               </div>
             </div>
           </div>
@@ -282,7 +282,7 @@ var mingantt = {
           </div>
 
           <!-- Focused -->
-          <div :style="bar.barStyle" style="background-color:transparent; border-top:solid 1px #DDD;" class="mg-absolute mg-h-2">
+          <div :style="bar.barStyle" style="background-color:transparent; border-top:solid 1px rgba(221,221,221,0.4); " class="mg-absolute mg-h-2">
           </div>
 
           <!-- Plan -->

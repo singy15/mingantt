@@ -494,3 +494,106 @@ input.smallcalendar::-webkit-calendar-picker-indicator {
   opacity: 0.5;
 }
 
+.ribbon-pre::after{
+  content: "";
+  position:absolute;
+  top:6px;
+  left:0px;
+  width:0;
+  height:0;
+  border-top:2px solid #dde5ff;
+  border-left:2px solid #dde5ff;
+  border-right:2px solid transparent;
+  border-bottom:2px solid transparent;
+}
+
+.ribbon-pre::before{
+  content: "";
+  position:absolute;
+  top:6px;
+  left:-1px;
+  width:0;
+  height:0;
+  border-top:3px solid #CCC;
+  border-left:3px solid #CCC;
+  border-right:3px solid transparent;
+  border-bottom:3px solid transparent;
+}
+
+.ribbon-aft::after{
+  content: "";
+  position:absolute;
+  top:6px;
+  right:0px;
+  width:0;
+  height:0;
+  border-top:2px solid #dde5ff;
+  border-left:2px solid transparent;
+  border-right:2px solid #dde5ff;
+  border-bottom:2px solid transparent;
+}
+
+.ribbon-aft::before{
+  content: "";
+  position:absolute;
+  top:6px;
+  right:-1px;
+  width:0;
+  height:0;
+  border-top:3px solid #CCC;
+  border-left:3px solid transparent;
+  border-right:3px solid #CCC;
+  border-bottom:3px solid transparent;
+}
+
+.ribbon-pre-cmpl::after{
+  content: "";
+  position:absolute;
+  top:6px;
+  left:0px;
+  width:0;
+  height:0;
+  border-top:2px solid #8492bd;
+  border-left:2px solid #8492bd;
+  border-right:2px solid transparent;
+  border-bottom:2px solid transparent;
+}
+
+.ribbon-pre-cmpl::before{
+  content: "";
+  position:absolute;
+  top:6px;
+  left:-1px;
+  width:0;
+  height:0;
+  border-top:3px solid #CCC;
+  border-left:3px solid #CCC;
+  border-right:3px solid transparent;
+  border-bottom:3px solid transparent;
+}
+
+.ribbon-aft-cmpl::after{
+  content: "";
+  position:absolute;
+  top:6px;
+  right:0px;
+  width:0;
+  height:0;
+  border-top:2px solid #8492bd;
+  border-left:2px solid transparent;
+  border-right:2px solid #8492bd;
+  border-bottom:2px solid transparent;
+}
+
+.ribbon-aft-cmpl::before{
+  content: "";
+  position:absolute;
+  top:6px;
+  right:-1px;
+  width:0;
+  height:0;
+  border-top:3px solid #CCC;
+  border-left:3px solid transparent;
+  border-right:3px solid #CCC;
+  border-bottom:3px solid transparent;
+}

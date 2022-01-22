@@ -286,6 +286,9 @@ var mingantt = {
           </div>
 
           <!-- Plan -->
+          <div :class="(bar.task.actualEndDate)? 'ribbon-pre-cmpl' : 'ribbon-pre'" :style="bar.preStyle" style="border:solid 1px transparent; background-color:transparent; z-index:888; width:0px !important; height:0px !important;" class="mg-absolute mg-h-2 mg-border mg-task" 
+              v-if="bar.style.scheduled === true && viewInfoSet[bar.task.taskId].children">
+          </div>
           <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border mg-task" 
               v-if="bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
               @click="selectTask(bar.task)">
@@ -302,6 +305,9 @@ var mingantt = {
                  style="top:3px;right:-6px;cursor:col-resize" 
                  @mousedown.stop="mouseDownResize(bar.task,'right')">
             </div>
+          </div>
+          <div :class="(bar.task.actualEndDate)? 'ribbon-aft-cmpl' : 'ribbon-aft'" :style="bar.aftStyle" style="border:solid 1px transparent; background-color:transparent; z-index:888;" class="mg-absolute mg-h-2 mg-border mg-task" 
+              v-if="bar.style.scheduled === true && viewInfoSet[bar.task.taskId].children">
           </div>
 
           <!-- Actual -->
@@ -1042,6 +1048,8 @@ var mingantt = {
       let style;
       let actualStyle;
       let barStyle;
+      let preStyle;
+      let aftStyle;
       return this.displayTasks.map(task => {
         style = {}
         let date_from = moment(task.planStartDate);
@@ -1064,6 +1072,24 @@ var mingantt = {
           width: `${this.block_size * between + 1}px`,
           scheduled: (task.planStartDate !== ""),
         };
+        preStyle = {
+          top: `${top}px`,
+          left: `${left}px`,
+          topRaw: top,
+          leftRaw: left,
+          width: `0px`,
+          height: `0px`,
+          scheduled: (task.planStartDate !== ""),
+        };
+        aftStyle = {
+          top: `${top}px`,
+          left: `${left + this.block_size * between - 1}px`,
+          topRaw: top,
+          leftRaw: left,
+          width: `0px`,
+          height: `0px`,
+          scheduled: (task.planStartDate !== ""),
+        };
         actualStyle = {
           top: `${top+7}px`,
           left: `${leftAc}px`,
@@ -1083,6 +1109,8 @@ var mingantt = {
         top = top + this.rowHeight;
         return {
           style,
+          preStyle,
+          aftStyle,
           actualStyle,
           barStyle,
           task

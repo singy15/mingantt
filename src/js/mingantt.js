@@ -306,7 +306,7 @@ var mingantt = {
             </div>
             <div class="mg-form-item">
               <label>Subject: </label>
-              <input class="mg-form-input mg-w-full" v-model="form.subject">
+              <input class="mg-form-input mg-w-full" v-model="form.subject" spellcheck="false">
             </div>
             <div class="mg-form-item">
               <label>AssignedTo: </label>
@@ -354,7 +354,7 @@ var mingantt = {
           <div name="right" style="float:right; padding:5px;">
             <div class="mg-form-item">
               <label>Desc: </label><br>
-              <textarea class="mg-form-input mg-w-full" v-model="form.content" style="width:400px; height:400px; min-width:400px; min-height:400px;"></textarea>
+              <textarea class="mg-form-input mg-w-full" v-model="form.content" style="width:400px; height:400px; min-width:400px; min-height:400px; white-space:nowrap;" spellcheck="false"></textarea>
             </div>
           </div>
         </div>

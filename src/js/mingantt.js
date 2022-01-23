@@ -14,17 +14,6 @@ var mingantt = {
       task_width: '',
       task_height: '',
       today:moment(),
-      categories: [
-        {
-          taskId: 1,
-          subject: 'Category1',
-          collapsed: false,
-        }, {
-          taskId: 2,
-          subject: 'Category2',
-          collapsed: false,
-        }
-      ],
       tasks: [],
       position_id: 0,
       positionY: 0,
@@ -39,7 +28,6 @@ var mingantt = {
       task: '',
       show: false,
       formDefault: {
-        categoryId: '',
         taskId: '',
         subject: '',
         planStartDate: '',
@@ -55,7 +43,6 @@ var mingantt = {
         parentTaskId: 0
       },
       form: {
-        categoryId: '',
         taskId: '',
         subject: '',
         planStartDate: '',
@@ -157,85 +144,65 @@ var mingantt = {
         </div>
 
         <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" 
-            :style="((task.actualStartDate !== '') && (task.cat !== 'category'))? 'background-color: #EEF;' : ''" 
-            :style="((task.actualEndDate !== '') && (task.cat !== 'category'))? 'background-color: #DDD;' : ''"
+            :style="((task.actualStartDate !== ''))? 'background-color: #EEF;' : ''" 
+            :style="((task.actualEndDate !== ''))? 'background-color: #DDD;' : ''"
             :style="((selectedTask !== null) && (selectedTask.taskId === task.taskId))? 'background-color:rgba(253, 226, 184, 0.5)' : ''"
             @click="selectTask(task)">
-          <!-- Template for category -->
-          <template v-if="task.cat === 'category'">
-            <div class="mg-flex mg-items-center mg-border-l mg-w-full mg-text-xs mg-pl-2 mg-flex  mg-items-center">
-              <span>{{task.subject}}</span>
-              <div class="pr-4" @click="toggleCategory(task.taskId)">
-                <span v-if="task.collapsed">
-                  <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </span>
-                <span v-else>
-                  <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </span>
-              </div>
-            </div>
-          </template>
           <!-- Template for task -->
-          <template v-else>
-            <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs"
-              draggable="true" @dragstart="dragTask(task)" @dragenter.prevent @dragover.prevent @drop.prevent="dragTaskOver(task)">
-              {{task.taskId }}
+          <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs"
+            draggable="true" @dragstart="dragTask(task)" @dragenter.prevent @dragover.prevent @drop.prevent="dragTaskOver(task)">
+            {{task.taskId }}
+          </div>
+          <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
+            <!-- {{task.subject }} -->
+            <span v-for="n of viewInfoSet[task.taskId].level" :key="n" style="display:inline-block; width:13px; height:100%; border:none; border-left:solid 1px #AAA; margin-left: 7px; box-sizing:border-box;"></span>
+            <div class="pr-4" @click="toggleCollapsed(task.taskId)" v-if="viewInfoSet[task.taskId].children" style="width:16px;">
+              <span v-if="collapseInfoSet[task.taskId]">
+                <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </span>
+              <span v-else>
+                <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </span>
             </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
-              <!-- {{task.subject }} -->
-              <span v-for="n of viewInfoSet[task.taskId].level" :key="n" style="display:inline-block; width:13px; height:100%; border:none; border-left:solid 1px #AAA; margin-left: 7px; box-sizing:border-box;"></span>
-              <div class="pr-4" @click="toggleCollapsed(task.taskId)" v-if="viewInfoSet[task.taskId].children" style="width:16px;">
-                <span v-if="collapseInfoSet[task.taskId]">
-                  <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </span>
-                <span v-else>
-                  <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </span>
-              </div>
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" :style="'width:'+'calc(100% - '+(viewInfoSet[task.taskId].level*21+((viewInfoSet[task.taskId].children)? 16 : 0)).toString()+'px)'+';'+'hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left;'" v-model="task.subject" >
-            </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planStartDate" type="date">
-              {{ formatDate2ShortDateStr(task.planStartDate) }}
-            </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planEndDate" type="date">
-              {{ formatDate2ShortDateStr(task.planEndDate) }}
-            </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.actualStartDate" type="date">
-              {{ formatDate2ShortDateStr(task.actualStartDate) }}
-            </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.actualEndDate" type="date">
-              {{ formatDate2ShortDateStr(task.actualEndDate) }}
-            </div>
-            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs">
-              <!-- {{ task.assignedUserId }} -->
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-16" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.assignedUserId" >
-            </div>
-            <!--
-            <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-              {{ task.progress }}%
-            </div>
-            -->
-            <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-              <!-- {{ task.planWorkload }} -->
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload" type="number">
-            </div>
-            <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs">
-              <!-- {{ task.actualWorkload }} -->
-              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
-            </div>
-          </template>
+            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" :style="'width:'+'calc(100% - '+(viewInfoSet[task.taskId].level*21+((viewInfoSet[task.taskId].children)? 16 : 0)).toString()+'px)'+';'+'hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left;'" v-model="task.subject" >
+          </div>
+          <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planStartDate" type="date">
+            {{ formatDate2ShortDateStr(task.planStartDate) }}
+          </div>
+          <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planEndDate" type="date">
+            {{ formatDate2ShortDateStr(task.planEndDate) }}
+          </div>
+          <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.actualStartDate" type="date">
+            {{ formatDate2ShortDateStr(task.actualStartDate) }}
+          </div>
+          <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.actualEndDate" type="date">
+            {{ formatDate2ShortDateStr(task.actualEndDate) }}
+          </div>
+          <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs">
+            <!-- {{ task.assignedUserId }} -->
+            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-16" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.assignedUserId" >
+          </div>
+          <!--
+          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
+            {{ task.progress }}%
+          </div>
+          -->
+          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
+            <!-- {{ task.planWorkload }} -->
+            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload" type="number">
+          </div>
+          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs">
+            <!-- {{ task.actualWorkload }} -->
+            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
+          </div>
         </div>
       </div>
     </div>
@@ -364,11 +331,6 @@ var mingantt = {
             <div class="mg-form-item">
               <label>ID: </label>
               <input class="mg-form-input mg-w-22" v-model.number="form.taskId" :disabled="update_mode">
-              <!-- <label> Category: </label> -->
-              <!-- <select v-model="form.categoryId" class=" mg-border mg-px-4 mg-py-2 mg-rounded-lg"> -->
-              <!--   <option v-for="category in categories" :key="category.taskId" :value="category.taskId">{{ category.subject }} -->
-              <!--   </option> -->
-              <!-- </select> -->
             </div>
             <div class="mg-form-item">
             </div>
@@ -677,69 +639,46 @@ var mingantt = {
       let deleteIndex;
       let addIndex;
 
+      if (overTask.taskId !== this.task.taskId && overTask.parentTaskId !== this.task.taskId) {
 
+        // Change parent
+        // if(overTask.parentTaskId !== this.task.parentTaskId && overTask.parentTaskId !== this.task.taskId) {
+        //   let before = this.task.parentTaskId;
+        //   this.task.parentTaskId = overTask.parentTaskId;
 
-      // if (this.task.cat !== 'category') {
-        // if (overTask.cat === 'category') {
-        //   let updateTask = this.tasks.find(task => task.taskId === this.task.taskId)
-        //   updateTask['categoryId'] = overTask['taskId']
+        //   // Validate circular relation
+        //   let checkCircularRelation = (task, tasks, state) => {
+        //     if(state[task.taskId]) {
+        //       return false;
+        //     }
 
-        //   // Fires handler
-        //   if(this.onUpdateTask) {
-        //     this.onUpdateTask(this.task, "update");
+        //     if(task.parentTaskId === 0) {
+        //       return true;
+        //     }
+
+        //     state[task.taskId] = true;
+
+        //     let par = this.tasks.find(x => x.taskId === task.parentTaskId);
+
+        //     return checkCircularRelation(par, tasks, state);
+        //   };
+
+        //   if(!checkCircularRelation(this.task, this.tasks, {})) {
+        //     this.task.parentTaskId = before;
+        //     alert("Error: circular relation!");
+        //     return;
         //   }
-        // } else {
-          if (overTask.taskId !== this.task.taskId && overTask.parentTaskId !== this.task.taskId) {
-            // this.tasks.map((task, index) => { if (task.taskId === this.task.taskId) deleteIndex = index })
-            // this.tasks.map((task, index) => { if (task.taskId === overTask.taskId) addIndex = index })
-            // this.tasks.splice(deleteIndex, 1)
-            // this.task['categoryId'] = overTask['categoryId']
-            // this.tasks.splice(addIndex, 0, this.task)
-
-            // Change parent
-            // if(overTask.parentTaskId !== this.task.parentTaskId && overTask.parentTaskId !== this.task.taskId) {
-            //   let before = this.task.parentTaskId;
-            //   this.task.parentTaskId = overTask.parentTaskId;
-
-            //   // Validate circular relation
-            //   let checkCircularRelation = (task, tasks, state) => {
-            //     if(state[task.taskId]) {
-            //       return false;
-            //     }
-
-            //     if(task.parentTaskId === 0) {
-            //       return true;
-            //     }
-
-            //     state[task.taskId] = true;
-
-            //     let par = this.tasks.find(x => x.taskId === task.parentTaskId);
-
-            //     return checkCircularRelation(par, tasks, state);
-            //   };
-
-            //   if(!checkCircularRelation(this.task, this.tasks, {})) {
-            //     this.task.parentTaskId = before;
-            //     alert("Error: circular relation!");
-            //     return;
-            //   }
-            // }
-
-            let tmp = this.task.sortOrder;
-            this.task.sortOrder = overTask.sortOrder;
-            overTask.sortOrder = tmp;
-
-            // Fires handler
-            if(this.onUpdateTask) {
-              this.onUpdateTask({update: [this.task, overTask]});
-            }
-          }
         // }
-      // }
-    },
-    toggleCategory(task_id) {
-      let category = this.categories.find(category => category.taskId === task_id)
-      category['collapsed'] = !category['collapsed'];
+
+        let tmp = this.task.sortOrder;
+        this.task.sortOrder = overTask.sortOrder;
+        overTask.sortOrder = tmp;
+
+        // Fires handler
+        if(this.onUpdateTask) {
+          this.onUpdateTask({update: [this.task, overTask]});
+        }
+      }
     },
     toggleCollapsed(taskId) {
       this.collapseInfoSet[taskId] = !this.collapseInfoSet[taskId];

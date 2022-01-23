@@ -165,8 +165,8 @@ const app = Vue.createApp({
       // Set new id
       if(info.insert) {
         let newid = Math.max(...this.$refs.mingantt.tasks.map((x) => x.taskId)) + 1;
-        info.insert.taskId = newid;
-        info.insert.sortOrder = newid;
+        info.insert[0].taskId = newid;
+        info.insert[0].sortOrder = newid;
       }
 
       if(timeoutSaveLocalStorage) {

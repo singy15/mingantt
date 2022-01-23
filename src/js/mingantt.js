@@ -785,7 +785,7 @@ var mingantt = {
 
       // Fires handler
       if(this.onUpdateTask) {
-        this.onUpdateTask({insert: this.form});
+        this.onUpdateTask({insert: [this.form]});
       }
 
       // Clear form
@@ -836,7 +836,7 @@ var mingantt = {
 
       // Fires handler
       if(this.onUpdateTask) {
-        this.onUpdateTask({update: task});
+        this.onUpdateTask({update: [task]});
       }
 
       if(clear) {

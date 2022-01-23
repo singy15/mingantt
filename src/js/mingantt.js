@@ -92,34 +92,18 @@ var mingantt = {
         <div class="mg-col-header mg-border-r mg-w-40">Pl/Term</div>
         <div class="mg-col-header mg-border-r mg-w-40">Ac/Term </div>
         <div class="mg-col-header mg-border-r mg-w-16">Assig.</div>
-        <!--
-        <div class="mg-col-header mg-border-r mg-w-12">Progr.</div>
-        -->
         <div class="mg-col-header mg-border-r mg-w-12">Pl/WL</div>
         <div class="mg-col-header mg-border-r mg-w-12">Ac/WL</div>
       </div>
-      <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + 20 + 'px;' + 'border-bottom:solid 1px #CCC; box-sizing:border-box;'">
 
+      <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + 20 + 'px;' + 'border-bottom:solid 1px #CCC; box-sizing:border-box;'">
           <div class="mg-flex mg-items-center mg-w-full mg-text-xs mg-flex mg-items-center">
             <button @click="addTask" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-full mg-justify-center">
-              <!--
-              <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              -->
               <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              <!--
-              <span class=" mg-text-xs">Add</span>
-              -->
             </button>
             <button @click="addChildTask" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-full mg-justify-center" style="margin-left:5px">
-              <!--
-              <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              -->
               <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
@@ -139,10 +123,9 @@ var mingantt = {
             <label class="mg-text-xs"><input type="checkbox" v-model="showGuide"/>Guide</label>
           </div>
       </div>
-      <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + (calendarViewHeight - rowHeight*2) + 'px;'">
-        <div class="mg-flex mg-border-b mg-bg-lightgray" :style="'height:0px;' + 'margin-top:' + positionY + 'px;'">
-        </div>
 
+      <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + (calendarViewHeight - rowHeight*2) + 'px;'">
+        <div class="mg-flex mg-border-b mg-bg-lightgray" :style="'height:0px;' + 'margin-top:' + positionY + 'px;'"></div>
         <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" 
             :style="((task.actualStartDate !== ''))? 'background-color: #EEF;' : ''" 
             :style="((task.actualEndDate !== ''))? 'background-color: #DDD;' : ''"
@@ -154,7 +137,6 @@ var mingantt = {
             {{task.taskId }}
           </div>
           <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
-            <!-- {{task.subject }} -->
             <span v-for="n of viewInfoSet[task.taskId].level" :key="n" style="display:inline-block; width:13px; height:100%; border:none; border-left:solid 1px #AAA; margin-left: 7px; box-sizing:border-box;"></span>
             <div class="pr-4" @click="toggleCollapsed(task.taskId)" v-if="viewInfoSet[task.taskId].children" style="width:16px;">
               <span v-if="collapseInfoSet[task.taskId]">
@@ -187,20 +169,12 @@ var mingantt = {
             {{ formatDate2ShortDateStr(task.actualEndDate) }}
           </div>
           <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs">
-            <!-- {{ task.assignedUserId }} -->
             <input @change="silentEditTask(task)" class="mg-text-xs mg-w-16" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.assignedUserId" >
           </div>
-          <!--
           <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-            {{ task.progress }}%
-          </div>
-          -->
-          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-            <!-- {{ task.planWorkload }} -->
             <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload" type="number">
           </div>
           <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs">
-            <!-- {{ task.actualWorkload }} -->
             <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
           </div>
         </div>
@@ -247,7 +221,6 @@ var mingantt = {
       <!-- Bar Area -->
       <div id="gantt-bar-area" class="mg-relative" :style="'width:' + calendarViewWidth + 'px;' + 'height:' + calendarViewHeight + 'px;' + 'top:' + positionY + 'px;'">
         <div v-for="(bar,index) in taskBars" :key="index">
-          
           <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:10;' + 'top:' + (bar.style.topRaw + 3).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - 11).toString() + 'px' + ';' + '' + ';'">
             +
           </span>
@@ -314,9 +287,6 @@ var mingantt = {
 
     </div>
 
-  </div>
-
-  <div id="form">
   </div>
 
   <!-- Header -->
@@ -502,14 +472,13 @@ var mingantt = {
       this.$refs.calendar.scrollLeft = this.scrollDistance
     },
     windowSizeCheck() {
-      let height = this.lists.length - this.position_id
-      if (event.deltaY > 0 && height * 40 > this.calendarViewHeight) {
-        // this.position_id+=3;
-      } else if (event.deltaY < 0 && this.position_id !== 0) {
-        // this.position_id-=3;
-      }
+      // let height = this.lists.length - this.position_id
+      // if (event.deltaY > 0 && height * 40 > this.calendarViewHeight) {
+      //   this.position_id+=3;
+      // } else if (event.deltaY < 0 && this.position_id !== 0) {
+      //   this.position_id-=3;
+      // }
 
-      // this.position_id = this.positionY/this.rowHeight;
       this.positionY = this.positionY - event.deltaY;
 
       if(this.positionY > 0) {
@@ -718,9 +687,7 @@ var mingantt = {
       // Set sortOrder
       this.form.sortOrder = this.form.taskId;
 
-      this.tasks.push(
-        this.form
-      )
+      this.tasks.push(this.form);
 
       // Fires handler
       if(this.onUpdateTask) {
@@ -728,17 +695,15 @@ var mingantt = {
       }
 
       // Clear form
-      this.form = {}
+      this.form = {};
 
       // Close edit form
-      this.show = false
+      this.show = false;
     },
     editTask(task, silent=false){
       this.update_mode=true;
       this.show = !silent;
       Object.assign(this.form, task);
-      console.log(task);
-      console.log(this.form);
     },
     updateTask(taskId, clear=true) {
       // Validate circular relation
@@ -903,11 +868,6 @@ var mingantt = {
       return (between_days + 1) * this.block_size - this.calendarViewWidth / 2;
     },
     viewInfoSet() {
-      console.log("calculate viewInfoSet");
-
-
-      // Initialize taskHashSet and viewInfoSet
- 
       let vis = {};
       let taskHashSet = {};
       let taskChildrenHashSet = {};
@@ -990,14 +950,6 @@ var mingantt = {
       };
 
       this.tasks.map((x) => {
-        // var vi = vis[x.taskId];
-
-        // // Set deepest level
-        // if(vi.children) {
-        //   vi.deepestLevel = taskDeepestLevelHashSet[x.taskId];
-        //   console.log(x.taskId, vi.deepestLevel);
-        // }
-
         if(x.parentTaskId !== 0) {
           deepestLevel(x, taskHashSet[x.parentTaskId]);
         }
@@ -1117,9 +1069,6 @@ var mingantt = {
     displayTasks() {
       let display_task_number = Math.floor(this.calendarViewHeight / this.rowHeight);
       // return this.lists.slice(this.position_id, this.position_id + display_task_number);
-      // return this.lists.slice(
-      //   Math.floor(((this.positionY - 22) * (-1)) / (this.rowHeight)), 
-      //   Math.floor(((this.positionY - 22) * (-1)) / (this.rowHeight)) + display_task_number);
       return this.lists;
     },
   }

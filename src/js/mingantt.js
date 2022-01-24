@@ -813,13 +813,14 @@ var mingantt = {
     },
     moveTask(dir) {
       if(this.selectedTask) {
-        let index = this.lists.indexOf(this.selectedTask);
+        let ls = this.lists.filter(x => (x.parentTaskId === this.selectedTask.parentTaskId));
+        let index = ls.indexOf(this.selectedTask);
 
         if((dir < 0) && (index > 0) 
-            && (this.lists[index-1].level === this.selectedTask.level) 
-            && (this.lists[index-1].parentTaskId === this.selectedTask.parentTaskId)) {
+            && (ls[index-1].level === this.selectedTask.level) 
+            && (ls[index-1].parentTaskId === this.selectedTask.parentTaskId)) {
           let src = this.selectedTask;
-          let tgt = this.lists[index-1];
+          let tgt = ls[index-1];
           let tmp = src.sortOrder;
           src.sortOrder = tgt.sortOrder;
           tgt.sortOrder = tmp;
@@ -828,11 +829,11 @@ var mingantt = {
           if(this.onUpdateTask) {
             this.onUpdateTask({update: [src, tgt]});
           }
-        } else if((dir > 0) && (index < this.lists.length - 1) 
-            && (this.lists[index+1].level === this.selectedTask.level) 
-            && (this.lists[index+1].parentTaskId === this.selectedTask.parentTaskId)) {
+        } else if((dir > 0) && (index < ls.length - 1) 
+            && (ls[index+1].level === this.selectedTask.level) 
+            && (ls[index+1].parentTaskId === this.selectedTask.parentTaskId)) {
           let src = this.selectedTask;
-          let tgt = this.lists[index+1];
+          let tgt = ls[index+1];
           let tmp = src.sortOrder;
           src.sortOrder = tgt.sortOrder;
           tgt.sortOrder = tmp;

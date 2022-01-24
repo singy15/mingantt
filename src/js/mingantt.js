@@ -27,20 +27,22 @@ var mingantt = {
       rightResizing:false,
       task: '',
       show: false,
-      formDefault: {
-        taskId: '',
-        subject: '',
-        planStartDate: '',
-        planEndDate: '',
-        actualStartDate: '',
-        actualEndDate: '',
-        assignedUserId: '',
-        progress: 0,
-        planWorkload: 0,
-        actualWorkload: 0,
-        planWorkloadMap: "",
-        content: "",
-        parentTaskId: 0
+      formDefault: () => {
+        return {
+          taskId: '',
+            subject: '',
+            planStartDate: '',
+            planEndDate: '',
+            actualStartDate: '',
+            actualEndDate: '',
+            assignedUserId: '',
+            progress: 0,
+            planWorkload: 0,
+            actualWorkload: 0,
+            planWorkloadMap: "",
+            content: "",
+            parentTaskId: 0
+        };
       },
       form: {
         taskId: '',
@@ -655,7 +657,7 @@ var mingantt = {
     },
     addTask() {
       this.update_mode = false;
-      this.form = {...this.formDefault};
+      this.form = {...((this.formDefault)())};
       this.show = true;
     },
     addChildTask() {
@@ -665,7 +667,7 @@ var mingantt = {
       }
 
       this.update_mode = false;
-      this.form = {...this.formDefault};
+      this.form = {...((this.formDefault)())};
       this.form.parentTaskId = this.selectedTask.taskId;
       this.show = true;
     },

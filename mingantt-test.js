@@ -180,6 +180,23 @@ const app = Vue.createApp({
 
       this.$refs.mingantt.showNotify("Save successful", 1000);
     };
+    this.$refs.mingantt.formDefault = () => {
+      return {
+        taskId: '',
+        subject: '',
+        planStartDate: '',
+        planEndDate: '',
+        actualStartDate: '',
+        actualEndDate: '',
+        assignedUserId: '',
+        progress: 0,
+        planWorkload: 0,
+        actualWorkload: 0,
+        planWorkloadMap: "",
+        content: "",
+        parentTaskId: 0
+      };
+    };
 
     // Load LocalStorage
     this.loadLocalStorage();

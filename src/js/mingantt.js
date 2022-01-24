@@ -247,7 +247,7 @@ var mingantt = {
           </div>
           <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border mg-task" 
               v-if="bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
-              @click="selectTask(bar.task)">
+              @click.exact="selectTask(bar.task)" @click.ctrl="addSelection(bar.task)">
             <div class="mg-w-full mg-h-full" style="pointer-events: none;">
               <div class="mg-h-full" 
                    style="pointer-events:none; background-color:#8492bd" 
@@ -269,7 +269,7 @@ var mingantt = {
           <!-- Actual -->
           <div :style="bar.actualStyle" style="cursor:pointer; " class="mg-absolute mg-h-1 mg-border mg-actual mg-task" 
               v-if="bar.actualStyle.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
-              @click="selectTask(bar.task)">
+              @click.exact="selectTask(bar.task)" @click.ctrl="addSelection(bar.task)">
             <div class="mg-w-full mg-h-full mg-task" style="pointer-events: none;">
               <div class="mg-h-full" 
                    style="pointer-events:none; background-color:#8492bd" 

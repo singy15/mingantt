@@ -65,6 +65,7 @@ var mingantt = {
       rowHeight: 20,
       onUpdateTask: null, // (updateInfo => { update: [...], delete: [...], insert: [...] }) => void
       selectedTask: null,
+      selections: [],
       notifyStyle: {
         position: "absolute",
         display: "none",
@@ -131,8 +132,8 @@ var mingantt = {
         <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" 
             :style="((task.actualStartDate !== ''))? 'background-color: #EEF;' : ''" 
             :style="((task.actualEndDate !== ''))? 'background-color: #DDD;' : ''"
-            :style="((selectedTask !== null) && (selectedTask.taskId === task.taskId))? 'background-color:rgba(253, 226, 184, 0.5)' : ''"
-            @click="selectTask(task)">
+            :style="((selections.find(x => x.taskId === task.taskId)))? 'background-color:rgba(253, 226, 184, 0.5)' : ''"
+            @click.exact="selectTask(task)" @click.ctrl="addSelection(task)">
           <!-- Template for task -->
           <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs"
             draggable="true" @dragstart="dragTask(task)" @dragenter.prevent @dragover.prevent @drop.prevent="dragTaskOver(task)">
@@ -233,7 +234,7 @@ var mingantt = {
           <div v-if="showGuide && viewInfoSet[bar.task.taskId].children && !collapseInfoSet[bar.task.taskId]" :style="'position:absolute; border-top-left-radius:3px; border-bottom-left-radius:3px; ' + 'top:' + (bar.style.topRaw).toString() + 'px' + ';' + ' left:' + ((bar.style.leftRaw - (viewInfoSet[bar.task.taskId].deepestLevel - viewInfoSet[bar.task.taskId].level) * 10 - 5)).toString() + 'px' + ';' + ' color:#888; border-left:solid 2px #CCC; border-top:solid 2px #CCC; border-bottom:solid 2px #CCC; width:2px;' + 'height:' + ((!collapseInfoSet[bar.task.taskId])? (viewInfoSet[bar.task.taskId].showMemberCount + 1) * rowHeight - 9 : rowHeight - 4).toString() + ';'"></div>
 
           <!-- Focused -->
-          <div :style="bar.barStyle" style="background-color:rgba(253, 226, 184, 0.5)" class="mg-absolute mg-h-2" v-if="(selectedTask !== null) && (bar.task.taskId === selectedTask.taskId)">
+          <div :style="bar.barStyle" style="background-color:rgba(253, 226, 184, 0.5)" class="mg-absolute mg-h-2" v-if="(selections.find(x => x.taskId === bar.task.taskId))">
           </div>
 
           <!-- Focused -->
@@ -778,6 +779,10 @@ var mingantt = {
       // Clear form
       this.form = {}
 
+      // Set selected
+      this.selectedTask = null;
+      this.selections = this.selections.filter(x => x.taskId !== deleted.taskId);
+
       // Close edit form
       this.show = false;
     },
@@ -798,6 +803,11 @@ var mingantt = {
     },
     selectTask(task) {
       this.selectedTask = task;
+      this.selections = [task];
+    },
+    addSelection(task) {
+      this.selectedTask = task;
+      this.selections.push(task);
     },
     showNotify(msg, time) {
       this.notifyMessage = msg;

@@ -153,6 +153,10 @@ var mingantt = {
                 </svg>
               </span>
             </div>
+            <div class="pr-4" v-if="!viewInfoSet[task.taskId].children" style="width:16px;">
+              <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              </svg>
+            </div>
             <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" :style="'width:'+'calc(100% - '+(viewInfoSet[task.taskId].level*21+((viewInfoSet[task.taskId].children)? 16 : 0)).toString()+'px)'+';'+'hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left;'" v-model="task.subject" >
           </div>
           <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">

@@ -486,7 +486,7 @@ var mingantt = {
       //   this.position_id-=3;
       // }
 
-      if(this.form) {
+      if(this.show) {
         return;
       }
 

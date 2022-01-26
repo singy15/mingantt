@@ -1,6 +1,15 @@
 import moment from 'moment';
 import '../css/mingantt.css';
 
+function getStorageDefault(key, defaultVal) {
+  let item = localStorage.getItem("mingantt/"+key);
+  return (item)? JSON.parse(item) : defaultVal;
+}
+
+function setStorageDefault(key, val) {
+  localStorage.setItem("mingantt/"+key, JSON.stringify(val));
+}
+
 var mingantt = {
   data: function () {
     return {
@@ -27,6 +36,7 @@ var mingantt = {
       rightResizing:false,
       task: '',
       show: false,
+      showPref: false,
       formDefault: () => {
         return {
           taskId: '',
@@ -71,10 +81,11 @@ var mingantt = {
         display: "none",
       },
       notifyMessage: "",
-      hideCompletedTask: false,
-      showGuide: true,
       collapseInfoSet: {},
-      autoSetProgress: true
+      autoSetProgress: true,
+      hideCompletedTask: getStorageDefault("hideCompletedTask", false),
+      showGuide: getStorageDefault("showGuide", true),
+      setPlanDateDefault: getStorageDefault("setPlanDateDefault", false)
     };
   },
   template:
@@ -122,8 +133,9 @@ var mingantt = {
                 <polyline points="0,6 12,18 24,6" stroke="currentColor" stroke-width="2" fill="none" />
               </svg>
             </button>
-            <label class="mg-text-xs"><input type="checkbox" v-model="hideCompletedTask"/>Hide Cmpl.</label>
-            <label class="mg-text-xs"><input type="checkbox" v-model="showGuide"/>Guide</label>
+            <button @click="showPref = true" class="mg-bg-darkgray mg-text-white mg-px-4 mg-w-24 mg-flex mg-items-center mg-h-full mg-justify-center" style="margin-left:5px">
+              Preference
+            </button>
           </div>
       </div>
 
@@ -402,6 +414,44 @@ var mingantt = {
       </div>
     </div>
   </div>
+
+  <!-- Configuration -->
+  <div id="gantt-header" v-show="showPref" class="mg-h-12 mg-p-2 mg-flex mg-items-center" style="position:fixed; z-index:900">
+    <div class="mg-base">
+      <div class="mg-overlay" @click="showPref=false"></div>
+      <div class="mg-content">
+        <h2>Preference</h2>
+        <div class="mg-form-item">
+          <div name="left" style="float:left; padding:5px;">
+            <div class="mg-form-item">
+              <label>Show indent guide: 
+                <input type="checkbox" class="mg-form-input mg-w-20" v-model="showGuide">
+              </label>
+            </div>
+            <div class="mg-form-item">
+              <label>Hide completed task: 
+                <input type="checkbox" class="mg-form-input mg-w-20" v-model="hideCompletedTask">
+              </label>
+            </div>
+            <div class="mg-form-item">
+              <label>Set default date: 
+                <input type="checkbox" class="mg-form-input mg-w-20" v-model="setPlanDateDefault">
+              </label>
+            </div>
+          </div>
+          <!--
+          <div name="right" style="float:right; padding:5px;">
+          </div>
+          -->
+        </div>
+        <div style="clear:both;">
+          <button @click="showPref = false" class="mg-green mg-text-white mg-py-2 mg-px-16 mg-rounded-lg mg-text-xs mg-flex mg-items-center">
+            <span class="mg-text-xs  mg-text-white" style="white-space: nowrap;">Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `,
   methods: {
@@ -667,6 +717,12 @@ var mingantt = {
     addTask() {
       this.update_mode = false;
       this.form = {...((this.formDefault)())};
+
+      if(this.setPlanDateDefault) {
+        this.form.planStartDate = moment().format('YYYY-MM-DD');
+        this.form.planEndDate = moment().format('YYYY-MM-DD');
+      }
+
       this.show = true;
     },
     addChildTask() {
@@ -677,6 +733,12 @@ var mingantt = {
 
       this.update_mode = false;
       this.form = {...((this.formDefault)())};
+
+      if(this.setPlanDateDefault) {
+        this.form.planStartDate = moment().format('YYYY-MM-DD');
+        this.form.planEndDate = moment().format('YYYY-MM-DD');
+      }
+
       this.form.parentTaskId = this.selectedTask.taskId;
       this.show = true;
     },
@@ -897,6 +959,17 @@ var mingantt = {
           }
         }
       }
+    },
+  },
+  watch: {
+    hideCompletedTask(newVal, oldVal) {
+      setStorageDefault("hideCompletedTask", newVal);
+    },
+    showGuide(newVal, oldVal) {
+      setStorageDefault("showGuide", newVal);
+    },
+    setPlanDateDefault(newVal, oldVal) {
+      setStorageDefault("setPlanDateDefault", newVal);
     }
   },
   mounted() {

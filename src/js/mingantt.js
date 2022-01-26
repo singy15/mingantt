@@ -10,6 +10,63 @@ function setStorageDefault(key, val) {
   localStorage.setItem("mingantt/"+key, JSON.stringify(val));
 }
 
+function setDraggable(elements){
+  var x;
+  var y;
+
+  elements.map(el => {
+    el.addEventListener("mousedown", mdown, false);
+    el.addEventListener("touchstart", mdown, false);
+  });
+
+  function mdown(e) {
+    e.target.classList.add("drag");
+
+    if(e.type === "mousedown") {
+        var event = e;
+    } else {
+        var event = e.changedTouches[0];
+    }
+
+    x = event.pageX - e.target.offsetLeft;
+    y = event.pageY - e.target.offsetTop;
+
+    document.body.addEventListener("mousemove", mmove, false);
+    document.body.addEventListener("touchmove", mmove, false);
+  }
+
+  function mmove(e) {
+    var drag = document.getElementsByClassName("drag")[0];
+
+    if(e.type === "mousemove") {
+        var event = e;
+    } else {
+        var event = e.changedTouches[0];
+    }
+
+    e.preventDefault();
+
+    drag.style.top = event.pageY - y + "px";
+    drag.style.left = event.pageX - x + "px";
+
+    drag.addEventListener("mouseup", mup, false);
+    document.body.addEventListener("mouseleave", mup, false);
+    drag.addEventListener("touchend", mup, false);
+    document.body.addEventListener("touchleave", mup, false);
+  }
+
+  function mup(e) {
+    var drag = document.getElementsByClassName("drag")[0];
+
+    document.body.removeEventListener("mousemove", mmove, false);
+    drag.removeEventListener("mouseup", mup, false);
+    document.body.removeEventListener("touchmove", mmove, false);
+    drag.removeEventListener("touchend", mup, false);
+
+    drag.classList.remove("drag");
+  }
+}
+
 var mingantt = {
   data: function () {
     return {
@@ -311,8 +368,12 @@ var mingantt = {
   <!-- Header -->
   <div id="gantt-header" v-show="show" class="mg-h-12 mg-p-2 mg-flex mg-items-center" style="position:fixed; z-index:900">
     <div class="mg-base" @keyup.ctrl.enter="(update_mode)? updateTask(form.taskId) : saveTask()" >
-      <div class="mg-overlay" @click="show=false"></div>
-      <div class="mg-content">
+      <div class="mg-overlay"></div>
+      <!--
+      <div class="mg-content" style="overflow:auto; resize:both;" id="formEdit"
+        draggable="true" @dragstart="formDragstart($event)" @dragenter.prevent @dragover.prevent @dragend="formDragend($event)" >
+      -->
+      <div class="mg-content" style="overflow:auto; resize:both;" id="formEdit">
         <h2 v-if="update_mode">Edit Task</h2>
         <h2 v-else>Add Task</h2>
         <div class="mg-form-item">
@@ -960,6 +1021,15 @@ var mingantt = {
         }
       }
     },
+    formDragstart(elForm) {
+      console.log("drag", elForm);
+    },
+    formDragend(elForm) {
+      console.log("drop", elForm);
+      elForm.target.style.position = "fixed";
+      elForm.target.style.left = elForm.screenX.toString() + "px";
+      elForm.target.style.top = elForm.screenY.toString() + "px";
+    }
   },
   watch: {
     hideCompletedTask(newVal, oldVal) {
@@ -980,6 +1050,7 @@ var mingantt = {
     window.addEventListener('mousemove', this.mouseMove);
     window.addEventListener('mousemove', this.mouseResize);
     window.addEventListener('mouseup', this.stopDrag);
+    // setDraggable([document.getElementById("formEdit")]);
     this.$nextTick(() => {
       this.todayPosition();
     });

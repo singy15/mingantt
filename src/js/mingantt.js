@@ -486,6 +486,10 @@ var mingantt = {
       //   this.position_id-=3;
       // }
 
+      if(this.form) {
+        return;
+      }
+
       this.positionY = this.positionY - event.deltaY;
 
       if(this.positionY > 0) {

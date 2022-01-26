@@ -829,6 +829,33 @@ var mingantt = {
     setFormProgress(progress) {
       this.form.progress = progress;
     },
+    inplaceSort(ls) {
+      let makeSortKey = (task) => {
+        return task.sortOrder.toString().padStart(7,"0") + task.taskId.toString().padStart(7,"0");
+      };
+
+      ls.sort((a,b) => {
+        let sortKeyA = makeSortKey(a);
+        let sortKeyB = makeSortKey(b);
+
+        if(sortKeyA < sortKeyB) {
+          return -1;
+        } else if(sortKeyA = sortKeyB) {
+          return 0;
+        }  else if(sortKeyA > sortKeyB) {
+          return 1;
+        }
+      });
+    },
+    resetSortOrder(ls) {
+      this.inplaceSort(ls);
+
+      let ix = 0;
+      ls.map(x => {
+        x.sortOrder = ix;
+        ix += 2;
+      });
+    },
     moveTask(dir) {
       if(this.selectedTask) {
         let ls = this.lists.filter(x => (x.parentTaskId === this.selectedTask.parentTaskId));
@@ -837,28 +864,36 @@ var mingantt = {
         if((dir < 0) && (index > 0) 
             && (ls[index-1].level === this.selectedTask.level) 
             && (ls[index-1].parentTaskId === this.selectedTask.parentTaskId)) {
-          let src = this.selectedTask;
-          let tgt = ls[index-1];
-          let tmp = src.sortOrder;
-          src.sortOrder = tgt.sortOrder;
-          tgt.sortOrder = tmp;
+          // let src = this.selectedTask;
+          // let tgt = ls[index-1];
+          // let tmp = src.sortOrder;
+          // src.sortOrder = tgt.sortOrder;
+          // tgt.sortOrder = tmp;
+          this.selectedTask.sortOrder -= 3;
+
+          // re-ordering
+          this.resetSortOrder(ls);
 
           // Fires handler
           if(this.onUpdateTask) {
-            this.onUpdateTask({update: [src, tgt]});
+            this.onUpdateTask({update: ls});
           }
         } else if((dir > 0) && (index < ls.length - 1) 
             && (ls[index+1].level === this.selectedTask.level) 
             && (ls[index+1].parentTaskId === this.selectedTask.parentTaskId)) {
-          let src = this.selectedTask;
-          let tgt = ls[index+1];
-          let tmp = src.sortOrder;
-          src.sortOrder = tgt.sortOrder;
-          tgt.sortOrder = tmp;
+          // let src = this.selectedTask;
+          // let tgt = ls[index+1];
+          // let tmp = src.sortOrder;
+          // src.sortOrder = tgt.sortOrder;
+          // tgt.sortOrder = tmp;
+          this.selectedTask.sortOrder += 3;
+
+          // re-ordering
+          this.resetSortOrder(ls);
 
           // Fires handler
           if(this.onUpdateTask) {
-            this.onUpdateTask({update: [src, tgt]});
+            this.onUpdateTask({update: ls});
           }
         }
       }

@@ -368,7 +368,7 @@ var mingantt = {
   <!-- Header -->
   <div id="gantt-header" v-show="show" class="mg-h-12 mg-p-2 mg-flex mg-items-center" style="position:fixed; z-index:900">
     <div class="mg-base" @keyup.ctrl.enter="(update_mode)? updateTask(form.taskId) : saveTask()" >
-      <div class="mg-overlay"></div>
+      <div class="mg-overlay" @click="show = false"></div>
       <!--
       <div class="mg-content" style="overflow:auto; resize:both;" id="formEdit"
         draggable="true" @dragstart="formDragstart($event)" @dragenter.prevent @dragover.prevent @dragend="formDragend($event)" >

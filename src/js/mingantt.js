@@ -131,6 +131,7 @@ var mingantt = {
       decodeFn: null,
       rowHeight: 20,
       onUpdateTask: null, // (updateInfo => { update: [...], delete: [...], insert: [...] }) => void
+      onSelectTask: null,
       selectedTask: null,
       selections: [],
       notifyStyle: {
@@ -935,10 +936,20 @@ var mingantt = {
     selectTask(task) {
       this.selectedTask = task;
       this.selections = [task];
+
+      // Fires handler
+      if(this.onSelectTask) {
+        this.onSelectTask(task);
+      }
     },
     addSelection(task) {
       this.selectedTask = task;
       this.selections.push(task);
+
+      // Fires handler
+      if(this.onSelectTask) {
+        this.onSelectTask(task);
+      }
     },
     showNotify(msg, time) {
       this.notifyMessage = msg;

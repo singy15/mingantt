@@ -141,10 +141,10 @@ var mingantt = {
       notifyMessage: "",
       collapseInfoSet: {},
       autoSetProgress: true,
-      hideCompletedTask: getStorageDefault("hideCompletedTask", false),
-      showGuide: getStorageDefault("showGuide", true),
-      setPlanDateDefault: getStorageDefault("setPlanDateDefault", false),
-      showStat: getStorageDefault("showStat", false)
+      prefHideCompletedTask: getStorageDefault("prefHideCompletedTask", false),
+      prefShowGuide: getStorageDefault("prefShowGuide", true),
+      prefSetDefaultPlanDate: getStorageDefault("prefSetDefaultPlanDate", false),
+      prefShowTaskStatistics: getStorageDefault("prefShowTaskStatistics", false)
     };
   },
   template:
@@ -167,8 +167,8 @@ var mingantt = {
         <div class="mg-col-header mg-border-r mg-w-16">Assig.</div>
         <div class="mg-col-header mg-border-r mg-w-12">Pl/WL</div>
         <div class="mg-col-header mg-border-r mg-w-12">Ac/WL</div>
-        <div class="mg-col-header mg-border-r mg-w-12" v-if="showStat">Stat Pl</div>
-        <div class="mg-col-header mg-border-r mg-w-12" v-if="showStat">Stat Ac</div>
+        <div class="mg-col-header mg-border-r mg-w-12" v-if="prefShowTaskStatistics">Stat Pl</div>
+        <div class="mg-col-header mg-border-r mg-w-12" v-if="prefShowTaskStatistics">Stat Ac</div>
       </div>
 
       <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + 20 + 'px;' + 'border-bottom:solid 1px #CCC; box-sizing:border-box;'">
@@ -257,11 +257,11 @@ var mingantt = {
           <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
             <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
           </div>
-          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r" v-if="showStat">
-            <span class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" v-if="viewInfoSet[task.taskId].children">{{ viewInfoSet[task.taskId].subtotalPlanWorkload.toString() }}</span>
+          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r" v-if="prefShowTaskStatistics">
+            <input class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="viewInfoSet[task.taskId].subtotalPlanWorkload" readonly v-if="viewInfoSet[task.taskId].children">
           </div>
-          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs" v-if="showStat">
-            <span class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" v-if="viewInfoSet[task.taskId].children">{{ viewInfoSet[task.taskId].subtotalActualWorkload }}</span>
+          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs" v-if="prefShowTaskStatistics">
+            <input class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="viewInfoSet[task.taskId].subtotalActualWorkload" readonly v-if="viewInfoSet[task.taskId].children">
           </div>
         </div>
       </div>
@@ -314,7 +314,7 @@ var mingantt = {
             -
           </span>
 
-          <div v-if="showGuide && viewInfoSet[bar.task.taskId].children && !collapseInfoSet[bar.task.taskId]" :style="'position:absolute; border-top-left-radius:3px; border-bottom-left-radius:3px; ' + 'top:' + (bar.style.topRaw).toString() + 'px' + ';' + ' left:' + ((bar.style.leftRaw - (viewInfoSet[bar.task.taskId].deepestLevel - viewInfoSet[bar.task.taskId].level) * 10 - 5)).toString() + 'px' + ';' + ' color:#888; border-left:solid 2px #CCC; border-top:solid 2px #CCC; border-bottom:solid 2px #CCC; width:2px;' + 'height:' + ((!collapseInfoSet[bar.task.taskId])? (viewInfoSet[bar.task.taskId].showMemberCount + 1) * rowHeight - 9 : rowHeight - 4).toString() + 'px;'"></div>
+          <div v-if="prefShowGuide && viewInfoSet[bar.task.taskId].children && !collapseInfoSet[bar.task.taskId]" :style="'position:absolute; border-top-left-radius:3px; border-bottom-left-radius:3px; ' + 'top:' + (bar.style.topRaw).toString() + 'px' + ';' + ' left:' + ((bar.style.leftRaw - (viewInfoSet[bar.task.taskId].deepestLevel - viewInfoSet[bar.task.taskId].level) * 10 - 5)).toString() + 'px' + ';' + ' color:#888; border-left:solid 2px #CCC; border-top:solid 2px #CCC; border-bottom:solid 2px #CCC; width:2px;' + 'height:' + ((!collapseInfoSet[bar.task.taskId])? (viewInfoSet[bar.task.taskId].showMemberCount + 1) * rowHeight - 9 : rowHeight - 4).toString() + 'px;'"></div>
 
           <!-- Focused -->
           <div :style="bar.barStyle" style="background-color:rgba(253, 226, 184, 0.5)" class="mg-absolute mg-h-2" v-if="(selections.find(x => x.taskId === bar.task.taskId))">
@@ -496,22 +496,22 @@ var mingantt = {
           <div name="left" style="float:left; padding:5px;">
             <div class="mg-form-item">
               <label>Show indent guide: 
-                <input type="checkbox" class="mg-form-input mg-w-20" v-model="showGuide">
+                <input type="checkbox" class="mg-form-input mg-w-20" v-model="prefShowGuide">
               </label>
             </div>
             <div class="mg-form-item">
               <label>Hide completed task: 
-                <input type="checkbox" class="mg-form-input mg-w-20" v-model="hideCompletedTask">
+                <input type="checkbox" class="mg-form-input mg-w-20" v-model="prefHideCompletedTask">
               </label>
             </div>
             <div class="mg-form-item">
               <label>Set default date: 
-                <input type="checkbox" class="mg-form-input mg-w-20" v-model="setPlanDateDefault">
+                <input type="checkbox" class="mg-form-input mg-w-20" v-model="prefSetDefaultPlanDate">
               </label>
             </div>
             <div class="mg-form-item">
               <label>Show statistics:
-                <input type="checkbox" class="mg-form-input mg-w-20" v-model="showStat">
+                <input type="checkbox" class="mg-form-input mg-w-20" v-model="prefShowTaskStatistics">
               </label>
             </div>
           </div>
@@ -784,7 +784,7 @@ var mingantt = {
       this.update_mode = false;
       this.form = {...((this.formDefault)())};
 
-      if(this.setPlanDateDefault) {
+      if(this.prefSetDefaultPlanDate) {
         this.form.planStartDate = moment().format('YYYY-MM-DD');
         this.form.planEndDate = moment().format('YYYY-MM-DD');
       }
@@ -800,7 +800,7 @@ var mingantt = {
       this.update_mode = false;
       this.form = {...((this.formDefault)())};
 
-      if(this.setPlanDateDefault) {
+      if(this.prefSetDefaultPlanDate) {
         this.form.planStartDate = moment().format('YYYY-MM-DD');
         this.form.planEndDate = moment().format('YYYY-MM-DD');
       }
@@ -1047,17 +1047,17 @@ var mingantt = {
     }
   },
   watch: {
-    hideCompletedTask(newVal, oldVal) {
-      setStorageDefault("hideCompletedTask", newVal);
+    prefHideCompletedTask(newVal, oldVal) {
+      setStorageDefault("prefHideCompletedTask", newVal);
     },
-    showGuide(newVal, oldVal) {
-      setStorageDefault("showGuide", newVal);
+    prefShowGuide(newVal, oldVal) {
+      setStorageDefault("prefShowGuide", newVal);
     },
-    setPlanDateDefault(newVal, oldVal) {
-      setStorageDefault("setPlanDateDefault", newVal);
+    prefSetDefaultPlanDate(newVal, oldVal) {
+      setStorageDefault("prefSetDefaultPlanDate", newVal);
     },
-    showStat(newVal, oldVal) {
-      setStorageDefault("showStat", newVal);
+    prefShowTaskStatistics(newVal, oldVal) {
+      setStorageDefault("prefShowTaskStatistics", newVal);
     }
   },
   mounted() {
@@ -1184,7 +1184,7 @@ var mingantt = {
       this.tasks.map((x) => {
         if(x.parentTaskId !== 0) {
           deepestLevel(x, taskHashSet[x.parentTaskId]);
-          if(this.showStat) { 
+          if(this.prefShowTaskStatistics) { 
             subtotal(x, taskHashSet[x.parentTaskId]);
           }
         }

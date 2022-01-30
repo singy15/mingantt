@@ -144,7 +144,9 @@ var mingantt = {
       prefHideCompletedTask: getStorageDefault("prefHideCompletedTask", false),
       prefShowGuide: getStorageDefault("prefShowGuide", true),
       prefSetDefaultPlanDate: getStorageDefault("prefSetDefaultPlanDate", false),
-      prefShowTaskStatistics: getStorageDefault("prefShowTaskStatistics", false)
+      prefShowTaskStatistics: getStorageDefault("prefShowTaskStatistics", false),
+      prefUseTimeSyntax: getStorageDefault("prefUseTimeSyntax", false),
+      prefUseTimeSyntaxHoursOfDay: getStorageDefault("prefUseTimeSyntaxHoursOfDay", 8.0)
     };
   },
   template:
@@ -252,10 +254,12 @@ var mingantt = {
             <input @change="silentEditTask(task)" class="mg-text-xs mg-w-16" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.assignedUserId" >
           </div>
           <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload" type="number">
+            <input v-if="prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload">
+            <input v-if="!prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload" type="number">
           </div>
           <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
+            <input v-if="prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" >
+            <input v-if="!prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
           </div>
           <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r" v-if="prefShowTaskStatistics">
             <input class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="viewInfoSet[task.taskId].subtotalPlanWorkload" readonly v-if="viewInfoSet[task.taskId].children">
@@ -512,6 +516,16 @@ var mingantt = {
             <div class="mg-form-item">
               <label>Show statistics:
                 <input type="checkbox" class="mg-form-input mg-w-20" v-model="prefShowTaskStatistics">
+              </label>
+            </div>
+            <div class="mg-form-item">
+              <label>Use TimeSyntax:
+                <input type="checkbox" class="mg-form-input mg-w-20" v-model="prefUseTimeSyntax">
+              </label>
+            </div>
+            <div class="mg-form-item">
+              <label>Hours of a day:
+                <input class="mg-form-input mg-w-24" v-model="prefUseTimeSyntaxHoursOfDay" type="number">
               </label>
             </div>
           </div>
@@ -890,7 +904,40 @@ var mingantt = {
         this.show = false;
       }
     },
+    parseTimeSyntax(str) {
+      let val = str.toString();
+      if(val.match(/(([1-9]\d*|0)(\.\d+)?)d/)
+        || val.match(/(([1-9]\d*|0)(\.\d+)?)h/)
+        || val.match(/(([1-9]\d*|0)(\.\d+)?)m/)) {
+        let fixed = 0.0;
+        if(val.match(/(([1-9]\d*|0)(\.\d+)?)d/)) {
+          fixed += parseFloat(val.match(/(([1-9]\d*|0)(\.\d+)?)d/)[1],10) * parseFloat(this.prefUseTimeSyntaxHoursOfDay);
+        }
+        if(val.match(/(([1-9]\d*|0)(\.\d+)?)h/)) {
+          fixed += parseFloat(val.match(/(([1-9]\d*|0)(\.\d+)?)h/)[1],10);
+        }
+        if(val.match(/(([1-9]\d*|0)(\.\d+)?)m/)) {
+          fixed += parseFloat(val.match(/(([1-9]\d*|0)(\.\d+)?)m/)[1],10) / 60.0;
+        }
+        val = fixed;
+      } else if(val === "") {
+        val = 0.0;
+      } else {
+        let valAc = parseFloat(val, 10);
+        if(isNaN(valAc)) {
+          val = 0.0;
+        } else {
+          val = valAc;
+        }
+      }
+      val = parseFloat(val.toFixed(2), 10);
+
+      return val;
+    },
     silentEditTask(task) {
+      task.actualWorkload = this.parseTimeSyntax(task.actualWorkload);
+      task.planWorkload = this.parseTimeSyntax(task.planWorkload);
+
       this.editTask(task, true);
       this.updateTask(task.taskId);
     },
@@ -1058,6 +1105,12 @@ var mingantt = {
     },
     prefShowTaskStatistics(newVal, oldVal) {
       setStorageDefault("prefShowTaskStatistics", newVal);
+    },
+    prefUseTimeSyntax(newVal, oldVal) {
+      setStorageDefault("prefUseTimeSyntax", newVal);
+    },
+    prefUseTimeSyntaxHoursOfDay(newVal, oldVal) {
+      setStorageDefault("prefUseTimeSyntaxHoursOfDay", newVal);
     }
   },
   mounted() {
@@ -1149,8 +1202,8 @@ var mingantt = {
         vi.memberCount = 0;
         vi.showMemberCount = 0;
         
-        vi.subtotalPlanWorkload = x.planWorkload;
-        vi.subtotalActualWorkload = x.actualWorkload;
+        vi.subtotalPlanWorkload = this.parseTimeSyntax(x.planWorkload);
+        vi.subtotalActualWorkload = this.parseTimeSyntax(x.actualWorkload);
       });
 
       let deepestLevel = (task, cur) => {
@@ -1171,8 +1224,11 @@ var mingantt = {
       };
 
       let subtotal = (task, cur) => {
-        vis[cur.taskId].subtotalPlanWorkload = vis[cur.taskId].subtotalPlanWorkload + task.planWorkload;
-        vis[cur.taskId].subtotalActualWorkload = vis[cur.taskId].subtotalActualWorkload + task.actualWorkload;
+        let wlPl = this.parseTimeSyntax(task.planWorkload);
+        let wlAc = this.parseTimeSyntax(task.actualWorkload);
+
+        vis[cur.taskId].subtotalPlanWorkload = vis[cur.taskId].subtotalPlanWorkload + wlPl;
+        vis[cur.taskId].subtotalActualWorkload = vis[cur.taskId].subtotalActualWorkload + wlAc;
 
         if(cur.parentTaskId === 0) {
           return;

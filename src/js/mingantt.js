@@ -627,9 +627,8 @@ var mingantt = {
     stopDrag(){
       if (this.dragging) {
         let diff = this.pageX - event.pageX
-        let days = Math.ceil(diff / this.block_size)
+        let days = Math.round(diff / this.block_size)
         if (days !== 0) {
-          console.log(days)
           let task = this.tasks.find(task => task.taskId === this.task_id);
           let planStartDate = moment(task.planStartDate).add(-days, 'days')
           let planEndDate = moment(task.planEndDate).add(-days, 'days')
@@ -646,7 +645,7 @@ var mingantt = {
       }
       if (this.leftResizing) {
         let diff = this.pageX - event.pageX;
-        let days = Math.ceil(diff / this.block_size)
+        let days = Math.round(diff / this.block_size)
         if (days !== 0) {
           let task = this.tasks.find(task => task.taskId === this.task_id);
           let planStartDate = moment(task.planStartDate).add(-days, 'days')
@@ -667,34 +666,25 @@ var mingantt = {
         }
       }
       if (this.rightResizing) {
-        let diff = this.pageX - event.pageX;
-        let days = Math.ceil(diff / this.block_size)
-        if (days === 1) {
-          this.element.style.width = `${parseInt(this.width.replace('px', ''))}px`;
-        } else if (days <= 2) {
-          days--;
+        let diff = event.pageX - this.pageX;
+        let days = Math.round(diff / this.block_size)
+        if (days !== 0) {
           let task = this.tasks.find(task => task.taskId === this.task_id);
-          let planEndDate = moment(task.planEndDate).add(-days, 'days')
-          task['planEndDate'] = planEndDate.format('YYYY-MM-DD')
+          let planStartDate = moment(task.planStartDate);
+          let planEndDate = moment(task.planEndDate).add(days, 'days');
+          if (planStartDate.diff(planEndDate, 'days') <= 0) {
+            task['planEndDate'] = planEndDate.format('YYYY-MM-DD')
+          } else {
+            task['planEndDate'] = planStartDate.format('YYYY-MM-DD')
+          }
 
           // Fires handler
           if(this.onUpdateTask) {
             this.onUpdateTask({update: [task]});
           }
         } else {
-          let task = this.tasks.find(task => task.taskId === this.task_id);
-          let planStartDate = moment(task.planStartDate);
-          let planEndDate = moment(task.planEndDate).add(-days, 'days')
-          if (planEndDate.diff(planStartDate, 'days') < 0) {
-            task['planEndDate'] = planStartDate.format('YYYY-MM-DD')
-          } else {
-            task['planEndDate'] = planEndDate.format('YYYY-MM-DD')
-          }
-
-          // Fires handler
-          if(this.onUpdateTask) {
-            this.onUpdateTask({update: [task]});
-          }
+          this.element.style.width = this.width;
+          this.element.style.left = `${this.left.replace('px', '')}px`;
         }
       }
       this.dragging = false;

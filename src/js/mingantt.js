@@ -418,13 +418,15 @@ var mingantt = {
             </div>
             <div class="mg-form-item">
               <label>Pl. Workload: </label>
-              <input class="mg-form-input mg-w-22" v-model="form.planWorkload" type="number">
+              <input v-if="prefUseTimeSyntax" class="mg-form-input mg-w-22" v-model="form.planWorkload">
+              <input v-if="!prefUseTimeSyntax" class="mg-form-input mg-w-22" v-model="form.planWorkload" type="number">
               <label> WL/Map: </label>
               <input class="mg-form-input mg-w-22" v-model="form.planWorkloadMap">
             </div>
             <div class="mg-form-item">
               <label> Ac. Workload: </label>
-              <input class="mg-form-input mg-w-22" v-model="form.actualWorkload" type="number">
+              <input v-if="prefUseTimeSyntax" class="mg-form-input mg-w-22" v-model="form.actualWorkload">
+              <input v-if="!prefUseTimeSyntax" class="mg-form-input mg-w-22" v-model="form.actualWorkload" type="number">
               <label> Parent: </label>
               <input class="mg-form-input mg-w-22" v-model="form.parentTaskId" type="number">
             </div>
@@ -840,6 +842,10 @@ var mingantt = {
       // Set sortOrder
       this.form.sortOrder = this.form.taskId;
 
+      // Parse TimeSyntax
+      this.form.planWorkload = this.parseTimeSyntax(this.form.planWorkload);
+      this.form.actualWorkload = this.parseTimeSyntax(this.form.actualWorkload);
+
       this.tasks.push(this.form);
 
       // Fires handler
@@ -887,6 +893,10 @@ var mingantt = {
       } else if(this.autoSetProgress && this.form.actualEndDate === "") {
         this.form.progress = 0;
       }
+
+      // Parse TimeSyntax
+      this.form.planWorkload = this.parseTimeSyntax(this.form.planWorkload);
+      this.form.actualWorkload = this.parseTimeSyntax(this.form.actualWorkload);
 
       let task = this.tasks.find(task => task.taskId === taskId);
       Object.assign(task, this.form);

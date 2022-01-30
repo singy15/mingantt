@@ -143,7 +143,8 @@ var mingantt = {
       autoSetProgress: true,
       hideCompletedTask: getStorageDefault("hideCompletedTask", false),
       showGuide: getStorageDefault("showGuide", true),
-      setPlanDateDefault: getStorageDefault("setPlanDateDefault", false)
+      setPlanDateDefault: getStorageDefault("setPlanDateDefault", false),
+      showStat: getStorageDefault("showStat", false)
     };
   },
   template:
@@ -166,6 +167,8 @@ var mingantt = {
         <div class="mg-col-header mg-border-r mg-w-16">Assig.</div>
         <div class="mg-col-header mg-border-r mg-w-12">Pl/WL</div>
         <div class="mg-col-header mg-border-r mg-w-12">Ac/WL</div>
+        <div class="mg-col-header mg-border-r mg-w-12" v-if="showStat">Stat Pl</div>
+        <div class="mg-col-header mg-border-r mg-w-12" v-if="showStat">Stat Ac</div>
       </div>
 
       <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + 20 + 'px;' + 'border-bottom:solid 1px #CCC; box-sizing:border-box;'">
@@ -251,8 +254,14 @@ var mingantt = {
           <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
             <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload" type="number">
           </div>
-          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs">
+          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
             <input @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
+          </div>
+          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r" v-if="showStat">
+            <span class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" v-if="viewInfoSet[task.taskId].children">{{ viewInfoSet[task.taskId].subtotalPlanWorkload.toString() }}</span>
+          </div>
+          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs" v-if="showStat">
+            <span class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" v-if="viewInfoSet[task.taskId].children">{{ viewInfoSet[task.taskId].subtotalActualWorkload }}</span>
           </div>
         </div>
       </div>
@@ -498,6 +507,11 @@ var mingantt = {
             <div class="mg-form-item">
               <label>Set default date: 
                 <input type="checkbox" class="mg-form-input mg-w-20" v-model="setPlanDateDefault">
+              </label>
+            </div>
+            <div class="mg-form-item">
+              <label>Show statistics:
+                <input type="checkbox" class="mg-form-input mg-w-20" v-model="showStat">
               </label>
             </div>
           </div>
@@ -1041,6 +1055,9 @@ var mingantt = {
     },
     setPlanDateDefault(newVal, oldVal) {
       setStorageDefault("setPlanDateDefault", newVal);
+    },
+    showStat(newVal, oldVal) {
+      setStorageDefault("showStat", newVal);
     }
   },
   mounted() {
@@ -1131,6 +1148,9 @@ var mingantt = {
 
         vi.memberCount = 0;
         vi.showMemberCount = 0;
+        
+        vi.subtotalPlanWorkload = x.planWorkload;
+        vi.subtotalActualWorkload = x.actualWorkload;
       });
 
       let deepestLevel = (task, cur) => {
@@ -1150,9 +1170,23 @@ var mingantt = {
         deepestLevel(task, taskHashSet[cur.parentTaskId]);
       };
 
+      let subtotal = (task, cur) => {
+        vis[cur.taskId].subtotalPlanWorkload = vis[cur.taskId].subtotalPlanWorkload + task.planWorkload;
+        vis[cur.taskId].subtotalActualWorkload = vis[cur.taskId].subtotalActualWorkload + task.actualWorkload;
+
+        if(cur.parentTaskId === 0) {
+          return;
+        }
+
+        subtotal(task, taskHashSet[cur.parentTaskId]);
+      };
+
       this.tasks.map((x) => {
         if(x.parentTaskId !== 0) {
           deepestLevel(x, taskHashSet[x.parentTaskId]);
+          if(this.showStat) { 
+            subtotal(x, taskHashSet[x.parentTaskId]);
+          }
         }
       });
       

@@ -597,3 +597,48 @@ input.smallcalendar::-webkit-calendar-picker-indicator {
   border-right:3px solid #CCC;
   border-bottom:3px solid transparent;
 }
+
+#mingantt-context-menu {
+  position: fixed;
+  display: block;
+  box-sizing: border-box;
+  border: solid 1px #CCC;
+  background-color: #FFF;
+  z-index: 99999;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.mingantt-context-menu-item {
+  display: block;
+  box-sizing: border-box;
+  /* border: solid 1px #777; */
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  background-color: #FFF;
+}
+
+.mingantt-context-menu-item:hover {
+  background-color: #DDD;
+  cursor: pointer;
+}
+
+.mingantt-context-menu-item-comment {
+  display: block;
+  box-sizing: border-box;
+  /* border: solid 1px #777; */
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  background-color: #FFF;
+}
+

@@ -146,7 +146,32 @@ var mingantt = {
       prefSetDefaultPlanDate: getStorageDefault("prefSetDefaultPlanDate", false),
       prefShowTaskStatistics: getStorageDefault("prefShowTaskStatistics", false),
       prefUseTimeSyntax: getStorageDefault("prefUseTimeSyntax", false),
-      prefUseTimeSyntaxHoursOfDay: getStorageDefault("prefUseTimeSyntaxHoursOfDay", 8.0)
+      prefUseTimeSyntaxHoursOfDay: getStorageDefault("prefUseTimeSyntaxHoursOfDay", 8.0),
+      showContextMenu: false,
+      contextMenuLeft: 0,
+      contextMenuTop: 0,
+      contextMenu: [
+        { 
+          template: () => { 
+            return `<span>+ ADD CHILD TASK</span>`; 
+          },
+          condition: (selections) => {
+            return selections.length === 1; 
+          },
+          action: (selections) => {
+            this.addChildTask();
+          }
+        }, 
+        { 
+          template: () => { return `<span>- DELETE TASK</span>`; }, 
+          condition: (selections) => {
+            return selections.length === 1; 
+          },
+          action: (selections) => {
+            this.deleteTask(selections[0].taskId);
+          }
+        }, 
+      ]
     };
   },
   template:
@@ -208,7 +233,8 @@ var mingantt = {
             :style="((task.actualStartDate !== ''))? 'background-color: #EEF;' : ''" 
             :style="((task.actualEndDate !== ''))? 'background-color: #DDD;' : ''"
             :style="((selections.find(x => x.taskId === task.taskId)))? 'background-color:rgba(253, 226, 184, 0.5)' : ''"
-            @click.exact="selectTask(task)" @click.ctrl="addSelection(task)">
+            :style="';user-select:none;'"
+            @click.exact="closeContextMenu(); selectTask(task)" @click.right.prevent="openContextMenu($event, task)" @click.ctrl="closeContextMenu(); addSelection(task)" >
           <!-- Template for task -->
           <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs"
             draggable="true" @dragstart="dragTask(task)" @dragenter.prevent @dragover.prevent @drop.prevent="dragTaskOver(task)">
@@ -543,6 +569,17 @@ var mingantt = {
         </div>
       </div>
     </div>
+  </div>
+
+  <div id="mingantt-context-menu" v-if="showContextMenu"
+    :style="{'top': contextMenuTop, 'left': contextMenuLeft}">
+    <template v-for="item in contextMenu">
+      <div class="mingantt-context-menu-item" 
+          v-if="(item.condition)? item.condition(selections) : true"
+          @click.prevent.stop="item.action(selections); closeContextMenu();"
+          v-html="item.template()">
+      </div>
+    </template>
   </div>
 </div>
 `,
@@ -1101,6 +1138,21 @@ var mingantt = {
       elForm.target.style.position = "fixed";
       elForm.target.style.left = elForm.screenX.toString() + "px";
       elForm.target.style.top = elForm.screenY.toString() + "px";
+    },
+    openContextMenu(event, task) {
+      console.log("openContextMenu", event);
+
+      if(this.selections.length <= 1) {
+        this.selectTask(task);
+      }
+
+      this.showContextMenu = true;
+      this.contextMenuTop = event.clientY;
+      this.contextMenuLeft = event.clientX;
+    },
+    closeContextMenu() {
+      console.log("closeContextMenu");
+      this.showContextMenu = false;
     }
   },
   watch: {

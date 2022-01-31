@@ -585,6 +585,11 @@ var mingantt = {
 `,
   methods: {
     loadTasks(tasks) {
+      let before = null;
+      if(this.selectedTask) {
+        before = this.selectedTask.taskId;
+      }
+
       if(this.encodeFn) {
         this.tasks = tasks.map(this.encodeFn);
 
@@ -599,6 +604,13 @@ var mingantt = {
         });
       } else {
         this.tasks = tasks;
+      }
+
+      let newtask = this.tasks.find(x => x.taskId === before);
+      if(newtask) {
+        this.selectedTask = newtask
+      } else {
+        this.selectedTask = null;
       }
     },
     getTasks() {

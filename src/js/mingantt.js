@@ -169,8 +169,8 @@ var mingantt = {
         <div class="mg-col-header mg-border-r mg-w-16">Assig.</div>
         <div class="mg-col-header mg-border-r mg-w-12">Pl/WL</div>
         <div class="mg-col-header mg-border-r mg-w-12">Ac/WL</div>
-        <div class="mg-col-header mg-border-r mg-w-12" v-if="prefShowTaskStatistics">Stat Pl</div>
-        <div class="mg-col-header mg-border-r mg-w-12" v-if="prefShowTaskStatistics">Stat Ac</div>
+        <div class="mg-col-header mg-border-r mg-w-16" v-if="prefShowTaskStatistics">Stat Pl</div>
+        <div class="mg-col-header mg-border-r mg-w-16" v-if="prefShowTaskStatistics">Stat Ac</div>
       </div>
 
       <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + 20 + 'px;' + 'border-bottom:solid 1px #CCC; box-sizing:border-box;'">
@@ -261,11 +261,11 @@ var mingantt = {
             <input v-if="prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" >
             <input v-if="!prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
           </div>
-          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r" v-if="prefShowTaskStatistics">
-            <input class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="viewInfoSet[task.taskId].subtotalPlanWorkload" readonly v-if="viewInfoSet[task.taskId].children">
+          <div class="mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs mg-border-r" v-if="prefShowTaskStatistics">
+            <input class="mg-text-xs mg-w-16 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="parseFloat(viewInfoSet[task.taskId].subtotalPlanWorkload.toFixed(2),10)" readonly v-if="viewInfoSet[task.taskId].children">
           </div>
-          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs" v-if="prefShowTaskStatistics">
-            <input class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="viewInfoSet[task.taskId].subtotalActualWorkload" readonly v-if="viewInfoSet[task.taskId].children">
+          <div class="mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs" v-if="prefShowTaskStatistics">
+            <input class="mg-text-xs mg-w-16 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="parseFloat(viewInfoSet[task.taskId].subtotalActualWorkload.toFixed(2),10)" readonly v-if="viewInfoSet[task.taskId].children">
           </div>
         </div>
       </div>

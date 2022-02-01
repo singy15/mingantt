@@ -158,7 +158,7 @@ var mingantt = {
           condition: (selections) => {
             return selections.length === 1; 
           },
-          action: (selections) => {
+          action: (event, selections) => {
             this.addChildTask();
           }
         }, 
@@ -167,11 +167,32 @@ var mingantt = {
           condition: (selections) => {
             return selections.length === 1; 
           },
-          action: (selections) => {
+          action: (event, selections) => {
             this.deleteTask(selections[0].taskId);
           }
         }, 
-      ]
+        { 
+          template: () => { return `<span>* SET PARENT: <input class="mg-text-xs mg-w-12" onclick="event.stopPropagation()"/></span>`; }, 
+          condition: (selections) => {
+            return selections.length >= 1;
+          },
+          action: (event, selections) => {
+            let val = event.target.querySelector("input").value;
+
+            if(val == null || val === "" || val === undefined) {
+              val = 0;
+            } else {
+              val = parseInt(val, 10);
+            }
+
+            selections.map(x => x.parentTaskId = val);
+
+            if(this.onUpdateTask) {
+              this.onUpdateTask({update: selections});
+            }
+          }
+        }, 
+      ],
     };
   },
   template:
@@ -576,7 +597,7 @@ var mingantt = {
     <template v-for="item in contextMenu">
       <div class="mingantt-context-menu-item" 
           v-if="(item.condition)? item.condition(selections) : true"
-          @click.prevent.stop="item.action(selections); closeContextMenu();"
+          @click.prevent.stop="item.action($event, selections); closeContextMenu();"
           v-html="item.template()">
       </div>
     </template>

@@ -256,64 +256,65 @@ var mingantt = {
             :style="((selections.find(x => x.taskId === task.taskId)))? 'background-color:rgba(253, 226, 184, 0.5)' : ''"
             :style="';user-select:none;'"
             @click.exact="closeContextMenu(); selectTask(task)" @click.right.prevent="openContextMenu($event, task)" @click.ctrl="closeContextMenu(); addSelection(task)" >
-          <!-- Template for task -->
-          <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs"
-            draggable="true" @dragstart="dragTask(task)" @dragenter.prevent @dragover.prevent @drop.prevent="dragTaskOver(task)">
-            {{task.taskId }}
-          </div>
-          <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
-            <span v-for="n of viewInfoSet[task.taskId].level" :key="n" style="display:inline-block; width:13px; height:100%; border:none; border-left:solid 1px #AAA; margin-left: 7px; box-sizing:border-box;"></span>
-            <div class="pr-4" @click="toggleCollapsed(task.taskId)" v-if="viewInfoSet[task.taskId].children" style="width:16px;">
-              <span v-if="collapseInfoSet[task.taskId]">
-                <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </span>
-              <span v-else>
-                <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </span>
+          <template v-if="(index >= Math.floor(Math.abs(positionY)/rowHeight)) && (index < (Math.floor(Math.abs(positionY)/rowHeight) + ((calendarViewHeight / rowHeight)-2)) )">
+            <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs"
+              draggable="true" @dragstart="dragTask(task)" @dragenter.prevent @dragover.prevent @drop.prevent="dragTaskOver(task)">
+              {{task.taskId }}
             </div>
-            <div class="pr-4" v-if="!viewInfoSet[task.taskId].children" style="width:16px;">
-              <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              </svg>
+            <div class="mg-border-r mg-flex mg-items-center mg-w-96 mg-text-xs mg-pl-2">
+              <span v-for="n of viewInfoSet[task.taskId].level" :key="n" style="display:inline-block; width:13px; height:100%; border:none; border-left:solid 1px #AAA; margin-left: 7px; box-sizing:border-box;"></span>
+              <div class="pr-4" @click="toggleCollapsed(task.taskId)" v-if="viewInfoSet[task.taskId].children" style="width:16px;">
+                <span v-if="collapseInfoSet[task.taskId]">
+                  <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+                <span v-else>
+                  <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+              </div>
+              <div class="pr-4" v-if="!viewInfoSet[task.taskId].children" style="width:16px;">
+                <svg class="mg-w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                </svg>
+              </div>
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" :style="'width:'+'calc(100% - '+(viewInfoSet[task.taskId].level*21+((viewInfoSet[task.taskId].children)? 32 : 16)).toString()+'px)'+';'+'hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left;'" v-model="task.subject" >
             </div>
-            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-96" :style="'width:'+'calc(100% - '+(viewInfoSet[task.taskId].level*21+((viewInfoSet[task.taskId].children)? 32 : 16)).toString()+'px)'+';'+'hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left;'" v-model="task.subject" >
-          </div>
-          <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
-            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planStartDate" type="date">
-            {{ formatDate2ShortDateStr(task.planStartDate) }}
-          </div>
-          <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
-            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planEndDate" type="date">
-            {{ formatDate2ShortDateStr(task.planEndDate) }}
-          </div>
-          <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
-            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.actualStartDate" type="date">
-            {{ formatDate2ShortDateStr(task.actualStartDate) }}
-          </div>
-          <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
-            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.actualEndDate" type="date">
-            {{ formatDate2ShortDateStr(task.actualEndDate) }}
-          </div>
-          <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs">
-            <input @change="silentEditTask(task)" class="mg-text-xs mg-w-16" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.assignedUserId" >
-          </div>
-          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-            <input v-if="prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload">
-            <input v-if="!prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload" type="number">
-          </div>
-          <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
-            <input v-if="prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" >
-            <input v-if="!prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
-          </div>
-          <div class="mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs mg-border-r" v-if="prefShowTaskStatistics">
-            <input class="mg-text-xs mg-w-16 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="parseFloat(viewInfoSet[task.taskId].subtotalPlanWorkload.toFixed(2),10)" readonly v-if="viewInfoSet[task.taskId].children">
-          </div>
-          <div class="mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs" v-if="prefShowTaskStatistics">
-            <input class="mg-text-xs mg-w-16 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="parseFloat(viewInfoSet[task.taskId].subtotalActualWorkload.toFixed(2),10)" readonly v-if="viewInfoSet[task.taskId].children">
-          </div>
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planStartDate" type="date">
+              {{ formatDate2ShortDateStr(task.planStartDate) }}
+            </div>
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.planEndDate" type="date">
+              {{ formatDate2ShortDateStr(task.planEndDate) }}
+            </div>
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.actualStartDate" type="date">
+              {{ formatDate2ShortDateStr(task.actualStartDate) }}
+            </div>
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-left mg-w-20 mg-text-xs">
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-20 smallcalendar" style="width:15px; hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.actualEndDate" type="date">
+              {{ formatDate2ShortDateStr(task.actualEndDate) }}
+            </div>
+            <div class="mg-border-r mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs">
+              <input @change="silentEditTask(task)" class="mg-text-xs mg-w-16" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:left; " v-model="task.assignedUserId" >
+            </div>
+            <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
+              <input v-if="prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload">
+              <input v-if="!prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.planWorkload" type="number">
+            </div>
+            <div class="mg-flex mg-items-center mg-justify-center mg-w-12 mg-text-xs mg-border-r">
+              <input v-if="prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" >
+              <input v-if="!prefUseTimeSyntax" @change="silentEditTask(task)" class="mg-text-xs mg-w-12 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0;" v-model="task.actualWorkload" type="number">
+            </div>
+            <div class="mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs mg-border-r" v-if="prefShowTaskStatistics">
+              <input class="mg-text-xs mg-w-16 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="parseFloat(viewInfoSet[task.taskId].subtotalPlanWorkload.toFixed(2),10)" readonly v-if="viewInfoSet[task.taskId].children">
+            </div>
+            <div class="mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs" v-if="prefShowTaskStatistics">
+              <input class="mg-text-xs mg-w-16 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="parseFloat(viewInfoSet[task.taskId].subtotalActualWorkload.toFixed(2),10)" readonly v-if="viewInfoSet[task.taskId].children">
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -358,67 +359,68 @@ var mingantt = {
       <!-- Bar Area -->
       <div id="gantt-bar-area" class="mg-relative" :style="'width:' + calendarViewWidth + 'px;' + 'height:' + calendarViewHeight + 'px;' + 'top:' + positionY + 'px;'">
         <div v-for="(bar,index) in taskBars" :key="index">
-          <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:10;' + 'top:' + (bar.style.topRaw + 3).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - 11).toString() + 'px' + ';' + '' + ';'">
-            +
-          </span>
-          <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && !collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:10;' + 'top:' + (bar.style.topRaw + 2).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - 9).toString() + 'px' + ';' + '' + ';'">
-            -
-          </span>
-
           <div v-if="prefShowGuide && viewInfoSet[bar.task.taskId].children && !collapseInfoSet[bar.task.taskId]" :style="'position:absolute; border-top-left-radius:3px; border-bottom-left-radius:3px; ' + 'top:' + (bar.style.topRaw).toString() + 'px' + ';' + ' left:' + ((bar.style.leftRaw - (viewInfoSet[bar.task.taskId].deepestLevel - viewInfoSet[bar.task.taskId].level) * 10 - 5)).toString() + 'px' + ';' + ' color:#888; border-left:solid 2px #CCC; border-top:solid 2px #CCC; border-bottom:solid 2px #CCC; width:2px;' + 'height:' + ((!collapseInfoSet[bar.task.taskId])? (viewInfoSet[bar.task.taskId].showMemberCount + 1) * rowHeight - 9 : rowHeight - 4).toString() + 'px;'"></div>
 
-          <!-- Focused -->
-          <div :style="bar.barStyle" style="background-color:rgba(253, 226, 184, 0.5)" class="mg-absolute mg-h-2" v-if="(selections.find(x => x.taskId === bar.task.taskId))">
-          </div>
+          <template v-if="(index >= Math.floor(Math.abs(positionY)/rowHeight)) && (index < (Math.floor(Math.abs(positionY)/rowHeight) + ((calendarViewHeight / rowHeight)-2)) )">
+            <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:10;' + 'top:' + (bar.style.topRaw + 3).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - 11).toString() + 'px' + ';' + '' + ';'">
+              +
+            </span>
+            <span @click="toggleCollapsed(bar.task.taskId)" v-if="viewInfoSet[bar.task.taskId].children && !collapseInfoSet[bar.task.taskId]" :style="'position:absolute; color:#AAA; cursor:pointer; display:inline-block; width:4px; height:2px; user-select:none; border: none; line-height:0px; z-index:10;' + 'top:' + (bar.style.topRaw + 2).toString() + 'px' + ';' + ' left:' + (bar.style.leftRaw - 9).toString() + 'px' + ';' + '' + ';'">
+              -
+            </span>
 
-          <!-- Focused -->
-          <div :style="bar.barStyle" style="background-color:transparent; border-top:solid 1px rgba(221,221,221,0.4); " class="mg-absolute mg-h-2">
-          </div>
+            <!-- Focused -->
+            <div :style="bar.barStyle" style="background-color:rgba(253, 226, 184, 0.5)" class="mg-absolute mg-h-2" v-if="(selections.find(x => x.taskId === bar.task.taskId))">
+            </div>
 
-          <!-- Plan -->
-          <div :class="(bar.task.actualEndDate)? 'ribbon-pre-cmpl' : 'ribbon-pre'" :style="bar.preStyle" style="border:solid 1px transparent; background-color:transparent; z-index:888; width:0px !important; height:0px !important;" class="mg-absolute mg-h-2 mg-border mg-task" 
-              v-if="bar.style.scheduled === true && viewInfoSet[bar.task.taskId].children">
-          </div>
-          <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border mg-task" 
-              v-if="bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
-              @click.exact="selectTask(bar.task)" @click.ctrl="addSelection(bar.task)">
-            <div class="mg-w-full mg-h-full" style="pointer-events: none;">
-              <div class="mg-h-full" 
-                   style="pointer-events:none; background-color:#8492bd" 
-                   :style="'width:' + bar.task.progress + '%'"></div>
+            <!-- Focused -->
+            <div :style="bar.barStyle" style="background-color:transparent; border-top:solid 1px rgba(221,221,221,0.4); " class="mg-absolute mg-h-2">
             </div>
-            <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
-                 style="top:3px;left:-6px;cursor:col-resize" 
-                 @mousedown.stop="mouseDownResize(bar.task,'left')">
-            </div>
-            <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
-                 style="top:3px;right:-6px;cursor:col-resize" 
-                 @mousedown.stop="mouseDownResize(bar.task,'right')">
-            </div>
-          </div>
-          <div :class="(bar.task.actualEndDate)? 'ribbon-aft-cmpl' : 'ribbon-aft'" :style="bar.aftStyle" style="border:solid 1px transparent; background-color:transparent; z-index:888;" class="mg-absolute mg-h-2 mg-border mg-task" 
-              v-if="bar.style.scheduled === true && viewInfoSet[bar.task.taskId].children">
-          </div>
 
-          <!-- Actual -->
-          <div :style="bar.actualStyle" style="cursor:pointer; " class="mg-absolute mg-h-1 mg-border mg-actual mg-task" 
-              v-if="bar.actualStyle.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
-              @click.exact="selectTask(bar.task)" @click.ctrl="addSelection(bar.task)">
-            <div class="mg-w-full mg-h-full mg-task" style="pointer-events: none;">
-              <div class="mg-h-full" 
-                   style="pointer-events:none; background-color:#8492bd" 
-                   :style="'width:' + bar.task.progress + '%'"></div>
+            <!-- Plan -->
+            <div :class="(bar.task.actualEndDate)? 'ribbon-pre-cmpl' : 'ribbon-pre'" :style="bar.preStyle" style="border:solid 1px transparent; background-color:transparent; z-index:888; width:0px !important; height:0px !important;" class="mg-absolute mg-h-2 mg-border mg-task" 
+                v-if="bar.style.scheduled === true && viewInfoSet[bar.task.taskId].children">
             </div>
-            <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
-                 style="top:3px;left:-6px;cursor:col-resize" 
-                 @mousedown.stop="mouseDownResize(bar.task,'left')">
+            <div :style="bar.style" style="cursor:pointer; background-color:#dde5ff;" class="mg-absolute mg-h-2 mg-border mg-task" 
+                v-if="bar.style.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
+                @click.exact="selectTask(bar.task)" @click.ctrl="addSelection(bar.task)">
+              <div class="mg-w-full mg-h-full" style="pointer-events: none;">
+                <div class="mg-h-full" 
+                     style="pointer-events:none; background-color:#8492bd" 
+                     :style="'width:' + bar.task.progress + '%'"></div>
+              </div>
+              <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
+                   style="top:3px;left:-6px;cursor:col-resize" 
+                   @mousedown.stop="mouseDownResize(bar.task,'left')">
+              </div>
+              <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
+                   style="top:3px;right:-6px;cursor:col-resize" 
+                   @mousedown.stop="mouseDownResize(bar.task,'right')">
+              </div>
             </div>
-            <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
-                 style="top:3px;right:-6px;cursor:col-resize" 
-                 @mousedown.stop="mouseDownResize(bar.task,'right')">
+            <div :class="(bar.task.actualEndDate)? 'ribbon-aft-cmpl' : 'ribbon-aft'" :style="bar.aftStyle" style="border:solid 1px transparent; background-color:transparent; z-index:888;" class="mg-absolute mg-h-2 mg-border mg-task" 
+                v-if="bar.style.scheduled === true && viewInfoSet[bar.task.taskId].children">
             </div>
-          </div>
 
+            <!-- Actual -->
+            <div :style="bar.actualStyle" style="cursor:pointer; " class="mg-absolute mg-h-1 mg-border mg-actual mg-task" 
+                v-if="bar.actualStyle.scheduled === true" @mousedown="mouseDownMove(bar.task)" 
+                @click.exact="selectTask(bar.task)" @click.ctrl="addSelection(bar.task)">
+              <div class="mg-w-full mg-h-full mg-task" style="pointer-events: none;">
+                <div class="mg-h-full" 
+                     style="pointer-events:none; background-color:#8492bd" 
+                     :style="'width:' + bar.task.progress + '%'"></div>
+              </div>
+              <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
+                   style="top:3px;left:-6px;cursor:col-resize" 
+                   @mousedown.stop="mouseDownResize(bar.task,'left')">
+              </div>
+              <div class="mg-absolute mg-w-2 mg-h-2 mg-task" 
+                   style="top:3px;right:-6px;cursor:col-resize" 
+                   @mousedown.stop="mouseDownResize(bar.task,'right')">
+              </div>
+            </div>
+          </template>
         </div>
       </div>
 

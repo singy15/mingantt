@@ -818,49 +818,62 @@ var mingantt = {
       this.task = dragTask;
     },
     dragTaskOver(overTask) {
-      let deleteIndex;
-      let addIndex;
-
-      if (overTask.taskId !== this.task.taskId && overTask.parentTaskId !== this.task.taskId) {
-
-        // Change parent
-        // if(overTask.parentTaskId !== this.task.parentTaskId && overTask.parentTaskId !== this.task.taskId) {
-        //   let before = this.task.parentTaskId;
-        //   this.task.parentTaskId = overTask.parentTaskId;
-
-        //   // Validate circular relation
-        //   let checkCircularRelation = (task, tasks, state) => {
-        //     if(state[task.taskId]) {
-        //       return false;
-        //     }
-
-        //     if(task.parentTaskId === 0) {
-        //       return true;
-        //     }
-
-        //     state[task.taskId] = true;
-
-        //     let par = this.tasks.find(x => x.taskId === task.parentTaskId);
-
-        //     return checkCircularRelation(par, tasks, state);
-        //   };
-
-        //   if(!checkCircularRelation(this.task, this.tasks, {})) {
-        //     this.task.parentTaskId = before;
-        //     alert("Error: circular relation!");
-        //     return;
-        //   }
-        // }
-
-        let tmp = this.task.sortOrder;
-        this.task.sortOrder = overTask.sortOrder;
-        overTask.sortOrder = tmp;
-
-        // Fires handler
-        if(this.onUpdateTask) {
-          this.onUpdateTask({update: [this.task, overTask]});
-        }
+      if(this.task.parentTaskId !== overTask.parentTaskId) {
+        return;
       }
+
+      this.task.sortOrder = overTask.sortOrder - 1;
+
+      let ls = this.tasks.filter(x => x.parentTaskId === this.task.parentTaskId);
+      this.resetSortOrder(ls);
+
+      if(this.onUpdateTask) {
+        this.onUpdateTask({update: ls});
+      }
+
+      // let deleteIndex;
+      // let addIndex;
+
+      // if (overTask.taskId !== this.task.taskId && overTask.parentTaskId !== this.task.taskId) {
+
+      //   // Change parent
+      //   // if(overTask.parentTaskId !== this.task.parentTaskId && overTask.parentTaskId !== this.task.taskId) {
+      //   //   let before = this.task.parentTaskId;
+      //   //   this.task.parentTaskId = overTask.parentTaskId;
+
+      //   //   // Validate circular relation
+      //   //   let checkCircularRelation = (task, tasks, state) => {
+      //   //     if(state[task.taskId]) {
+      //   //       return false;
+      //   //     }
+
+      //   //     if(task.parentTaskId === 0) {
+      //   //       return true;
+      //   //     }
+
+      //   //     state[task.taskId] = true;
+
+      //   //     let par = this.tasks.find(x => x.taskId === task.parentTaskId);
+
+      //   //     return checkCircularRelation(par, tasks, state);
+      //   //   };
+
+      //   //   if(!checkCircularRelation(this.task, this.tasks, {})) {
+      //   //     this.task.parentTaskId = before;
+      //   //     alert("Error: circular relation!");
+      //   //     return;
+      //   //   }
+      //   // }
+
+      //   let tmp = this.task.sortOrder;
+      //   this.task.sortOrder = overTask.sortOrder;
+      //   overTask.sortOrder = tmp;
+
+      //   // Fires handler
+      //   if(this.onUpdateTask) {
+      //     this.onUpdateTask({update: [this.task, overTask]});
+      //   }
+      // }
     },
     toggleCollapsed(taskId) {
       this.collapseInfoSet[taskId] = !this.collapseInfoSet[taskId];

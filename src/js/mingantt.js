@@ -70,6 +70,9 @@ function setDraggable(elements){
 var mingantt = {
   data: function () {
     return {
+      curday: moment(),
+      curyear: moment().format("YYYY"),
+      curyear2: moment().format("YY"),
       start_month: moment().add(-1, "months").format("YYYY-MM"),
       end_month: moment().add(2, "months").format("YYYY-MM"),
       block_size: 24,
@@ -251,10 +254,7 @@ var mingantt = {
       <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + (calendarViewHeight - rowHeight*2) + 'px;'">
         <div class="mg-flex mg-border-b mg-bg-lightgray" :style="'height:0px;' + 'margin-top:' + positionY + 'px;'"></div>
         <div v-for="(task,index) in displayTasks" :key="index" class="mg-flex mg-h-5 mg-border-b" 
-            :style="((task.actualStartDate !== ''))? 'background-color: #EEF;' : ''" 
-            :style="((task.actualEndDate !== ''))? 'background-color: #DDD;' : ''"
-            :style="((selections.find(x => x.taskId === task.taskId)))? 'background-color:rgba(253, 226, 184, 0.5)' : ''"
-            :style="';user-select:none;'"
+            :style="(((selectedTask) && (selectedTask.taskId === task.taskId)) || ((selections.length > 1) && (selections.find(x => x.taskId === task.taskId))))? 'background-color:rgba(253, 226, 184, 0.5)' : (((task.actualEndDate !== ''))? 'background-color: #DDD;' : (((task.actualStartDate !== ''))? 'background-color: #EEF;' : '')) + ';user-select:none;'"
             @click.exact="closeContextMenu(); selectTask(task)" @click.right.prevent="openContextMenu($event, task)" @click.ctrl="closeContextMenu(); addSelection(task)" >
           <template v-if="(index >= Math.floor(Math.abs(positionY)/rowHeight)) && (index < (Math.floor(Math.abs(positionY)/rowHeight) + ((calendarViewHeight / rowHeight)-2)) )">
             <div @click="editTask(task)" class="mg-flex mg-items-center mg-border-r mg-border-l mg-justify-center mg-w-12 mg-text-xs"
@@ -335,8 +335,7 @@ var mingantt = {
           <div v-for="(calendar,index) in calendars" :key="index">
             <div v-for="(day,index) in calendar.days" :key="index">
               <div class="mg-border-r mg-border-b mg-h-10 mg-absolute mg-flex mg-items-center mg-justify-center mg-flex-col mg-text-xs mg-bg-gray"
-                   :class="{'mg-bg-darkgray mg-text-white': (day.dayOfWeek === 0 || day.dayOfWeek === 6)}"
-                   :class="{'mg-bg-darkred mg-text-white': calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date()}"
+                   :class="(calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date())? 'mg-bg-darkred mg-text-white' : ((day.dayOfWeek === 0 || day.dayOfWeek === 6)? 'mg-bg-darkgray mg-text-white' : '')"
                    :style="'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px'">
                 <span style="text-align:center;">{{ day.day }}<br><span class="mg-text-xxs">{{ day.dayOfWeekStr }}</span></span>
               </div>
@@ -347,8 +346,7 @@ var mingantt = {
           <div v-for="(calendar,index) in calendars" :key="index">
             <div v-for="day in calendar.days" :key="index">
               <div class="mg-border-r mg-border-b mg-absolute"
-                   :class="{'mg-bg-lightgray': (day.dayOfWeek === 6 || day.dayOfWeek === 0)}"
-                   :class="{'mg-bg-lightred': calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date()}"
+                   :class="(calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date())? 'mg-bg-lightred' : ((day.dayOfWeek === 6 || day.dayOfWeek === 0)? 'mg-bg-lightgray' : '')"
                    :style="'border-right:solid 1px rgba(221,221,221,0.4); border-bottom:solid 1px rgba(221,221,221,0.4);' + 'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px;' + 'height:' + calendarViewHeight + 'px'">
               </div>
             </div>
@@ -1069,15 +1067,23 @@ var mingantt = {
         return "";
       }
 
-      var cur = moment();
-      var dt = moment(date);
-      var pre = "";
+      // var cur = moment();
+      // var dt = moment(date);
+      // var pre = "";
 
-      if(cur.format('YY') !== dt.format('YY')) {
-        pre = dt.format('YY') + "/";
-      }
+      // if(cur.format('YY') !== dt.format('YY')) {
+      //   pre = dt.format('YY') + "/";
+      // }
 
-      return pre + dt.format('M/D');
+      // return pre + dt.format('M/D');
+      
+      let m1 = date.substring(5,6);
+      let m2 = date.substring(6,7);
+      let d1 = date.substring(8,9);
+      let d2 = date.substring(9,10);
+      let yy = date.substring(2,4);
+      let str = ((yy !== this.curyear2)? yy + "/" : "") + ((m1 !== "0")? m1 : "" ) + m2 + "/" + ((d1 !== "0")? d1 : "" ) + d2;
+      return str;
     },
     selectTask(task) {
       this.selectedTask = task;
@@ -1249,6 +1255,7 @@ var mingantt = {
       return (between_days + 1) * this.block_size - this.calendarViewWidth / 2;
     },
     viewInfoSet() {
+      console.log("viewinfoset");
       let vis = {};
       let taskHashSet = {};
       let taskChildrenHashSet = {};

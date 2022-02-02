@@ -619,7 +619,7 @@ var mingantt = {
   </div>
 
   <div id="mingantt-context-menu" v-if="showContextMenu"
-    :style="{'top': contextMenuTop, 'left': contextMenuLeft}">
+    :style="{'top': contextMenuTop.toString() + 'px', 'left': contextMenuLeft.toString() + 'px'}">
     <template v-for="item in contextMenu">
       <div class="mingantt-context-menu-item" 
           v-if="(item.condition)? item.condition(selections) : true"

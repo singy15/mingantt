@@ -118,7 +118,6 @@ function encodeTask(task) {
   //   encoded.parentTaskId = 0;
   // }
   encoded.cat = undefined;
-  console.log(encoded);
   return encoded;
 }
 

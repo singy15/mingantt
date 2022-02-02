@@ -188,6 +188,11 @@ var mingantt = {
               val = parseInt(val, 10);
             }
 
+            if(val !== 0 && !(this.tasks.find(t => t.taskId === val))) {
+              alert("Parent task not exists!");
+              return;
+            }
+
             selections.map(x => x.parentTaskId = val);
 
             if(this.onUpdateTask) {
@@ -936,6 +941,15 @@ var mingantt = {
         return;
       }
 
+      if(this.form.parentTaskId === "") {
+        this.form.parentTaskId = 0;
+      }
+
+      if(this.form.parentTaskId !== 0 && !(this.tasks.find(t => t.taskId === this.form.parentTaskId))) {
+        alert("Parent task not exists!");
+        return;
+      }
+
       // Auto set progress
       if(this.autoSetProgress && this.form.actualEndDate !== "") {
         this.form.progress = 100;
@@ -969,6 +983,15 @@ var mingantt = {
       Object.assign(this.form, task);
     },
     updateTask(taskId, clear=true) {
+      if(this.form.parentTaskId === "") {
+        this.form.parentTaskId = 0;
+      }
+
+      if(this.form.parentTaskId !== 0 && !(this.tasks.find(t => t.taskId === this.form.parentTaskId))) {
+        alert("Parent task not exists!");
+        return;
+      }
+
       // Validate circular relation
       let checkCircularRelation = (task, tasks, state) => {
         if(state[task.taskId]) {

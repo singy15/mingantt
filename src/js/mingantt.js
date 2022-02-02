@@ -196,6 +196,12 @@ var mingantt = {
           }
         }, 
       ],
+      alarmTimeBegin: getStorageDefault("alarmTimeBegin", "00:00"),
+      alarmTimeEnd: getStorageDefault("alarmTimeEnd", "00:00"),
+      alarmProgress: 0,
+      alarmRestPre: "",
+      alarmRest: { h:0,m:0,s:0 },
+      alarmDiff: 0
     };
   },
   template:
@@ -492,6 +498,21 @@ var mingantt = {
                 <div style="cursor:pointer;" @click="setFormProgress(75)">75%</div>
                 <div style="cursor:pointer;" @click="setFormProgress(100)">100%</div>
               </div>
+            </div>
+            <div class="mg-form-item">
+              <label>Activity: 
+                <input type="time" v-model="alarmTimeBegin" style="outline:none;font-size:0.7rem;border:solid 1px #CCC;"/>
+                <input type="time" v-model="alarmTimeEnd" style="outline:none;font-size:0.7rem;border:solid 1px #CCC;"/>&nbsp;
+                <meter :value="alarmProgress" min="0" max="100" low="20" style="width:100px;"></meter>&nbsp;
+                <span style="display:inline-block; width:90px;">
+                  <span>{{ alarmRestPre }}&nbsp;</span>
+                  <span>{{ alarmRest.h }}</span><span style="font-size:0.5rem">h</span>
+                  <span>{{ alarmRest.m }}</span><span style="font-size:0.5rem">m</span>
+                  <span>{{ alarmRest.s }}</span><span style="font-size:0.5rem">s</span>
+                </span>
+                &nbsp;
+                <button class="mg-green mg-text-white" style="width:28px;height:16px;line-height:0px;font-size:0.5rem;cursor:pointer;" @click="setActualByAlarm()">SET</button>
+              </label>
             </div>
           </div>
           <div name="right" style="float:right; padding:5px;">
@@ -1207,6 +1228,57 @@ var mingantt = {
     closeContextMenu() {
       console.log("closeContextMenu");
       this.showContextMenu = false;
+    },
+    updateAlarm() {
+      if(this.alarmTimeBegin === "00:00" 
+          || this.alarmTimeEnd === "00:00" 
+          || this.alarmTimeBegin === this.alarmTimeEnd) {
+        this.alarmProgress = 0;
+        return;
+      }
+
+      let t_b = moment(this.alarmTimeBegin, "hh:mm");
+      let t_e = moment(this.alarmTimeEnd, "hh:mm");
+      let t_0 = moment();
+
+      let divTime = (xs) => {
+        let axs = Math.abs(xs);
+        let h = Math.floor(axs / (60 * 60));
+        let m = Math.floor((axs - (h * 60 * 60)) / 60);
+        let s = axs - (h * 60 * 60) - (m * 60);
+        return {diff: xs, h: h, m: m, s: s};
+      };
+
+      let pre = "";
+      let sec = 0;
+      let prg = 0;
+      let maxsec = t_e.diff(t_b, "seconds");
+
+      if(t_b.diff(t_0) >= 0) {
+        pre = "T~";
+        sec = t_b.diff(t_0, "seconds");
+        prg = 100;
+      } else if(t_e.diff(t_0) >= 0) {
+        pre = "T-";
+        sec = t_e.diff(t_0, "seconds");
+        prg = Math.floor((sec / maxsec) * 100.0);
+      } else {
+        pre = "T+";
+        sec = t_0.diff(t_e, "seconds");
+        prg = 0;
+      }
+
+      this.alarmRestPre = pre;
+      this.alarmRest = divTime(sec);;
+      this.alarmProgress = prg;
+      this.alarmDiff = divTime(t_0.diff(t_b, "seconds"));
+    },
+    setActualByAlarm() {
+      if(this.alarmDiff.diff <= 0) {
+        this.form.actualWorkload = "0m";
+      } else {
+        this.form.actualWorkload = `${this.alarmDiff.h}h${this.alarmDiff.m}m`;
+      }
     }
   },
   watch: {
@@ -1227,6 +1299,12 @@ var mingantt = {
     },
     prefUseTimeSyntaxHoursOfDay(newVal, oldVal) {
       setStorageDefault("prefUseTimeSyntaxHoursOfDay", newVal);
+    },
+    alarmTimeBegin(newVal, oldVal) {
+      setStorageDefault("alarmTimeBegin", newVal);
+    },
+    alarmTimeEnd(newVal, oldVal) {
+      setStorageDefault("alarmTimeEnd", newVal);
     }
   },
   mounted() {
@@ -1238,6 +1316,7 @@ var mingantt = {
     window.addEventListener('mousemove', this.mouseResize);
     window.addEventListener('mouseup', this.stopDrag);
     // setDraggable([document.getElementById("formEdit")]);
+    setInterval(this.updateAlarm, 1000);
     this.$nextTick(() => {
       this.todayPosition();
     });

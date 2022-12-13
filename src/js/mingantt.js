@@ -1427,7 +1427,7 @@ var mingantt = {
         
         vi.subtotalPlanWorkload = this.parseTimeSyntax(x.planWorkload);
         vi.subtotalActualWorkload = this.parseTimeSyntax(x.actualWorkload);
-        vi.subtotalRestWorkload = (x.actualEndDate)? this.parseTimeSyntax(x.planWorkload) : 0.0;
+        vi.subtotalRestWorkload = (!(x.actualEndDate))? this.parseTimeSyntax(x.planWorkload) : 0.0;
       });
 
       let deepestLevel = (task, cur) => {
@@ -1453,7 +1453,7 @@ var mingantt = {
 
         vis[cur.taskId].subtotalPlanWorkload = vis[cur.taskId].subtotalPlanWorkload + wlPl;
         vis[cur.taskId].subtotalActualWorkload = vis[cur.taskId].subtotalActualWorkload + wlAc;
-        vis[cur.taskId].subtotalRestWorkload = vis[cur.taskId].subtotalRestWorkload + ((task.actualEndDate) ? wlPl : 0.0);
+        vis[cur.taskId].subtotalRestWorkload = vis[cur.taskId].subtotalRestWorkload + ((!(task.actualEndDate)) ? wlPl : 0.0);
 
         if(cur.parentTaskId === 0) {
           return;

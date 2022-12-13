@@ -231,6 +231,7 @@ var mingantt = {
         <div class="mg-col-header mg-border-r mg-w-12">Ac/WL</div>
         <div class="mg-col-header mg-border-r mg-w-16" v-if="prefShowTaskStatistics">Stat Pl</div>
         <div class="mg-col-header mg-border-r mg-w-16" v-if="prefShowTaskStatistics">Stat Ac</div>
+        <div class="mg-col-header mg-border-r mg-w-16" v-if="prefShowTaskStatistics">Stat Rst</div>
       </div>
 
       <div id="gantt-task-list" class="mg-overflow-y-hidden" :style="'height:' + 20 + 'px;' + 'border-bottom:solid 1px #CCC; box-sizing:border-box;'">
@@ -322,8 +323,11 @@ var mingantt = {
             <div class="mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs mg-border-r" v-if="prefShowTaskStatistics">
               <input class="mg-text-xs mg-w-16 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="parseFloat(viewInfoSet[task.taskId].subtotalPlanWorkload.toFixed(2),10)" readonly v-if="viewInfoSet[task.taskId].children">
             </div>
-            <div class="mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs" v-if="prefShowTaskStatistics">
+            <div class="mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs mg-border-r" v-if="prefShowTaskStatistics">
               <input class="mg-text-xs mg-w-16 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="parseFloat(viewInfoSet[task.taskId].subtotalActualWorkload.toFixed(2),10)" readonly v-if="viewInfoSet[task.taskId].children">
+            </div>
+            <div class="mg-flex mg-items-center mg-justify-center mg-w-16 mg-text-xs" v-if="prefShowTaskStatistics">
+              <input class="mg-text-xs mg-w-16 nospinner" style="hright:20px; background-color:transparent; outline:none; border:none; font-size:0.70rem; text-align:right; -webkit-appearance:none; margin:0; color:#00F;" :value="parseFloat(viewInfoSet[task.taskId].subtotalRestWorkload.toFixed(2),10)" readonly v-if="viewInfoSet[task.taskId].children">
             </div>
           </template>
         </div>
@@ -348,7 +352,7 @@ var mingantt = {
               <div class="mg-border-r mg-border-b mg-h-10 mg-absolute mg-flex mg-items-center mg-justify-center mg-flex-col mg-text-xs mg-bg-gray"
                    :class="(calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date())? 'mg-bg-darkred mg-text-white' : ((day.dayOfWeek === 0 || day.dayOfWeek === 6)? 'mg-bg-darkgray mg-text-white' : '')"
                    :style="'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px'">
-                <span style="text-align:center;">{{ day.day }}<br><span class="mg-text-xxs">{{ day.dayOfWeekStr }}</span></span>
+                <span style="text-align:center;">{{ day.day }}<br><span class="mg-text-xxs" style="display:inline-block;transform: scale(0.75,0.8);">{{ "" }}</span></span>
               </div>
             </div>
           </div>
@@ -1423,6 +1427,7 @@ var mingantt = {
         
         vi.subtotalPlanWorkload = this.parseTimeSyntax(x.planWorkload);
         vi.subtotalActualWorkload = this.parseTimeSyntax(x.actualWorkload);
+        vi.subtotalRestWorkload = (x.actualEndDate)? this.parseTimeSyntax(x.planWorkload) : 0.0;
       });
 
       let deepestLevel = (task, cur) => {
@@ -1448,6 +1453,7 @@ var mingantt = {
 
         vis[cur.taskId].subtotalPlanWorkload = vis[cur.taskId].subtotalPlanWorkload + wlPl;
         vis[cur.taskId].subtotalActualWorkload = vis[cur.taskId].subtotalActualWorkload + wlAc;
+        vis[cur.taskId].subtotalRestWorkload = vis[cur.taskId].subtotalRestWorkload + ((task.actualEndDate) ? wlPl : 0.0);
 
         if(cur.parentTaskId === 0) {
           return;

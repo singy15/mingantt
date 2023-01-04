@@ -352,7 +352,7 @@ var mingantt = {
               <div class="mg-border-r mg-border-b mg-h-10 mg-absolute mg-flex mg-items-center mg-justify-center mg-flex-col mg-text-xs mg-bg-gray"
                    :class="(calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date())? 'mg-bg-darkred mg-text-white' : ((day.dayOfWeek === 0 || day.dayOfWeek === 6)? 'mg-bg-darkgray mg-text-white' : '')"
                    :style="'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px'">
-                <span style="text-align:center;">{{ day.day }}<br><span class="mg-text-xxs" style="display:inline-block;transform: scale(0.75,0.8);">{{ "" }}</span></span>
+                <span style="text-align:center;">{{ day.day }}<br><span class="mg-text-xxs" style="display:inline-block;transform: scale(0.75,0.8);">{{ (statistics && statistics[day.yyyymmdd])? Math.round(statistics[day.yyyymmdd].cost*100) / 100 : "&nbsp;" }}</span></span>
               </div>
             </div>
           </div>
@@ -363,6 +363,7 @@ var mingantt = {
               <div class="mg-border-r mg-border-b mg-absolute"
                    :class="(calendar.year=== today.year() && calendar.month === today.month() && day.day === today.date())? 'mg-bg-lightred' : ((day.dayOfWeek === 6 || day.dayOfWeek === 0)? 'mg-bg-lightgray' : '')"
                    :style="'border-right:solid 1px rgba(221,221,221,0.4); border-bottom:solid 1px rgba(221,221,221,0.4);' + 'width:' + block_size + 'px;' + 'left:' + day.block_number*block_size + 'px;' + 'height:' + calendarViewHeight + 'px'">
+                   <!-- aa -->
               </div>
             </div>
           </div>
@@ -681,6 +682,7 @@ var mingantt = {
           day: date.date(),
           dayOfWeek: date.day(),
           dayOfWeekStr: dayOfWeek[date.day()],
+          yyyymmdd: date.clone().format("YYYY-MM-DD"),
           block_number
         })
         date.add(1, 'day');
@@ -702,7 +704,7 @@ var mingantt = {
           month: start_month.month(),
           start_block_number: block_number,
           calendar: days.length,
-          days: days
+          days: days,
         })
         start_month.add(1, 'months')
         block_number = days[days.length - 1].block_number
@@ -1332,7 +1334,7 @@ var mingantt = {
     },
     alarmTimeEnd(newVal, oldVal) {
       setStorageDefault("alarmTimeEnd", newVal);
-    }
+    },
   },
   mounted() {
     this.getCalendar();
@@ -1587,7 +1589,40 @@ var mingantt = {
       // return this.lists.slice(this.position_id, this.position_id + display_task_number);
       return this.lists;
     },
-  }
+    statistics() {
+      let stat = {};
+      this.lists.forEach(t => {
+        let dtFrom = moment(t.planStartDate);
+        let dtEnd = moment(t.planEndDate);
+        if(dtFrom.isValid() && dtEnd.isValid()) {
+          console.log("calulatable");
+
+          for(var d = dtFrom.clone(), i = 0; dtEnd.isAfter(d) || dtEnd.isSame(d); d.add(1,'days'), i++) {
+            // Initialize
+            if(!stat[d.format('YYYY-MM-DD')]) {
+              stat[d.format('YYYY-MM-DD')] = { cost:0 };
+            }
+
+            // Calc basic info
+            let s = stat[d.format('YYYY-MM-DD')];
+            let duration = dtEnd.diff(dtFrom, 'days') + 1;
+            let costPerDay = t.planWorkload / duration;
+            
+            // Sum cost
+            if(t.planWorkloadMap) {
+              let cost = t.planWorkloadMap.split(",")[i];
+              if(cost !== undefined) {
+                s.cost = s.cost + parseFloat(cost, 10);
+              }
+            } else {
+              s.cost = s.cost + costPerDay;
+            }
+          }
+        }
+      });
+      return stat;
+    }
+  },
 };
 
 window.mingantt = mingantt;
